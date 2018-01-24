@@ -197,12 +197,16 @@ case $MENU in
 			b=$(((line-8)/2))
 
 			echo ""
-			echo -e "${RED}All User Online Now${NC}";
+			echo -e "${RED}Client Online Now${NC}";
 			echo ""
 			cat /etc/openvpn/openvpn.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 			cat /usr/local/bin/Client-Login
 		fi
-			echo "======================"
+			echo ""
+			UIDN=1000
+			TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/openvpn/openvpn.log | wc -l)"
+			echo -e "ONLINE TOTAL : ${RED}$TOTAL${NC}"
+			echo ""
 			exit
 	;;
 
