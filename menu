@@ -190,12 +190,8 @@ case $MENU in
 			cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 			cat /usr/local/bin/Client-Login
 			echo ""
-			UIDN=1000
-			TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/openvpn/openvpn-status.log | wc -l)"
-			echo -e "ONLINE TOTAL : ${RED}$TOTAL${NC}"
-			echo ""
-			exit
 		fi
+		exit
 	;;
 
 
