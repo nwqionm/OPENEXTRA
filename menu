@@ -43,7 +43,6 @@ echo ""
 			fi
 	else
 		echo -e "Client name ${RED}$CLIENT${NC} already expired."
-		CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENT"p)
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa --batch revoke $CLIENT
 		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
@@ -100,7 +99,7 @@ case $MENU in
 		echo "</tls-auth>" >> ~/$1.ovpn
 		}
 
-		read -p "Client Name : " -e CLIENT
+		read -p "Client name : " -e CLIENT
 		read -p "Expire : " -e EXP
 		
 		cd /etc/openvpn/easy-rsa/
@@ -112,9 +111,9 @@ case $MENU in
 		EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 		echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
 		echo ""
-		echo "Client Name : $CLIENT"
+		echo "Client name : $CLIENT"
 		echo "Expire : $EXP"
-		echo "Download Config : $IP:80/$CLIENT.ovpn"
+		echo "Download config : http://$IP:85/$CLIENT.ovpn"
 		echo ""
 		exit
 	;;
@@ -185,7 +184,7 @@ case $MENU in
 			b=$(((line-8)/2))
 
 			echo ""
-			echo -e "${RED}Client Online${NC}";
+			echo -e "${RED}CLIENT ONLINE${NC}";
 			echo ""
 			cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 			cat /usr/local/bin/Client-Login
@@ -211,7 +210,7 @@ case $MENU in
 			echo '' >> /usr/local/bin/Reboot-Server
 			echo 'DATE=$(date +"%m-%d-%Y")' >> /usr/local/bin/Reboot-Server
 			echo 'TIME=$(date +"%T")' >> /usr/local/bin/Reboot-Server
-			echo 'echo "Reboot Date $DATE IN TIME $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
+			echo 'echo "Reboot date $DATE in time $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
 			echo '/sbin/shutdown -r now' >> /usr/local/bin/Reboot-Server
 			chmod +x /usr/local/bin/Reboot-Server
 		fi
@@ -219,15 +218,15 @@ case $MENU in
 		echo ""
 		echo -e "${RED}Set Time Auto Reboot Server${NC}"
 		echo ""
-		echo -e "|${RED}1${NC}| Every   1 Hour"
-		echo -e "|${RED}2${NC}| Every   6 Hour"
+		echo -e "|${RED}1${NC}| Every 1 Hour"
+		echo -e "|${RED}2${NC}| Every 6 Hour"
 		echo -e "|${RED}3${NC}| Every 12 Hour"
-		echo -e "|${RED}4${NC}| Every   1 Day"
-		echo -e "|${RED}5${NC}| Every   7 Day"
+		echo -e "|${RED}4${NC}| Every 1 Day"
+		echo -e "|${RED}5${NC}| Every 7 Day"
 		echo -e "|${RED}6${NC}| Every 30 Day"
-		echo -e "|${RED}7${NC}| Stop Reboot Server"
-		echo -e "|${RED}8${NC}| View Log Reboot Server"
-		echo -e "|${RED}9${NC}| Clear Log Reboot Server"
+		echo -e "|${RED}7${NC}| Stop reboot server"
+		echo -e "|${RED}8${NC}| View log reboot server"
+		echo -e "|${RED}9${NC}| Clear log reboot server"
 		echo ""
 		read -p "Select a Menu : " REBOOT
 
@@ -236,7 +235,7 @@ case $MENU in
 			1)
 				echo "0 * * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 1 Hour."
+				echo "Already set time reboot every 1 hour."
 				echo ""
 				exit
 			;;
@@ -244,7 +243,7 @@ case $MENU in
 			2)
 				echo "0 */6 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 6 Hour."
+				echo "Already set time reboot every 6 hour."
 				echo ""
 				exit
 			;;
@@ -252,7 +251,7 @@ case $MENU in
 			3)
 				echo "0 */12 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 12 Hour."
+				echo "Already set time reboot every 12 hour."
 				echo ""
 				exit
 			;;
@@ -260,7 +259,7 @@ case $MENU in
 			4)
 				echo "0 0 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 1 Day."
+				echo "Already set time reboot every 1 day."
 				echo ""
 				exit
 			;;
@@ -268,7 +267,7 @@ case $MENU in
 			5)
 				echo "0 0 */7 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 7 Day."
+				echo "Already set time reboot every 7 day."
 				echo ""
 				exit
 			;;
@@ -276,7 +275,7 @@ case $MENU in
 			6)
 				echo "0 0 1 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 				echo ""
-				echo "Already Set Time Reboot Every 30 Day."
+				echo "Already set time reboot every 30 day"
 				echo ""
 				exit
 			;;
@@ -284,7 +283,7 @@ case $MENU in
 			7)
 				rm -f /usr/local/bin/Reboot-Server
 				echo ""
-				echo "Already Stop Reboot Server."
+				echo "Already stop reboot server."
 				echo ""
 				exit
 			;;
@@ -292,7 +291,7 @@ case $MENU in
 			8)
 				if [[ -e /usr/local/bin/Reboot-Log ]]; then
 					echo ""
-					echo "You No Have Log Reboot Server."
+					echo "You no have log reboot server."
 					echo ""
 					exit
 				else
@@ -307,7 +306,7 @@ case $MENU in
 			9)
 				echo "" > /usr/local/bin/Reboot-Log
 				echo ""
-				echo "Already Clear Log Reboot Server."
+				echo "Already clear log reboot server."
 				echo ""
 				exit
 			;;
@@ -322,7 +321,7 @@ case $MENU in
 	9)
 	;;
 	10)
-		rm -f /usr/local/bin/Menu
+		rm -f /usr/local/bin/menu
 		wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 		chmod +x /usr/local/bin/menu
 	;;
