@@ -67,10 +67,11 @@ echo ""
 			userdel -r "$username"
 		fi
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
+		menu
+		exit
 
 	fi
 	done
-	menu
 echo ""
 read -p "Select a Menu Script : " MENU
 
