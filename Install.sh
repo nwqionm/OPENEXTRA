@@ -500,7 +500,9 @@ END
 			service squid restart
 		fi
 	fi
-
+	
+	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
+	chmod +x /usr/local/bin/menu
 	newclient "$CLIENT"
 	cp /root/$CLIENT.ovpn /home/vps/public_html/
 	rm $CLIENT.ovpn
