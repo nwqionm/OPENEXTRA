@@ -71,6 +71,7 @@ echo ""
 
 	fi
 	done
+	menu
 echo ""
 read -p "Select a Menu Script : " MENU
 
