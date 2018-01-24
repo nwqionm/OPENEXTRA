@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear
+
 # Color
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -10,37 +12,6 @@ echo ""
 echo -e "${RED}  (\_(\  ${NC}"
 echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
 echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
-echo ""
-	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
-	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
-	for((i=1; i<=$TOTALACCOUNTS; i++ ))
-	do
-		TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
-		CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
-		CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
-		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
-		TODAYSTIME=`date +%s`
-
-		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
-			TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
-				if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
-					echo "Client name ${RED}$CLIENT${NC} will expired less than 1 day."
-				fi
-		else
-			echo "Client name ${RED}$CLIENT${NC} already expired."
-			cd /etc/openvpn/easy-rsa/
-			./easyrsa --batch revoke $CLIENT
-			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-			rm -rf pki/reqs/$CLIENT.req
-			rm -rf pki/private/$CLIENT.key
-			rm -rf pki/issued/$CLIENT.crt
-			rm -rf /etc/openvpn/crl.pem
-			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-			chmod 644 /etc/openvpn/crl.pem
-			rm /home/vps/public_html/$CLIENT.ovpn
-			exit
-		fi
-	done
 echo ""
 echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
@@ -55,7 +26,53 @@ echo -e "|${RED} 8${NC}| "
 echo -e "|${RED} 9${NC}| "
 echo -e "|${RED}10${NC}| UPDATE MENU SCRIPT"
 echo ""
-read -p "Select a Menu : " MENU
+	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
+	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
+	for((i=1; i<=$TOTALACCOUNTS; i++ ))
+	do
+	TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
+	CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
+	CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
+	CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
+	TODAYSTIME=`date +%s`
+
+	if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
+		TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
+			if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
+				echo -e "Client name ${RED}$CLIENT${NC} will expire less than 1 day."
+			fi
+	else
+		echo -e "Client name ${RED}$CLIENT${NC} already expired."
+		cd /etc/openvpn/easy-rsa/
+		./easyrsa --batch revoke $CLIENT
+		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+		rm -rf pki/reqs/$CLIENT.req
+		rm -rf pki/private/$CLIENT.key
+		rm -rf pki/issued/$CLIENT.crt
+		rm -rf /etc/openvpn/crl.pem
+		cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+		chmod 644 /etc/openvpn/crl.pem
+		rm -f /home/vps/public_html/$CLIENT.ovpn
+		rm -f /usr/local/bin/Expire-List
+
+		nowsecs=$( date +%s )
+		while read account
+		do
+			username=$( echo $account | cut -d: -f1  )
+			expiredays=$( echo $account | cut -d: -f2 )
+			expiresecs=$(( $expiredays * 86400 ))
+
+		if [ $expiresecs -le $nowsecs ]
+			then
+			echo "$username has expired deleting"
+			userdel -r "$username"
+		fi
+		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
+
+	fi
+	done
+echo ""
+read -p "Select a Menu Script : " MENU
 
 case $MENU in
 
@@ -124,8 +141,10 @@ case $MENU in
 			echo ""
 			tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
 		if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
+			echo ""
 			read -p "Select one Client [1]: " CLIENTNUMBER
 		else
+			echo ""
 			read -p "Select one Client [1-$NUMBEROFCLIENTS]: " CLIENTNUMBER
 		fi
 
@@ -139,7 +158,8 @@ case $MENU in
 		rm -rf /etc/openvpn/crl.pem
 		cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 		chmod 644 /etc/openvpn/crl.pem
-		rm /home/vps/public_html/$CLIENT.ovpn
+		rm -f /home/vps/public_html/$CLIENT.ovpn
+		userdel $CLIENT
 		echo ""
 		echo "Client Name " $CLIENT " Removed."
 		echo ""
@@ -171,24 +191,24 @@ case $MENU in
 
 	4)
 		clear
-		if [ -f "/etc/openvpn/openvpn-status.log" ]; then
-			line=`cat /etc/openvpn/openvpn-status.log | wc -l`
+		if [ -f "/etc/openvpn/openvpn.log" ]; then
+			line=`cat /etc/openvpn/openvpn.log | wc -l`
 			a=$((3+((line-8)/2)))
 			b=$(((line-8)/2))
 
 			echo ""
-			echo "${RED}All User Online Now${NC}";
+			echo -e "${RED}All User Online Now${NC}";
 			echo ""
-			echo "==========================================";
-			cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /tmp/vpn-login-db.txt
-			cat /tmp/vpn-login-db.txt
+			cat /etc/openvpn/openvpn.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
+			cat /usr/local/bin/Client-Login
 		fi
-		echo "==========================================";
+			echo "======================"
+			exit
 	;;
 
 
 	5)
-		
+
 	;;
 
 
