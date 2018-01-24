@@ -11,13 +11,44 @@ echo -e "${RED}  (\_(\  ${NC}"
 echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
 echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
+	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
+	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
+	for((i=1; i<=$TOTALACCOUNTS; i++ ))
+	do
+		TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
+		CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
+		CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
+		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
+		TODAYSTIME=`date +%s`
+
+		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
+			TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
+				if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
+					echo "Client name ${RED}$CLIENT${NC} will expired less than 1 day."
+				fi
+		else
+			echo "Client name ${RED}$CLIENT${NC} already expired."
+			cd /etc/openvpn/easy-rsa/
+			./easyrsa --batch revoke $CLIENT
+			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+			rm -rf pki/reqs/$CLIENT.req
+			rm -rf pki/private/$CLIENT.key
+			rm -rf pki/issued/$CLIENT.crt
+			rm -rf /etc/openvpn/crl.pem
+			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+			chmod 644 /etc/openvpn/crl.pem
+			rm /home/vps/public_html/$CLIENT.ovpn
+			exit
+		fi
+	done
+echo ""
 echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
 echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
 echo -e "|${RED} 2${NC}| CHOOSE AND REMOVE CLIENT"
 echo -e "|${RED} 3${NC}| CHECK ALL CLIENT"
 echo -e "|${RED} 4${NC}| CHECK CLIENT ONLINE"
-echo -e "|${RED} 5${NC}| REMOVE CLIENT EXPIRED"
+echo -e "|${RED} 5${NC}| "
 echo -e "|${RED} 6${NC}| SET TIME REBOOT SERVER"
 echo -e "|${RED} 7${NC}| "
 echo -e "|${RED} 8${NC}| "
@@ -157,40 +188,7 @@ case $MENU in
 
 
 	5)
-		cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List.txt
-		TOTALACCOUNTS=`cat /usr/local/bin/Expire-List.txt | wc -l`
-		for((i=1; i<=$TOTALACCOUNTS; i++ ))
-			do
-
-			tuserval=`head -n $i /usr/local/bin/Expire-List.txt | tail -n 1`
-			CLIENT=`echo $tuserval | cut -f1 -d:`
-			userexp=`echo $tuserval | cut -f2 -d:`
-			userexpireinseconds=$(( $userexp * 86400 ))
-			todaystime=`date +%s`
-
-			if [ $userexpireinseconds -ge $todaystime ] ; then
-				timeto30days=$(( $todaystime + 2592000 ))
-				timeto50days=$(( $todaystime + 4320000 ))
-					if [ $userexpireinseconds -le $timeto30days ]; then
-						echo "$CLIENT		$EXP"
-					elif [ $userexpireinseconds -le $timeto50days ]; then
-						echo "$CLIENT		$EXP"
-					fi
-			else
-				echo "The Client Name ${RED}$CLIENT${NC} Already Expired, Removed."
-				cd /etc/openvpn/easy-rsa/
-				./easyrsa --batch revoke $CLIENT
-				EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-				rm -rf pki/reqs/$CLIENT.req
-				rm -rf pki/private/$CLIENT.key
-				rm -rf pki/issued/$CLIENT.crt
-				rm -rf /etc/openvpn/crl.pem
-				cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-				chmod 644 /etc/openvpn/crl.pem
-				rm /home/vps/public_html/$CLIENT.ovpn
-				exit
-			fi
-		done
+		
 	;;
 
 
