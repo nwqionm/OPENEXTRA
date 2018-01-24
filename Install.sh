@@ -13,11 +13,6 @@ if [[ ! -e /dev/net/tun ]]; then
 	exit
 fi
 
-if grep -qs "CentOS release 5" "/etc/redhat-release"; then
-	echo "CentOS 5 เป็นเวอร์ชั่นเก่าที่ไม่รองรับแล้ว"
-	exit
-fi
-
 # Set Localtime GMT +7
 ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
 
@@ -37,17 +32,17 @@ echo ""
 echo -e "FUNCTION SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
 echo -e "|${RED}1${NC}| OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
-echo "		Ubuntu 14.04 - 16.04 - 17.04"
-echo "		Debian 8 - 9"
+echo "	Ubuntu 14.04 - 16.04 - 17.04"
+echo "	Debian 8 - 9"
 echo -e "|${RED}2${NC}| OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
-echo "		Ubuntu 14.04 - 16.04 - 17.04"
-echo "		Debian 7 - 8 - 9"
+echo "	Ubuntu 14.04 - 16.04 - 17.04"
+echo "	Debian 7 - 8 - 9"
 echo -e "|${RED}3${NC}| SSH + DROPBEAR ${RED} ✖   ${NC}"
 echo -e "|${RED}4${NC}| WEB PANEL ${RED} ✖   ${NC}"
 echo -e "|${RED}5${NC}| VNSTAT (CHECK BANDWIDTH or DATA) ${RED} ✖   ${NC}"
 echo -e "|${RED}6${NC}| SQUID PROXY ${GREEN} ✔   ${NC}"
-echo "		Ubuntu 12.04 - 14.04 - 16.04 - 17.04"
-echo "		Debian 7 - 8 - 9"
+echo "	Ubuntu 12.04 - 14.04 - 16.04 - 17.04"
+echo "	Debian 7 - 8 - 9"
 echo -e "|${RED}7${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
 echo -e "|${RED}8${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 echo ""
@@ -122,23 +117,22 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
 	echo "ระบบตรวจสอบพบว่า"
 	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
-	echo "กรุณาสร้าง OS ใหม่ และทำการติดตั้งอีกครั้ง"
 	echo ""
 	exit
 else
 	clear
 	echo ""
 	read -p "IP address : " -e -i $IP IP
-	read -p "Port (แนะนำ 1194) : " -e -i 1194 PORT
+	read -p "Port : " -e -i 1194 PORT
 	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
 		read -p "Protocol : " -e -i TCP PROTOCOL
 	done
-	read -p "Port Proxy (แนะนำ 8080) : " -e -i 8080 PROXY
+	read -p "Port Proxy : " -e -i 8080 PROXY
 	while [[ $CLIENT = "" ]]; do
 		read -p "Client Name : " -e CLIENT
 	done
 	echo ""
-	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
+	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
 
 	if [[ "$OS" = 'debian' ]]; then
 		apt-get install ca-certificates -y
@@ -155,11 +149,6 @@ else
 			apt update
 		fi
 
-		if [[ "$VERSION_ID" = 'VERSION_ID="12.04"' ]]; then
-			echo "deb http://build.openvpn.net/debian/openvpn/stable precise main" > /etc/apt/sources.list.d/openvpn.list
-			wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
-			apt-get update
-		fi
 		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 			echo "deb http://build.openvpn.net/debian/openvpn/stable trusty main" > /etc/apt/sources.list.d/openvpn.list
 			wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
