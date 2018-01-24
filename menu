@@ -121,7 +121,7 @@ case $MENU in
 		TOTALACCOUNTS=`cat /usr/local/bin/Expire-List.txt | wc -l`
 		for((i=1; i<=$TOTALACCOUNTS; i++ ))
 			do
-			EXP="$(chage -l $username| grep "Account Expires" | awk -F": " '{print $2}')"
+			EXP="$(chage -l $username | grep "Account Expires" | awk -F": " '{print $2}')"
 			tuserval=`head -n $i /usr/local/bin/Expire-List.txt | tail -n 1`
 			username=`echo $tuserval | cut -f1 -d:`
 			userexp=`echo $tuserval | cut -f2 -d:`
