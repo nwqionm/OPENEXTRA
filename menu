@@ -334,9 +334,9 @@ case $MENU in
 	9)
 	;;
 	10)
-#		rm /usr/local/bin/Menu
-#		wget -O /usr/local/bin/Menu "Link"
-		chmod +x /usr/local/bin/Menu
+		rm -f /usr/local/bin/Menu
+		wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
+		chmod +x /usr/local/bin/menu
 	;;
 
 	
