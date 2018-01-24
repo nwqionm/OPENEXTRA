@@ -43,6 +43,7 @@ echo ""
 			fi
 	else
 		echo -e "Client name ${RED}$CLIENT${NC} already expired."
+		CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENT"p)
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa --batch revoke $CLIENT
 		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
