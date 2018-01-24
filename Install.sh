@@ -505,7 +505,10 @@ END
 	chmod +x /usr/local/bin/menu
 	newclient "$CLIENT"
 	cp /root/$CLIENT.ovpn /home/vps/public_html/
-	rm $CLIENT.ovpn
+	rm -f /root/$CLIENT.ovpn
+	useradd -e `date -d "365 days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
+	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
