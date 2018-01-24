@@ -68,22 +68,12 @@ case $MENU in
 
 		newclient "$CLIENT"
 		cp /root/$CLIENT.ovpn /home/vps/public_html/
-#		rm $CLIENT.ovpn
-
-		DIR="/home/vps/public_html/$CLIENT.ovpn"
-		NOW=$(date +%s)
-#		DAYS=30
-
-		for file in "$DIR"*
-		do
-		if [ $(((`stat $file -c '%Y'`) + (10 * $DAYS))) -lt $NOW ]; then
-			rm -f $CLIENT.ovpn
-		fi
-		done
-		
+		rm $CLIENT.ovpn
+		useradd -e `date -d "$DAYS days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
+		EXP="$(chage -l $CLIENT | grep "Account Expires" | awk -F": " '{print $2}')"
 		echo ""
 		echo "Client Name : $CLIENT"
-#		echo "Expire : $EXP"
+		echo "Expire : $EXP"
 		echo "Download Config : $IP:80/$CLIENT.ovpn"
 		echo ""
 		exit
@@ -127,9 +117,32 @@ case $MENU in
 
 	3)
 		clear
-		echo ""
-		echo -e "${RED}All Client in Server${NC}"
-		tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
+		cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List.txt
+		TOTALACCOUNTS=`cat /usr/local/bin/Expire-List.txt | wc -l`
+		for((i=1; i<=$TOTALACCOUNTS; i++ ))
+			do
+			EXP="$(chage -l $username| grep "Account Expires" | awk -F": " '{print $2}')"
+			tuserval=`head -n $i /usr/local/bin/Expire-List.txt | tail -n 1`
+			username=`echo $tuserval | cut -f1 -d:`
+			userexp=`echo $tuserval | cut -f2 -d:`
+			userexpireinseconds=$(( $userexp * 86400 ))
+			todaystime=`date +%s`
+
+			if [ $userexpireinseconds -ge $todaystime ] ; then
+				timeto7days=$(( $todaystime + 604800 ))
+					if [ $userexpireinseconds -le $timeto7days ]; then
+						echo ""
+						echo -e "${RED}USERNAME		EXPIRE ON${NC}"
+						echo ""
+						echo "$username		$EXP"
+						echo ""
+					fi
+			else
+				echo ""
+				echo "The user account $username already expired."
+				echo ""
+			fi
+		done
 	;;
 
 
