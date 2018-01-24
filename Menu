@@ -62,12 +62,20 @@ case $MENU in
 
 
 		read -p "Client name : " -e -i client CLIENT
+		read -p "Expire : " -e DAYS
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa build-client-full $CLIENT nopass
 
 		newclient "$CLIENT"
 		cp /root/$CLIENT.ovpn /home/vps/public_html/
-		rm $CLIENT.ovpn
+#		rm $CLIENT.ovpn
+
+		now=$(date +%s)
+		if [ $((10 * $DAYS))) -lt $now ]
+		then
+		rm /root/$CLIENT.ovpn
+		fi
+		
 		echo ""
 		echo "Client Name : $CLIENT"
 #		echo "Expire : $EXP"
