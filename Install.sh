@@ -901,5 +901,10 @@ elif [[ -e /etc/squid3/squid.conf ]]; then
 	echo "Squid proxy removed."
 	echo ""
 	exit
+else
+	echo ""
+	echo "คุณยังไม่เคยติดตั้ง Squid Proxy"
+	echo ""
+	exit
 fi
 ;;
