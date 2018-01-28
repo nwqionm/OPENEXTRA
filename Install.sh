@@ -9,7 +9,7 @@ exit
 fi
 
 if [[ ! -e /dev/net/tun ]]; then
-echo ""
+	echo ""
 	echo "TUN ไม่สามารถใช้งานได้"
 	exit
 fi
@@ -80,7 +80,7 @@ else
 	echo ""
 	exit
 fi
-
+	
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
 	echo "<ca>" >> ~/$1.ovpn
@@ -108,10 +108,11 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
 	echo ""
 	exit
-
-else
-
+fi
 	clear
+	OS=debian
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
@@ -353,7 +354,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -391,7 +392,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -432,7 +433,6 @@ END
 	echo "====================================================="
 	exit
 
-fi
 ;;
 
 2)
@@ -469,6 +469,11 @@ else
 	echo ""
 	exit
 fi
+
+if [[ -e /etc/debian_version ]]; then
+	OS=debian
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
 
 	# Debian 8
 	if [[ "$VERSION_ID" = 'VERSION_ID="8"' ]]; then
@@ -684,6 +689,8 @@ END
 		echo ""
 		exit
 	fi
+fi
+
 ;;
 
 3)
@@ -744,6 +751,11 @@ else
 	exit
 fi
 
+if [[ -e /etc/debian_version ]]; then
+	OS=debian
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
+
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ -e /etc/squid3/squid.conf ]]; then
 			apt-get -y remove --purge squid3
@@ -768,7 +780,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -815,7 +827,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -838,6 +850,8 @@ END
 			echo ""
 			exit
 	fi
+fi
+
 ;;
 
 7)
@@ -907,4 +921,5 @@ else
 	echo ""
 	exit
 fi
+
 ;;
