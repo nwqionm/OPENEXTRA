@@ -220,8 +220,12 @@ exit 0' > $RCLOCAL
 	fi
 
 	if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-		if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-			semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+		if [[ "$PORT" != '1194' ]]; then
+			if [[ "$PROTOCOL" = 'UDP' ]]; then
+				semanage port -a -t openvpn_port_t -p udp $PORT
+			elif [[ "$PROTOCOL" = 'TCP' ]]; then
+				semanage port -a -t openvpn_port_t -p tcp $PORT
+			fi
 		fi
 	fi
 
