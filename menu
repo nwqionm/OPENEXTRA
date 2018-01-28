@@ -101,7 +101,7 @@ case $MENU in
 		}
 
 		read -p "Client name : " -e CLIENT
-		read -p "Expire : " -e EXP
+		read -p "Expire : " -e TimeActive
 		
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa build-client-full $CLIENT nopass
