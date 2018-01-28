@@ -111,16 +111,22 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	exit
 else
 	clear
-	read -p "IP address : " -e -i $IP IP
+	read -p "IP address: " -e -i $IP IP
+	read -p "Protocol (1.TCP 2.UDP) : " -e -i 1 PROTOCOL
+	case $PROTOCOL in
+		1) 
+		PROTOCOL=tcp
+		;;
+		2) 
+		PROTOCOL=udp
+		;;
+	esac
 	read -p "Port : " -e -i 1194 PORT
-	while [[ $PROTOCOL != "UDP" && $PROTOCOL != "TCP" ]]; do
-		read -p "Protocol : " -e -i TCP PROTOCOL
-	done
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name : " -e CLIENT
 	echo ""
 	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
-
+	
 	apt-get update
 	apt-get install openvpn iptables openssl ca-certificates -y
 
@@ -146,12 +152,8 @@ else
 	openvpn --genkey --secret /etc/openvpn/ta.key
 
 	echo "port $PORT
-	if [[ "$PROTOCOL" = 'UDP' ]]; then
-		echo "proto udp" >> /etc/openvpn/server.conf
-	elif [[ "$PROTOCOL" = 'TCP' ]]; then
-		echo "proto tcp" >> /etc/openvpn/server.conf
-	fi
-	dev tun
+proto $PROTOCOL
+dev tun
 sndbuf 0
 rcvbuf 0
 ca ca.crt
@@ -169,6 +171,7 @@ ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 		else
 			RESOLVCONF='/etc/resolv.conf'
 		fi
+		# Obtain the resolvers from resolv.conf and use them for OpenVPN
 		grep -v '#' $RESOLVCONF | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
 			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
 		done
@@ -191,12 +194,10 @@ client-to-client" >> /etc/openvpn/server.conf
 
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	if pgrep firewalld; then
-
 		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
 		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
-		# Set NAT for the VPN subnet
 		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 	else
@@ -209,7 +210,6 @@ exit 0' > $RCLOCAL
 		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
 		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
-
 			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
 			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
 			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
@@ -219,12 +219,8 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	if [[ "$PORT" != '1194' ]]; then
-		if [[ "$PROTOCOL" = 'UDP' ]]; then
-			semanage port -a -t openvpn_port_t -p udp $PORT
-		elif [[ "$PROTOCOL" = 'TCP' ]]; then
-			semanage port -a -t openvpn_port_t -p tcp $PORT
-		fi
+	if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+		semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
 	fi
 
 	service openvpn restart
@@ -239,19 +235,15 @@ exit 0' > $RCLOCAL
 		echo "หากไม่ใช่ กรุณาเว้นว่างไว้"
 		echo "หรือหากไม่แน่ใจ กรุณาเปิดดูลิ้งค์ด้านบนเพื่อศึกษาข้อมูลเกี่ยวกับ (NAT)"
 		echo ""
-		read -p "External IP : " -e USEREXTERNALIP
+		read -p "External IP: " -e USEREXTERNALIP
 		if [[ "$USEREXTERNALIP" != "" ]]; then
 			IP=$USEREXTERNALIP
 		fi
 	fi
-	
+
 	echo "client
-	if [[ "$PROTOCOL" = 'UDP' ]]; then
-		echo "proto udp" >> /etc/openvpn/client-common.txt
-	elif [[ "$PROTOCOL" = 'TCP' ]]; then
-		echo "proto tcp-client" >> /etc/openvpn/client-common.txt
-	fi
 dev tun
+proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 remote $IP:$PORT@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp $PORT
@@ -424,11 +416,7 @@ END
 	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
 	echo "IP server : $IP"
 	echo "Port : $PORT"
-	if [[ "$PROTOCOL" = 'UDP' ]]; then
-		echo "Protocal : UDP"
-	elif [[ "$PROTOCOL" = 'TCP' ]]; then
-		echo "Protocal : TCP"
-	fi
+	echo "Protocal : $PROTOCAL"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
 	echo "Download config (only you) : $IP:85/$CLIENT.ovpn"
