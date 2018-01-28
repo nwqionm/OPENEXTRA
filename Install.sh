@@ -94,11 +94,13 @@ fi
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
-	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
+	while [[ $PROTOCOL != "UDP" && $PROTOCOL != "TCP" ]]; do
 		read -p "Protocol : " -e -i TCP PROTOCOL
 	done
 	read -p "Port proxy : " -e -i 8080 PROXY
+	while [[ $CLIENT = "" ]]; do
 	read -p "Client name : " -e CLIENT
+	done
 	echo ""
 	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
 
