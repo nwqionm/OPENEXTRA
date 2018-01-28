@@ -69,25 +69,13 @@ if [[ -e /etc/debian_version ]]; then
 		echo "Debian 7 - 8 - 9"
 		echo ""
 		exit
-	fi
-else
-	echo ""
-	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
-	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
-	echo ""
-	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 7 - 8 - 9"
-	echo ""
-	exit
-fi
 
-if [[ -e /etc/openvpn/server.conf ]]; then
-	echo ""
-	echo "ระบบตรวจสอบพบว่า"
-	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
-	echo ""
-fi
+	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="14.04"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+
 	clear
+	OS=debian
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
 	newclient () {
 		cp /etc/openvpn/client-common.txt ~/$1.ovpn
 		echo "<ca>" >> ~/$1.ovpn
@@ -108,10 +96,13 @@ fi
 	if [[ "$IP" = "" ]]; then
 			IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 	fi
-	OS=debian
-	GROUPNAME=nogroup
-	RCLOCAL='/etc/rc.local'
 
+if [[ -e /etc/openvpn/server.conf ]]; then
+	echo ""
+	echo "ระบบตรวจสอบพบว่า"
+	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
+	echo ""
+fi
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
@@ -429,6 +420,19 @@ END
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
+	exit
+
+	fi
+else
+	echo ""
+	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
+	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
+	echo ""
+	echo "Ubuntu 14.04 - 16.04 - 17.04"
+	echo "Debian 7 - 8 - 9"
+	echo ""
+	exit
+fi
 
 	;;
 
