@@ -851,46 +851,80 @@ END
 	7)
 
 	clear
+	newclient () {
+
+		cp /etc/openvpn/client-common.txt ~/$1.ovpn
+		echo "<ca>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+		echo "</ca>" >> ~/$1.ovpn
+		echo "<cert>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+		echo "</cert>" >> ~/$1.ovpn
+		echo "<key>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+		echo "</key>" >> ~/$1.ovpn
+		echo "<tls-auth>" >> ~/$1.ovpn
+		cat /etc/openvpn/ta.key >> ~/$1.ovpn
+		echo "</tls-auth>" >> ~/$1.ovpn
+		}
+
 	echo ""
-	read -p "Do you really want to remove OpenVPN (y or n): " -e -i n REMOVE
-	if [[ "$REMOVE" = 'y' ]]; then
-		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
-		PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
-		if pgrep firewalld; then
-			IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
-			firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
-			firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
-			firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
-			firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
-			firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-			firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-		else
-			IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
-			iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-			sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
-			if iptables -L -n | grep -qE '^ACCEPT'; then
-				iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-				iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
-				iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-				sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
-				sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
-				sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
+	IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+	if [[ "$IP" = "" ]]; then
+			IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	fi
+
+	if [[ -e /etc/openvpn/server.conf ]]; then
+		while :
+		do
+			echo ""
+			read -p "Do you really want to remove OpenVPN (y or n): " -e -i n REMOVE
+			if [[ "$REMOVE" = 'y' ]]; then
+				PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
+				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
+				if pgrep firewalld; then
+					IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
+					firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
+					firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
+					firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
+					firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
+					firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+					firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+				else
+					IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
+					iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+					sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
+					if iptables -L -n | grep -qE '^ACCEPT'; then
+						iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+						iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
+						iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+						sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
+						sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
+						sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
+					fi
+				fi
+
+				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
+				fi
+
+				apt-get remove --purge -y openvpn
+				rm -rf /etc/openvpn
+				echo ""
+				echo "OpenVPN removed."
+			else
+				echo ""
+				echo "Removal aborted."
 			fi
-		fi
+			exit
 
-		if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-			semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
-		fi
-
-		apt-get remove --purge -y openvpn
-		rm -rf /etc/openvpn
-		echo ""
-		echo "OpenVPN removed."
+		done
 	else
 		echo ""
-		echo "Removal aborted."
+		echo "คุณยังไม่ได้ติดตั้ง OpenVPN"
+		echo ""
+		exit
 	fi
-	exit
 
 	;;
 
