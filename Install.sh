@@ -32,7 +32,11 @@ echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
 echo -e "FUNCTION SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
+if [[ -e /etc/openvpn/server.conf ]]; then
+echo -e "|${RED}1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+else
 echo -e "|${RED}1${NC}| OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+fi
 echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 7- 8 - 9"
 echo -e "|${RED}2${NC}| OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
