@@ -49,9 +49,9 @@ echo -e "|${RED}8${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 echo ""
 echo -e "${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
 echo ""
-read -p "กรุณาเลือกฟังก์ชั่นที่ต้องการติดตั้ง (ตัวเลข) : " MENU
+read -p "กรุณาเลือกฟังก์ชั่นที่ต้องการติดตั้ง (ตัวเลข) : " MENUSCRIPT
 
-case $MENU in
+case $MENUSCRIPT in
 
 1)
 
@@ -695,8 +695,10 @@ fi
 
 3)
 ;;
+
 4)
 ;;
+
 5)
 ;;
 
