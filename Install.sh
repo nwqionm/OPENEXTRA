@@ -57,6 +57,7 @@ case $MENUSCRIPT in
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
@@ -442,6 +443,7 @@ fi
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
@@ -467,6 +469,7 @@ else
 fi
 
 	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
@@ -723,6 +726,7 @@ fi
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
@@ -748,6 +752,7 @@ else
 fi
 
 	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
