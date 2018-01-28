@@ -115,9 +115,9 @@ fi
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
-	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
+#	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
 		read -p "Protocol : " -e -i TCP PROTOCOL
-	done
+#	done
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name : " -e CLIENT
 	echo ""
@@ -604,7 +604,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -656,7 +656,7 @@ acl Safe_ports port 488
 acl Safe_ports port 591
 acl Safe_ports port 777
 acl CONNECT method CONNECT
-acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255                 
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
 http_access allow SSH
 http_access allow localnet
 http_access allow localhost
@@ -918,3 +918,5 @@ END
 	fi
 
 	;;
+
+esac
