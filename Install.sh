@@ -61,46 +61,63 @@ if [[ -e /etc/debian_version ]]; then
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
-	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="14.04"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
+			echo ""
+			echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ไม่รองรับ"
+			echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
+			echo ""
+			echo "Ubuntu 14.04 - 16.04 - 17.04"
+			echo "Debian 7 - 8 - 9"
+			echo ""
+			exit
+		fi
+else
+	echo ""
+	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
+	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
+	echo ""
+	echo "Ubuntu 14.04 - 16.04 - 17.04"
+	echo "Debian 7 - 8 - 9"
+	echo ""
+	exit
+fi
 
-	clear
-	newclient () {
-		cp /etc/openvpn/client-common.txt ~/$1.ovpn
-		echo "<ca>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
-		echo "</ca>" >> ~/$1.ovpn
-		echo "<cert>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
-		echo "</cert>" >> ~/$1.ovpn
-		echo "<key>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
-		echo "</key>" >> ~/$1.ovpn
-		echo "<tls-auth>" >> ~/$1.ovpn
-		cat /etc/openvpn/ta.key >> ~/$1.ovpn
-		echo "</tls-auth>" >> ~/$1.ovpn
-	}
+newclient () {
+	cp /etc/openvpn/client-common.txt ~/$1.ovpn
+	echo "<ca>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+	echo "</ca>" >> ~/$1.ovpn
+	echo "<cert>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+	echo "</cert>" >> ~/$1.ovpn
+	echo "<key>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+	echo "</key>" >> ~/$1.ovpn
+	echo "<tls-auth>" >> ~/$1.ovpn
+	cat /etc/openvpn/ta.key >> ~/$1.ovpn
+	echo "</tls-auth>" >> ~/$1.ovpn
+}
 
-	IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-	if [[ "$IP" = "" ]]; then
-			IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-	fi
+IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+if [[ "$IP" = "" ]]; then
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
 	echo "ระบบตรวจสอบพบว่า"
 	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
 	echo ""
-fi
-	echo ""
+	exit
+else
+	clear
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
 	while [[ $PROTOCOL != "UDP" && $PROTOCOL != "TCP" ]]; do
 		read -p "Protocol : " -e -i TCP PROTOCOL
 	done
 	read -p "Port proxy : " -e -i 8080 PROXY
-	while [[ $CLIENT = "" ]]; do
 	read -p "Client name : " -e CLIENT
-	done
 	echo ""
 	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
 
@@ -129,8 +146,12 @@ fi
 	openvpn --genkey --secret /etc/openvpn/ta.key
 
 	echo "port $PORT
-proto $PROTOCOL
-dev tun
+	if [[ "$PROTOCOL" = 'UDP' ]]; then
+		echo "proto udp" >> /etc/openvpn/server.conf
+	elif [[ "$PROTOCOL" = 'TCP' ]]; then
+		echo "proto tcp" >> /etc/openvpn/server.conf
+	fi
+	dev tun
 sndbuf 0
 rcvbuf 0
 ca ca.crt
@@ -170,10 +191,12 @@ client-to-client" >> /etc/openvpn/server.conf
 
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	if pgrep firewalld; then
+
 		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
 		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
+		# Set NAT for the VPN subnet
 		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 	else
@@ -182,9 +205,11 @@ client-to-client" >> /etc/openvpn/server.conf
 exit 0' > $RCLOCAL
 		fi
 		chmod +x $RCLOCAL
+
 		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
 		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
+
 			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
 			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
 			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
@@ -194,19 +219,13 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	if hash sestatus 2>/dev/null; then
-		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
-			fi
+	if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+		if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+			semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
 		fi
 	fi
 
-	if pgrep systemd-journal; then
-		service openvpn restart
-	else
-		/etc/init.d/openvpn restart
-	fi
+	service openvpn restart
 
 	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
 	if [[ "$IP" != "$EXTERNALIP" ]]; then
@@ -223,10 +242,14 @@ exit 0' > $RCLOCAL
 			IP=$USEREXTERNALIP
 		fi
 	fi
-
+	
 	echo "client
+	if [[ "$PROTOCOL" = 'UDP' ]]; then
+		echo "proto udp" >> /etc/openvpn/client-common.txt
+	elif [[ "$PROTOCOL" = 'TCP' ]]; then
+		echo "proto tcp-client" >> /etc/openvpn/client-common.txt
+	fi
 dev tun
-proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 remote $IP:$PORT@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp $PORT
@@ -249,7 +272,6 @@ verb 3" > /etc/openvpn/client-common.txt
 	rm /etc/nginx/sites-available/default
 	cat > /etc/nginx/nginx.conf <<END
 user www-data;
-
 worker_processes 2;
 pid /var/run/nginx.pid;
 events {
@@ -271,12 +293,9 @@ http {
         client_max_body_size 32M;
 	client_header_buffer_size 8m;
 	large_client_header_buffers 8 8m;
-
 	fastcgi_buffer_size 8m;
 	fastcgi_buffers 8 8m;
-
 	fastcgi_read_timeout 600;
-
         include /etc/nginx/conf.d/*.conf;
 }
 END
@@ -309,6 +328,7 @@ END
 	service nginx restart
 
 	if [[ "$OS" = 'debian' ]]; then
+		VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 		if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 			if [[ -e /etc/squid3/squid.conf ]]; then
 				apt-get -y remove --purge squid3
@@ -402,7 +422,11 @@ END
 	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
 	echo "IP server : $IP"
 	echo "Port : $PORT"
-	echo "Protocal : $PROTOCAL"
+	if [[ "$PROTOCOL" = 'UDP' ]]; then
+		echo "Protocal : UDP"
+	elif [[ "$PROTOCOL" = 'TCP' ]]; then
+		echo "Protocal : TCP"
+	fi
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
 	echo "Download config (only you) : $IP:85/$CLIENT.ovpn"
@@ -410,27 +434,6 @@ END
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
-	exit
-
-	else
-		echo ""
-		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ไม่รองรับ"
-		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
-		echo ""
-		echo "Ubuntu 14.04 - 16.04 - 17.04"
-		echo "Debian 7 - 8 - 9"
-		echo ""
-		exit
-
-	fi
-else
-	echo ""
-	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
-	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
-	echo ""
-	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 7 - 8 - 9"
-	echo ""
 	exit
 fi
 
