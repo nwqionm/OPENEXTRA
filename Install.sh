@@ -219,13 +219,11 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-		if [[ "$PORT" != '1194' ]]; then
-			if [[ "$PROTOCOL" = 'UDP' ]]; then
-				semanage port -a -t openvpn_port_t -p udp $PORT
-			elif [[ "$PROTOCOL" = 'TCP' ]]; then
-				semanage port -a -t openvpn_port_t -p tcp $PORT
-			fi
+	if [[ "$PORT" != '1194' ]]; then
+		if [[ "$PROTOCOL" = 'UDP' ]]; then
+			semanage port -a -t openvpn_port_t -p udp $PORT
+		elif [[ "$PROTOCOL" = 'TCP' ]]; then
+			semanage port -a -t openvpn_port_t -p tcp $PORT
 		fi
 	fi
 
@@ -864,10 +862,10 @@ END
 
 	7)
 
+	clear
 	echo ""
-	read -p "Do you really want to remove OpenVPN ? [Y or N] : " -e -i N REMOVE
-
-	if [[ "$REMOVE" = 'Y' ]]; then
+	read -p "Do you really want to remove OpenVPN (y or n): " -e -i n REMOVE
+	if [[ "$REMOVE" = 'y' ]]; then
 		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 		PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
 		if pgrep firewalld; then
@@ -891,23 +889,20 @@ END
 				sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
 			fi
 		fi
-		if hash sestatus 2>/dev/null; then
 
-			if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
-				fi
-			fi
+		if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+			semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
 		fi
 
 		apt-get remove --purge -y openvpn
 		rm -rf /etc/openvpn
 		echo ""
 		echo "OpenVPN removed."
-		exit
 	else
-		exit
+		echo ""
+		echo "Removal aborted."
 	fi
+	exit
 
 	;;
 
