@@ -5,7 +5,7 @@ if [[ "$EUID" -ne 0 ]]; then
 	echo "กรุณาเข้าสู่ระบบผู้ใช้ root ก่อนทำการใช้งานสคริปท์"
 	echo "คำสั่งเข้าสู่ระบบผู้ใช้ root คือ sudo -i"
 	echo ""
-exit
+	exit
 fi
 
 if [[ ! -e /dev/net/tun ]]; then
@@ -53,7 +53,7 @@ read -p "กรุณาเลือกฟังก์ชั่นที่ต�
 
 case $MENUSCRIPT in
 
-1)
+	1)
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
@@ -80,39 +80,38 @@ else
 	echo ""
 	exit
 fi
-	
-newclient () {
-	cp /etc/openvpn/client-common.txt ~/$1.ovpn
-	echo "<ca>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
-	echo "</ca>" >> ~/$1.ovpn
-	echo "<cert>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
-	echo "</cert>" >> ~/$1.ovpn
-	echo "<key>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
-	echo "</key>" >> ~/$1.ovpn
-	echo "<tls-auth>" >> ~/$1.ovpn
-	cat /etc/openvpn/ta.key >> ~/$1.ovpn
-	echo "</tls-auth>" >> ~/$1.ovpn
-}
-
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
 	echo "ระบบตรวจสอบพบว่า"
 	echo "คุณได้ทำการติดตั้งเซิฟเวอร์ OpenVPN ไปก่อนหน้านี้แล้ว"
 	echo ""
-	exit
 fi
 	clear
+	newclient () {
+		cp /etc/openvpn/client-common.txt ~/$1.ovpn
+		echo "<ca>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+		echo "</ca>" >> ~/$1.ovpn
+		echo "<cert>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+		echo "</cert>" >> ~/$1.ovpn
+		echo "<key>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+		echo "</key>" >> ~/$1.ovpn
+		echo "<tls-auth>" >> ~/$1.ovpn
+		cat /etc/openvpn/ta.key >> ~/$1.ovpn
+		echo "</tls-auth>" >> ~/$1.ovpn
+	}
+
+	IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+	if [[ "$IP" = "" ]]; then
+			IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	fi
 	OS=debian
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
+
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
@@ -120,7 +119,6 @@ fi
 		read -p "Protocol : " -e -i TCP PROTOCOL
 	done
 	read -p "Port proxy : " -e -i 8080 PROXY
-	while [[ $CLIENT = "" ]]; do
 	read -p "Client name : " -e CLIENT
 	echo ""
 	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
@@ -431,18 +429,15 @@ END
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
-	exit
 
-;;
+	;;
 
-2)
+	2)
 
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
 		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
-	echo ""
-	read -p "Port proxy (แนะนำ 8080) : " -e -i 8080 PROXY
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
@@ -470,7 +465,6 @@ else
 	exit
 fi
 
-if [[ -e /etc/debian_version ]]; then
 	OS=debian
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
@@ -689,20 +683,19 @@ END
 		echo ""
 		exit
 	fi
-fi
 
-;;
+	;;
 
-3)
-;;
+	3)
+	;;
 
-4)
-;;
+	4)
+	;;
 
-5)
-;;
+	5)
+	;;
 
-6)
+	6)
 
 if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 
@@ -753,7 +746,6 @@ else
 	exit
 fi
 
-if [[ -e /etc/debian_version ]]; then
 	OS=debian
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
@@ -852,76 +844,77 @@ END
 			echo ""
 			exit
 	fi
-fi
 
-;;
+	;;
 
-7)
+	7)
 
-			echo ""
-			read -p "Do you really want to remove OpenVPN ? [Y or N] : " -e -i N REMOVE
+	echo ""
+	read -p "Do you really want to remove OpenVPN ? [Y or N] : " -e -i N REMOVE
 
-			if [[ "$REMOVE" = 'Y' ]]; then
-				PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
-				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
-				if pgrep firewalld; then
-					IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
-					firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
-					firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
-					firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-					firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-				else
-					IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
-					iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-					sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
-					if iptables -L -n | grep -qE '^ACCEPT'; then
-						iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-						iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
-						iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-						sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
-					fi
-				fi
-				if hash sestatus 2>/dev/null; then
-					if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-						if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-							semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
-						fi
-					fi
-				fi
-
-				apt-get remove --purge -y openvpn
-				rm -rf /etc/openvpn
-				echo ""
-				echo "OpenVPN removed."
-				exit
-			else
-				exit
+	if [[ "$REMOVE" = 'Y' ]]; then
+		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
+		PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
+		if pgrep firewalld; then
+			IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
+			firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		else
+			IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
+			iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
+			if iptables -L -n | grep -qE '^ACCEPT'; then
+				iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+				iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
+				iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+				sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
 			fi
-;;
+		fi
+		if hash sestatus 2>/dev/null; then
 
-8)
+			if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
+				fi
+			fi
+		fi
 
-if [[ -e /etc/squid/squid.conf ]]; then
-	apt-get -y remove --purge squid
-	echo ""
-	echo "Squid proxy removed."
-	echo ""
-	exit
-elif [[ -e /etc/squid3/squid.conf ]]; then
-	apt-get -y remove --purge squid3
-	echo ""
-	echo "Squid proxy removed."
-	echo ""
-	exit
-else
-	echo ""
-	echo "คุณยังไม่เคยติดตั้ง Squid Proxy"
-	echo ""
-	exit
-fi
+		apt-get remove --purge -y openvpn
+		rm -rf /etc/openvpn
+		echo ""
+		echo "OpenVPN removed."
+		exit
+	else
+		exit
+	fi
 
-;;
+	;;
+
+	8)
+
+	if [[ -e /etc/squid/squid.conf ]]; then
+		apt-get -y remove --purge squid
+		echo ""
+		echo "Squid proxy removed."
+		echo ""
+		exit
+	elif [[ -e /etc/squid3/squid.conf ]]; then
+		apt-get -y remove --purge squid3
+		echo ""
+		echo "Squid proxy removed."
+		echo ""
+		exit
+	else
+		echo ""
+		echo "คุณยังไม่เคยติดตั้ง Squid Proxy"
+		echo ""
+		exit
+	fi
+
+	;;
