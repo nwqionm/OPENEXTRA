@@ -151,7 +151,6 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			fi
 				exit
 		done
-	fi
 else
 	clear
 	read -p "IP address: " -e -i $IP IP
