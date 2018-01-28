@@ -60,22 +60,9 @@ if [[ -e /etc/debian_version ]]; then
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
 
-	if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
-		echo ""
-		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ไม่รองรับ"
-		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
-		echo ""
-		echo "Ubuntu 14.04 - 16.04 - 17.04"
-		echo "Debian 7 - 8 - 9"
-		echo ""
-		exit
-
-	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="14.04"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="14.04"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 
 	clear
-	OS=debian
-	GROUPNAME=nogroup
-	RCLOCAL='/etc/rc.local'
 	newclient () {
 		cp /etc/openvpn/client-common.txt ~/$1.ovpn
 		echo "<ca>" >> ~/$1.ovpn
@@ -421,6 +408,16 @@ END
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
 	exit
+
+	else
+		echo ""
+		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ไม่รองรับ"
+		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
+		echo ""
+		echo "Ubuntu 14.04 - 16.04 - 17.04"
+		echo "Debian 7 - 8 - 9"
+		echo ""
+		exit
 
 	fi
 else
