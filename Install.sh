@@ -94,9 +94,9 @@ fi
 	echo ""
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
-#	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
+	while [[ $PROTOCOL != "TCP" && $PROTOCOL != "UDP" ]]; do
 		read -p "Protocol : " -e -i TCP PROTOCOL
-#	done
+	done
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name : " -e CLIENT
 	echo ""
