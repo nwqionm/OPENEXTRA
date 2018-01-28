@@ -137,8 +137,12 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 					fi
 				fi
 
-				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
+				if hash sestatus 2>/dev/null; then
+					if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+						if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+							semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+						fi
+					fi
 				fi
 
 				apt-get remove --purge -y openvpn
@@ -261,8 +265,12 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-		semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+	if hash sestatus 2>/dev/null; then
+		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+			fi
+		fi
 	fi
 
 	service openvpn restart
