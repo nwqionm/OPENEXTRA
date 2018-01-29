@@ -104,9 +104,10 @@ case $MENU in
 		read -p "Expire : " -e TimeActive
 
 		if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
-		echo ""
-		echo "Already have client."
-		echo ""
+			echo ""
+			echo "Already have client."
+			echo ""
+			exit
 		fi
 
 		cd /etc/openvpn/easy-rsa/
