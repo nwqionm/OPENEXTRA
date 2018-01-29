@@ -102,7 +102,13 @@ case $MENU in
 
 		read -p "Client name : " -e CLIENT
 		read -p "Expire : " -e TimeActive
-		
+
+		if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
+		echo ""
+		echo "Already have client."
+		echo ""
+		fi
+
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa build-client-full $CLIENT nopass
 		newclient "$CLIENT"
