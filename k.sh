@@ -8,7 +8,7 @@ fi
 
 apt-get -y install squid
 cat > /etc/squid/squid.conf <<END
-http_port $PROXY
+http_port 8080
 acl localhost src 127.0.0.1/32 ::1
 acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
 acl localnet src 10.0.0.0/8
