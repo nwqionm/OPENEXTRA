@@ -64,24 +64,9 @@ if [[ -e /etc/debian_version ]]; then
 	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 	GROUPNAME=nogroup
 	RCLOCAL='/etc/rc.local'
-
-		if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
-			echo ""
-			echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ไม่รองรับ"
-			echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
-			echo ""
-			echo "Ubuntu 14.04 - 16.04 - 17.04"
-			echo "Debian 7 - 8 - 9"
-			echo ""
-			exit
-		fi
 else
 	echo ""
-	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
-	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
-	echo ""
-	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 7 - 8 - 9"
+	echo "สคริปท์นี้รองรับเฉพาะ OS Debian และ Ubuntu เท่านั้น"
 	echo ""
 	exit
 fi
@@ -104,75 +89,23 @@ newclient () {
 
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
-	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
-		while :
-		do
-			echo ""
-			read -p "Do you really want to remove OpenVPN (y or n): " -e -i n REMOVE
-			if [[ "$REMOVE" = 'y' ]]; then
-				PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
-				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
-				if pgrep firewalld; then
-					IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
-					firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
-					firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
-					firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
-					firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-					firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-				else
-					IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
-					iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-					sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
-					if iptables -L -n | grep -qE '^ACCEPT'; then
-						iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
-						iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
-						iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-						sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
-					fi
-				fi
-
-				if hash sestatus 2>/dev/null; then
-					if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-						if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-							semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
-						fi
-					fi
-				fi
-
-				apt-get remove --purge -y openvpn
-				rm -rf /etc/openvpn
-				echo ""
-				echo "OpenVPN removed."
-			else
-				echo ""
-				echo "Removal aborted."
-			fi
-				exit
-		done
+	echo""
+	echo "คุณได้ติดตั้ง OpenVPN ไปก่อนหน้านี้แล้ว"
+	echo ""
+	exit
 else
 	clear
-	read -p "IP address: " -e -i $IP IP
-	read -p "Protocol (1.TCP 2.UDP) : " -e -i 1 PROTOCOL
-	case $PROTOCOL in
-		1) 
-		PROTOCOL=tcp
-		;;
-		2) 
-		PROTOCOL=udp
-		;;
-	esac
+	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
 	read -p "Port proxy : " -e -i 8080 PROXY
-	read -p "Client name : " -e CLIENT
+	read -p "Client name: " -e CLIENT
 	echo ""
-	read -n1 -r -p "กด ENTER 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก..."
-	
+	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
+
 	apt-get update
 	apt-get install openvpn iptables openssl ca-certificates -y
 
@@ -187,6 +120,7 @@ else
 	chown -R root:root /etc/openvpn/easy-rsa/
 	rm -rf ~/EasyRSA-3.0.4.tgz
 	cd /etc/openvpn/easy-rsa/
+
 	./easyrsa init-pki
 	./easyrsa --batch build-ca nopass
 	./easyrsa gen-dh
@@ -198,7 +132,7 @@ else
 	openvpn --genkey --secret /etc/openvpn/ta.key
 
 	echo "port $PORT
-proto $PROTOCOL
+proto tcp
 dev tun
 sndbuf 0
 rcvbuf 0
@@ -217,7 +151,6 @@ ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 		else
 			RESOLVCONF='/etc/resolv.conf'
 		fi
-		# Obtain the resolvers from resolv.conf and use them for OpenVPN
 		grep -v '#' $RESOLVCONF | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
 			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
 		done
@@ -240,13 +173,14 @@ client-to-client" >> /etc/openvpn/server.conf
 
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	if pgrep firewalld; then
-		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --zone=public --add-port=$PORT/tcp
 		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
-		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --permanent --zone=public --add-port=$PORT/tcp
 		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
 		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 	else
+
 		if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
 			echo '#!/bin/sh -e
 exit 0' > $RCLOCAL
@@ -256,22 +190,16 @@ exit 0' > $RCLOCAL
 		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
 		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
-			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+			iptables -I INPUT -p tcp --dport $PORT -j ACCEPT
 			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
 			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-			sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I INPUT -p tcp --dport $PORT -j ACCEPT" $RCLOCAL
 			sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 			sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 		fi
 	fi
 
-	if hash sestatus 2>/dev/null; then
-		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
-			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
-			fi
-		fi
-	fi
+	semanage port -a -t openvpn_port_t -p tcp $PORT
 
 	service openvpn restart
 
@@ -293,7 +221,7 @@ exit 0' > $RCLOCAL
 
 	echo "client
 dev tun
-proto $PROTOCOL
+proto tcp
 sndbuf 0
 rcvbuf 0
 remote $IP:$PORT@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp $PORT
@@ -371,14 +299,12 @@ server {
 END
 	service nginx restart
 
-	if [[ "$OS" = 'debian' ]]; then
-		VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
-		if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-			if [[ -e /etc/squid3/squid.conf ]]; then
-				apt-get -y remove --purge squid3
-			fi
-			apt-get -y install squid3
-			cat > /etc/squid3/squid.conf <<END
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		fi
+	apt-get -y install squid3
+	cat > /etc/squid3/squid.conf <<END
 http_port $PROXY
 acl localhost src 127.0.0.1/32 ::1
 acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
@@ -411,12 +337,12 @@ END
 			sed -i $IP2 /etc/squid3/squid.conf;
 			service squid3 restart
 
-		elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-			if [[ -e /etc/squid/squid.conf ]]; then
-				apt-get -y remove --purge squid
-			fi
-			apt-get -y install squid
-			cat > /etc/squid/squid.conf <<END
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
+	apt-get -y install squid
+	cat > /etc/squid/squid.conf <<END
 http_port $PROXY
 acl localhost src 127.0.0.1/32 ::1
 acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
@@ -448,7 +374,6 @@ END
 			IP2="s/xxxxxxxxx/$IP/g";
 			sed -i $IP2 /etc/squid/squid.conf;
 			service squid restart
-		fi
 	fi
 
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
@@ -466,7 +391,7 @@ END
 	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
 	echo "IP server : $IP"
 	echo "Port : $PORT"
-	echo "Protocal : $PROTOCAL"
+	echo "Protocal : TCP"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
 	echo "Download config (only you) : $IP:85/$CLIENT.ovpn"
