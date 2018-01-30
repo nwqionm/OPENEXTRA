@@ -79,7 +79,7 @@ echo "	Debian 7- 8 - 9"
 echo -e "|${RED}7${NC}| "
 echo -e "|${RED}8${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 echo ""
-echo -e "${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
+echo -e "     ${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
 echo ""
 read -p "กรุณาเลือกฟังก์ชั่นที่ต้องการติดตั้ง (ตัวเลข) : " MENUSCRIPT
 
@@ -110,9 +110,9 @@ fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
-	read -p "Do you really want to remove OpenVPN  (y or n): " -e -i n REMOVE
+	read -p "Do you really want to remove OpenVPN  (Y or N): " -e -i N REMOVE
 
-	if [[ "$REMOVE" = 'y' ]]; then
+	if [[ "$REMOVE" = 'N' ]]; then
 		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 			if pgrep firewalld; then
 				IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
