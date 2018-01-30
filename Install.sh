@@ -247,8 +247,6 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	semanage port -a -t openvpn_port_t -p tcp $PORT
-
 	service openvpn restart
 
 	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
