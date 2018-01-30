@@ -30,7 +30,7 @@ echo ""
 cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
 TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
 for((i=1; i<=$TOTALACCOUNTS; i++ ))
-do
+	do
 	TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
 	CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
 	CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
@@ -60,17 +60,15 @@ do
 
 		nowsecs=$( date +%s )
 		while read account
-		do
+			do
 			username=$( echo $account | cut -d: -f1  )
 			expiredays=$( echo $account | cut -d: -f2 )
 			expiresecs=$(( $expiredays * 86400 ))
-
-		if [ $expiresecs -le $nowsecs ]
-			then
-			userdel -r "$username"
-		fi
-
+			if [ $expiresecs -le $nowsecs ]; then
+				userdel -r "$username"
+			fi
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
+
 		menu
 		exit
 
