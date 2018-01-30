@@ -28,7 +28,7 @@ if [[ -e /etc/debian_version ]]; then
 
 	if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
 		echo ""
-		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นเก่าที่ไม่รองรับแล้ว"
+		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ยังไม่รองรับ"
 		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
 		echo ""
 		echo "Ubuntu 14.04 - 16.04 - 17.04"
@@ -159,9 +159,10 @@ else
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
 	echo ""
-	echo -e "     |${RED}1${NC}| UDP"
-	echo -e "     |${RED}2${NC}| TCP"
-	read -p "Protocol [1-2]: " -e -i 2 PROTOCOL
+	echo -e "   |${RED}1${NC}| UDP"
+	echo -e "   |${RED}2${NC}| TCP"
+	echo ""
+	read -p "Protocol : " -e -i 2 PROTOCOL
 	case $PROTOCOL in
 		1) 
 		PROTOCOL=udp
@@ -171,9 +172,10 @@ else
 		;;
 	esac
 	echo ""
-	echo -e "     |${RED}1${NC}| DNS Current system"
-	echo -e "     |${RED}2${NC}| DNS Google"
-	read -p "DNS (1 or 2) : " -e -i 1 DNS
+	echo -e "   |${RED}1${NC}| DNS Current system"
+	echo -e "   |${RED}2${NC}| DNS Google"
+	echo ""
+	read -p "DNS : " -e -i 1 DNS
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name: " -e CLIENT
 	echo ""
@@ -287,8 +289,6 @@ exit 0' > $RCLOCAL
 		fi
 	fi
 
-	service openvpn restart
-
 	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
 	if [[ "$IP" != "$EXTERNALIP" ]]; then
 		echo ""
@@ -383,7 +383,6 @@ server {
     }
 }
 END
-	service nginx restart
 
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ -e /etc/squid3/squid.conf ]]; then
@@ -422,7 +421,9 @@ refresh_pattern .               0       20%     4320
 END
 		IP2="s/xxxxxxxxx/$IP/g";
 		sed -i $IP2 /etc/squid3/squid.conf;
-		service squid3 restart
+		/etc/init.d/squid3 restart
+		/etc/init.d/openvpn restart
+		/etc/init.d/nginx restart
 
 	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ -e /etc/squid/squid.conf ]]; then
@@ -461,8 +462,11 @@ refresh_pattern .               0       20%     4320
 END
 		IP2="s/xxxxxxxxx/$IP/g";
 		sed -i $IP2 /etc/squid/squid.conf;
-		service squid restart
+		/etc/init.d/squid restart
+		/etc/init.d/openvpn restart
+		/etc/init.d/nginx restart
 	fi
+
 fi
 
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
@@ -495,6 +499,7 @@ fi
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
+	echo ""
 	exit
 
 	;;
@@ -508,7 +513,7 @@ fi
 
 if [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
 	echo ""
-	echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นเก่าที่ไม่รองรับแล้ว"
+	echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ยังไม่รองรับ"
 	echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
 	echo ""
 	echo "Ubuntu 14.04 - 16.04 - 17.04"
