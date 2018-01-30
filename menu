@@ -16,11 +16,11 @@ echo ""
 echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
 echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
-echo -e "|${RED} 2${NC}| CHOOSE AND REMOVE CLIENT"
+echo -e "|${RED} 2${NC}| REMOVE CLIENT"
 echo -e "|${RED} 3${NC}| CHECK ALL CLIENT"
-echo -e "|${RED} 4${NC}| CHECK CLIENT ONLINE"
-echo -e "|${RED} 5${NC}| RENEW EXPIRE CLIENT"
-echo -e "|${RED} 6${NC}| SET TIME REBOOT SERVER"
+echo -e "|${RED} 4${NC}| CHECK ALL CLIENT ONLINE"
+echo -e "|${RED} 5${NC}| RENEW EXPIRE DATE OF CLIENT"
+echo -e "|${RED} 6${NC}| SET TIME AUTO REBOOT SERVER"
 echo -e "|${RED} 7${NC}| "
 echo -e "|${RED} 8${NC}| "
 echo -e "|${RED} 9${NC}| "
@@ -40,12 +40,12 @@ do
 	if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
 		TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
 			if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
-				echo -e "Client name ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
+				echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
 			fi
 
 	else
 
-		echo -e "Client name ${RED}$CLIENT${NC} already expired."
+		echo -e "     ${RED}$CLIENT${NC} หมดอายุแล้ว"
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa --batch revoke $CLIENT
 		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
@@ -71,6 +71,7 @@ do
 		fi
 
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
+		sleep 3
 		menu
 		exit
 
@@ -106,15 +107,24 @@ newclient () {
 	echo "</tls-auth>" >> ~/$1.ovpn
 }
 
-read -p "Client name : " -e CLIENT
-read -p "Expire : " -e TimeActive
+read -p "ชื่อลูกค้า : " -e CLIENT
+
 
 if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	echo ""
-	echo "Already have client."
+	echo "มีชื่อลูกค้านี้อยู่ในระบบแล้ว"
 	echo ""
-	exit
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
+
+	if [[ "$REMOVE" = 'Y' ]]; then
+		menu
+		exit
+	elif [[ "$REMOVE" = 'N' ]]; then
+		exit
+	fi
 fi
+
+read -p "วันหมดอายุ : " -e TimeActive
 
 cd /etc/openvpn/easy-rsa/
 ./easyrsa build-client-full $CLIENT nopass
@@ -125,9 +135,9 @@ useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
 echo ""
-echo "Client name : $CLIENT"
-echo "Expire : $EXP"
-echo "Download config : http://$IP:85/$CLIENT.ovpn"
+echo "ชื่อลูกค้า : $CLIENT"
+echo "หมดอายุในวันที่ : $EXP"
+echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$CLIENT.ovpn"
 echo ""
 exit
 
@@ -139,17 +149,23 @@ clear
 NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
 if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 	echo ""
-	echo "You have no existing clients."
+	echo "ไม่เคยมีลูกค้าอยู่ในระบบ"
+	echo ""
 	exit
 fi
 
 echo ""
-echo "Select the existing client certificate you want to remove."
 tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
 if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
-	read -p "Select one client [1]: " CLIENTNUMBER
+	echo -e "${RED}คำเตือน${NC} : การออกจากหน้านี้ต้องกด CTRL+C เท่านั้น"
+	echo "หากกด Enter จะทำการลบชื่อลูกค้าลำดับที่ 1 โดยอัตโนมัติ"
+	echo ""
+	read -p "เลือกลำดับรายชื่อลูกค้าที่ต้องการลบ [1]: " CLIENTNUMBER
 else
-	read -p "Select one client [1 - $NUMBEROFCLIENTS]: " CLIENTNUMBER
+	echo -e "${RED}คำเตือน${NC} : การออกจากหน้านี้ต้องกด CTRL+C เท่านั้น"
+	echo "หากกด Enter จะทำการลบชื่อลูกค้าลำดับที่ 1 โดยอัตโนมัติ"
+	echo ""
+	read -p "เลือกลำดับรายชื่อลูกค้าที่ต้องการลบ [1 - $NUMBEROFCLIENTS]: " CLIENTNUMBER
 fi
 
 CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
@@ -165,7 +181,7 @@ chown nobody:$GROUPNAME /etc/openvpn/crl.pem
 rm -f /home/vps/public_html/$CLIENT.ovpn
 userdel $CLIENT
 echo ""
-echo "Client name " $CLIENT " Removed."
+echo "ลูกค้าชื่อ ${RED}$CLIENT${NC} ถูกลบออกจากระบบเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -176,7 +192,7 @@ exit
 clear
 UIDN=1000
 echo ""
-echo -e "${RED}USERNAME          EXPIRE ON${NC}"
+echo -e "${RED}รายชื่อลูกค้า          วันหมดอายุ${NC}"
 echo ""
 while read CHECKCLIENT
 do
@@ -190,7 +206,7 @@ done < /etc/passwd
 
 TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 echo ""
-echo -e "TOTAL CLIENT : ${RED}$TOTAL${NC}"
+echo -e "รวมรายชื่อลูกค้าทั้งหมด : ${RED}$TOTAL${NC}"
 echo ""
 exit
 
@@ -205,7 +221,7 @@ if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 	b=$(((line-8)/2))
 
 	echo ""
-	echo -e "${RED}CLIENT ONLINE${NC}";
+	echo -e "${RED}รายชื่อลูกค้าที่กำลังออนไลน์ในขณะนี้${NC}";
 	echo ""
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 	cat /usr/local/bin/Client-Login
@@ -219,41 +235,41 @@ fi
 	5)
 
 clear
-UIDN=1000
 echo ""
-read -p "Client name : " -e CLIENT
+read -p "ชื่อลูกค้า : " -e CLIENT
 
 if [[ ! -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	echo ""
-	echo "Server is no have this client name."
+	echo "ไม่มีชื่อลูกค้าที่คุณระบุอยู่ในระบบ"
 	echo ""
-	exit
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
+
+	if [[ "$REMOVE" = 'Y' ]]; then
+		menu
+		exit
+	elif [[ "$REMOVE" = 'N' ]]; then
+		exit
+	fi
 fi
 
-while read CHECKCLIENT
-do
-	CLIENT="$(echo $CHECKCLIENT | cut -d: -f1)"
-	ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
-	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-	if [[ $ID -ge $UIDN ]]; then
-		printf "%-17s %2s\n" "$CLIENT" "$EXP"
-	fi
-done < /etc/passwd
+EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+echo ""
+echo -e "ลูกค้ารายนี้หมดอายุในวันที่ : ${RED}$EXP${NC}"
+echo ""
+read -p "เปลี่ยนวันหมดอายุ : " -e TimeActive
 
-read -p "Expire : " -e TimeActive
-
+rm -f /usr/local/bin/Expire-List
 userdel $CLIENT
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
 echo ""
-echo "Client name : $CLIENT"
-echo "Expire : $EXP"
+echo "ชื่อลูกค้า : $CLIENT"
+echo "หมดวันหมดในวันที่ : $EXP"
 echo ""
 exit
 
 	;;
-
 
 	6)
 
@@ -262,7 +278,7 @@ exit
 	echo '' >> /usr/local/bin/Reboot-Server
 	echo 'DATE=$(date +"%m-%d-%Y")' >> /usr/local/bin/Reboot-Server
 	echo 'TIME=$(date +"%T")' >> /usr/local/bin/Reboot-Server
-	echo 'echo "Reboot date $DATE in time $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
+	echo 'echo "รีบูทเมื่อวันที่ $DATE เวลา $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
 	echo '/sbin/shutdown -r now' >> /usr/local/bin/Reboot-Server
 	chmod +x /usr/local/bin/Reboot-Server
 fi
@@ -271,15 +287,15 @@ clear
 echo ""
 echo -e "${RED}Set Time Auto Reboot Server${NC}"
 echo ""
-echo -e "|${RED}1${NC}| Every	 1 Hour"
-echo -e "|${RED}2${NC}| Every	 6 Hour"
-echo -e "|${RED}3${NC}| Every	12 Hour"
-echo -e "|${RED}4${NC}| Every	 1 Day"
-echo -e "|${RED}5${NC}| Every	 7 Day"
-echo -e "|${RED}6${NC}| Every	30 Day"
-echo -e "|${RED}7${NC}| Stop reboot server"
-echo -e "|${RED}8${NC}| View log reboot server"
-echo -e "|${RED}9${NC}| Clear log reboot server"
+echo -e "|${RED}1${NC}| รีบูททุกๆ	 1 ชั่วโมง"
+echo -e "|${RED}2${NC}| รีบูททุกๆ	 6 ชั่วโมง"
+echo -e "|${RED}3${NC}| รีบูททุกๆ	12 ชั่วโมง"
+echo -e "|${RED}4${NC}| รีบูททุกๆ	 1 วัน"
+echo -e "|${RED}5${NC}| รีบูททุกๆ	 7 วัน"
+echo -e "|${RED}6${NC}| รีบูททุกๆ	30 วัน"
+echo -e "|${RED}7${NC}| หยุดการรีบูทเซิฟเวอร์"
+echo -e "|${RED}8${NC}| ตรวจสอบบันทึกการรีบูทเซิฟเวอร์"
+echo -e "|${RED}9${NC}| ลบบันทึกการรีบูทเซิฟเวอร์"
 echo ""
 read -p "Select a Menu : " REBOOT
 
@@ -289,7 +305,7 @@ case $REBOOT in
 
 echo "0 * * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 1 hour."
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 1 ชั่วโมงเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -299,7 +315,7 @@ exit
 
 echo "0 */6 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 6 hour."
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -309,7 +325,7 @@ exit
 
 echo "0 */12 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 12 hour."
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 12 ชั่วโมงเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -319,7 +335,7 @@ exit
 
 echo "0 0 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 1 day."
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 1 วันเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -329,7 +345,7 @@ exit
 
 echo "0 0 */7 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 7 day."
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 7 วันเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -339,7 +355,7 @@ exit
 
 echo "0 0 1 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
-echo "Already set time reboot every 30 day"
+echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 30 วันเรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -349,7 +365,7 @@ exit
 
 rm -f /usr/local/bin/Reboot-Server
 echo ""
-echo "Already stop reboot server."
+echo "หยุดการรีบูทเซิฟเวอร์เรียบร้อยแล้ว"
 echo ""
 exit
 
@@ -359,7 +375,7 @@ exit
 
 if [[ -e /usr/local/bin/Reboot-Log ]]; then
 	echo ""
-	echo "You no have log reboot server."
+	echo "ไม่มีบันทึกการรีบูทเซิฟเวอร์"
 	echo ""
 	exit
 else
@@ -376,13 +392,14 @@ fi
 
 echo "" > /usr/local/bin/Reboot-Log
 echo ""
-echo "Already clear log reboot server."
+echo "ลบบันทึกการรีบูทเซิฟเวอร์เรียบร้อยแล้ว"
 echo ""
 exit
 
 	;;
 
 esac
+
 	;;
 
 	7)
