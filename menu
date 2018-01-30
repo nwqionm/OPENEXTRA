@@ -38,7 +38,7 @@ echo ""
 
 		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
 			TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
-				if [ $CLIENTEXPIREINSECO
+				if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
 					echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
 				fi
 		else
@@ -56,7 +56,6 @@ echo ""
 			rm -f /usr/local/bin/Expire-List
 			menu
 			exit
-
 		fi
 	done
 echo ""
