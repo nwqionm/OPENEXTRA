@@ -463,6 +463,7 @@ END
 		sed -i $IP2 /etc/squid/squid.conf;
 		service squid restart
 	fi
+fi
 
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 	chmod +x /usr/local/bin/menu
@@ -495,8 +496,6 @@ END
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
 	exit
-
-fi
 
 	;;
 
