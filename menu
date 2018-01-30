@@ -19,17 +19,18 @@ echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
 echo -e "|${RED} 2${NC}| CHOOSE AND REMOVE CLIENT"
 echo -e "|${RED} 3${NC}| CHECK ALL CLIENT"
 echo -e "|${RED} 4${NC}| CHECK CLIENT ONLINE"
-echo -e "|${RED} 5${NC}| "
+echo -e "|${RED} 5${NC}| RENEW EXPIRE CLIENT"
 echo -e "|${RED} 6${NC}| SET TIME REBOOT SERVER"
 echo -e "|${RED} 7${NC}| "
 echo -e "|${RED} 8${NC}| "
 echo -e "|${RED} 9${NC}| "
 echo -e "|${RED}10${NC}| UPDATE MENU SCRIPT"
 echo ""
-	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
-	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
-	for((i=1; i<=$TOTALACCOUNTS; i++ ))
-	do
+
+cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
+TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
+for((i=1; i<=$TOTALACCOUNTS; i++ ))
+do
 	TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
 	CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
 	CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
@@ -39,9 +40,11 @@ echo ""
 	if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
 		TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
 			if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
-				echo -e "Client name ${RED}$CLIENT${NC} will expire less than 1 day."
+				echo -e "ALERT : ${RED}$CLIENT${NC} กำลังจะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
 			fi
+
 	else
+
 		echo -e "Client name ${RED}$CLIENT${NC} already expired."
 		cd /etc/openvpn/easy-rsa/
 		./easyrsa --batch revoke $CLIENT
@@ -66,270 +69,325 @@ echo ""
 			then
 			userdel -r "$username"
 		fi
+
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
 		menu
 		exit
 
 	fi
-	done
+done
+
 echo ""
 read -p "Select a Menu Script : " MENU
 
 case $MENU in
 
 	1)
-		clear
-		IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-		if [[ "$IP" = "" ]]; then
-			IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-		fi
 
-		newclient () {
-		cp /etc/openvpn/client-common.txt ~/$1.ovpn
-		echo "<ca>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
-		echo "</ca>" >> ~/$1.ovpn
-		echo "<cert>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
-		echo "</cert>" >> ~/$1.ovpn
-		echo "<key>" >> ~/$1.ovpn
-		cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
-		echo "</key>" >> ~/$1.ovpn
-		echo "<tls-auth>" >> ~/$1.ovpn
-		cat /etc/openvpn/ta.key >> ~/$1.ovpn
-		echo "</tls-auth>" >> ~/$1.ovpn
-		}
+clear
+IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+if [[ "$IP" = "" ]]; then
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+fi
 
-		read -p "Client name : " -e CLIENT
-		read -p "Expire : " -e TimeActive
+newclient () {
+	cp /etc/openvpn/client-common.txt ~/$1.ovpn
+	echo "<ca>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+	echo "</ca>" >> ~/$1.ovpn
+	echo "<cert>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+	echo "</cert>" >> ~/$1.ovpn
+	echo "<key>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+	echo "</key>" >> ~/$1.ovpn
+	echo "<tls-auth>" >> ~/$1.ovpn
+	cat /etc/openvpn/ta.key >> ~/$1.ovpn
+	echo "</tls-auth>" >> ~/$1.ovpn
+}
 
-		if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
-			echo ""
-			echo "Already have client."
-			echo ""
-			exit
-		fi
+read -p "Client name : " -e CLIENT
+read -p "Expire : " -e TimeActive
 
-		cd /etc/openvpn/easy-rsa/
-		./easyrsa build-client-full $CLIENT nopass
-		newclient "$CLIENT"
-		cp /root/$CLIENT.ovpn /home/vps/public_html/
-		rm -f /root/$CLIENT.ovpn
-		useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
-		EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-		echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
-		echo ""
-		echo "Client name : $CLIENT"
-		echo "Expire : $EXP"
-		echo "Download config : http://$IP:85/$CLIENT.ovpn"
-		echo ""
-		exit
+if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
+	echo ""
+	echo "Already have client."
+	echo ""
+	exit
+fi
+
+cd /etc/openvpn/easy-rsa/
+./easyrsa build-client-full $CLIENT nopass
+newclient "$CLIENT"
+cp /root/$CLIENT.ovpn /home/vps/public_html/
+rm -f /root/$CLIENT.ovpn
+useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
+EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+echo ""
+echo "Client name : $CLIENT"
+echo "Expire : $EXP"
+echo "Download config : http://$IP:85/$CLIENT.ovpn"
+echo ""
+exit
+
 	;;
-
 
 	2)
-		clear
-		NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
-		if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
-			echo ""
-			echo "You have no existing clients."
-			exit
-		fi
-		echo ""
-		echo "Select the existing client certificate you want to remove."
-		tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
-		if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
-			read -p "Select one client [1]: " CLIENTNUMBER
-		else
-			read -p "Select one client [1 - $NUMBEROFCLIENTS]: " CLIENTNUMBER
-		fi
-		CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
-		cd /etc/openvpn/easy-rsa/
-		./easyrsa --batch revoke $CLIENT
-		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-		rm -rf pki/reqs/$CLIENT.req
-		rm -rf pki/private/$CLIENT.key
-		rm -rf pki/issued/$CLIENT.crt
-		rm -rf /etc/openvpn/crl.pem
-		cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-		chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-		rm -f /home/vps/public_html/$CLIENT.ovpn
-		userdel $CLIENT
-		echo ""
-		echo "Client name " $CLIENT " Removed."
-		echo ""
-		exit
-	;;
 
+clear
+NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
+if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
+	echo ""
+	echo "You have no existing clients."
+	exit
+fi
+
+echo ""
+echo "Select the existing client certificate you want to remove."
+tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
+if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
+	read -p "Select one client [1]: " CLIENTNUMBER
+else
+	read -p "Select one client [1 - $NUMBEROFCLIENTS]: " CLIENTNUMBER
+fi
+
+CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
+cd /etc/openvpn/easy-rsa/
+./easyrsa --batch revoke $CLIENT
+EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+rm -rf pki/reqs/$CLIENT.req
+rm -rf pki/private/$CLIENT.key
+rm -rf pki/issued/$CLIENT.crt
+rm -rf /etc/openvpn/crl.pem
+cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+rm -f /home/vps/public_html/$CLIENT.ovpn
+userdel $CLIENT
+echo ""
+echo "Client name " $CLIENT " Removed."
+echo ""
+exit
+
+	;;
 
 	3)
-		clear
-		UIDN=1000
-		echo ""
-		echo -e "${RED}USERNAME          EXPIRE ON${NC}"
-		echo ""
-		while read CHECKCLIENT
-		do
-			ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
-			ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
-			EXP="$(chage -l $ACCOUNT | grep "Account expires" | awk -F": " '{print $2}')"
-			if [[ $ID -ge $UIDN ]]; then
-			printf "%-17s %2s\n" "$ACCOUNT" "$EXP"
-			fi
-		done < /etc/passwd
-		TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
-		echo ""
-		echo -e "TOTAL CLIENT : ${RED}$TOTAL${NC}"
-		echo ""
+
+clear
+UIDN=1000
+echo ""
+echo -e "${RED}USERNAME          EXPIRE ON${NC}"
+echo ""
+while read CHECKCLIENT
+do
+	ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
+	ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+	EXP="$(chage -l $ACCOUNT | grep "Account expires" | awk -F": " '{print $2}')"
+	if [[ $ID -ge $UIDN ]]; then
+		printf "%-17s %2s\n" "$ACCOUNT" "$EXP"
+	fi
+done < /etc/passwd
+
+TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
+echo ""
+echo -e "TOTAL CLIENT : ${RED}$TOTAL${NC}"
+echo ""
+exit
+
 	;;
 
-
 	4)
-		clear
-		if [ -f "/etc/openvpn/openvpn-status.log" ]; then
-			line=`cat /etc/openvpn/openvpn-status.log | wc -l`
-			a=$((3+((line-8)/2)))
-			b=$(((line-8)/2))
 
-			echo ""
-			echo -e "${RED}CLIENT ONLINE${NC}";
-			echo ""
-			cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
-			cat /usr/local/bin/Client-Login
-			echo ""
-		fi
-		exit
+clear
+if [ -f "/etc/openvpn/openvpn-status.log" ]; then
+	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
+	a=$((3+((line-8)/2)))
+	b=$(((line-8)/2))
+
+	echo ""
+	echo -e "${RED}CLIENT ONLINE${NC}";
+	echo ""
+	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
+	cat /usr/local/bin/Client-Login
+	echo ""
+	exit
+fi
+
 	;;
 
 
 	5)
 
+clear
+echo ""
+read -p "Client name : " -e CLIENT
+read -p "Expire : " -e TimeActive
+
+if [[ ! -e /home/vps/public_html/$CLIENT.ovpn ]]; then
+	echo ""
+	echo "Server is no have this client name."
+	echo ""
+	exit
+fi
+
+userdel $CLIENT
+useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
+EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+echo ""
+echo "Client name : $CLIENT"
+echo "Expire : $EXP"
+echo ""
+exit
+
 	;;
 
 
 	6)
-		clear
-		 if [ ! -e /usr/local/bin/Reboot-Server ]; then
-			echo '#!/bin/bash' > /usr/local/bin/Reboot-Server
-			echo '' >> /usr/local/bin/Reboot-Server
-			echo 'DATE=$(date +"%m-%d-%Y")' >> /usr/local/bin/Reboot-Server
-			echo 'TIME=$(date +"%T")' >> /usr/local/bin/Reboot-Server
-			echo 'echo "Reboot date $DATE in time $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
-			echo '/sbin/shutdown -r now' >> /usr/local/bin/Reboot-Server
-			chmod +x /usr/local/bin/Reboot-Server
-		fi
 
-		echo ""
-		echo -e "${RED}Set Time Auto Reboot Server${NC}"
-		echo ""
-		echo -e "|${RED}1${NC}| Every 1 Hour"
-		echo -e "|${RED}2${NC}| Every 6 Hour"
-		echo -e "|${RED}3${NC}| Every 12 Hour"
-		echo -e "|${RED}4${NC}| Every 1 Day"
-		echo -e "|${RED}5${NC}| Every 7 Day"
-		echo -e "|${RED}6${NC}| Every 30 Day"
-		echo -e "|${RED}7${NC}| Stop reboot server"
-		echo -e "|${RED}8${NC}| View log reboot server"
-		echo -e "|${RED}9${NC}| Clear log reboot server"
-		echo ""
-		read -p "Select a Menu : " REBOOT
+ if [ ! -e /usr/local/bin/Reboot-Server ]; then
+	echo '#!/bin/bash' > /usr/local/bin/Reboot-Server
+	echo '' >> /usr/local/bin/Reboot-Server
+	echo 'DATE=$(date +"%m-%d-%Y")' >> /usr/local/bin/Reboot-Server
+	echo 'TIME=$(date +"%T")' >> /usr/local/bin/Reboot-Server
+	echo 'echo "Reboot date $DATE in time $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
+	echo '/sbin/shutdown -r now' >> /usr/local/bin/Reboot-Server
+	chmod +x /usr/local/bin/Reboot-Server
+fi
 
-		case $REBOOT in
+clear
+echo ""
+echo -e "${RED}Set Time Auto Reboot Server${NC}"
+echo ""
+echo -e "|${RED}1${NC}| Every	 1 Hour"
+echo -e "|${RED}2${NC}| Every	 6 Hour"
+echo -e "|${RED}3${NC}| Every	12 Hour"
+echo -e "|${RED}4${NC}| Every	 1 Day"
+echo -e "|${RED}5${NC}| Every	 7 Day"
+echo -e "|${RED}6${NC}| Every	30 Day"
+echo -e "|${RED}7${NC}| Stop reboot server"
+echo -e "|${RED}8${NC}| View log reboot server"
+echo -e "|${RED}9${NC}| Clear log reboot server"
+echo ""
+read -p "Select a Menu : " REBOOT
 
-			1)
-				echo "0 * * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 1 hour."
-				echo ""
-				exit
-			;;
+case $REBOOT in
 
-			2)
-				echo "0 */6 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 6 hour."
-				echo ""
-				exit
-			;;
+	1)
 
-			3)
-				echo "0 */12 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 12 hour."
-				echo ""
-				exit
-			;;
+echo "0 * * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 1 hour."
+echo ""
+exit
 
-			4)
-				echo "0 0 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 1 day."
-				echo ""
-				exit
-			;;
+	;;
 
-			5)
-				echo "0 0 */7 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 7 day."
-				echo ""
-				exit
-			;;
+	2)
 
-			6)
-				echo "0 0 1 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
-				echo ""
-				echo "Already set time reboot every 30 day"
-				echo ""
-				exit
-			;;
+echo "0 */6 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 6 hour."
+echo ""
+exit
 
-			7)
-				rm -f /usr/local/bin/Reboot-Server
-				echo ""
-				echo "Already stop reboot server."
-				echo ""
-				exit
-			;;
+	;;
 
-			8)
-				if [[ -e /usr/local/bin/Reboot-Log ]]; then
-					echo ""
-					echo "You no have log reboot server."
-					echo ""
-					exit
-				else
-					clear
-					echo ""
-					cat /usr/local/bin/Reboot-Log
-					echo ""
-					exit
-				fi
-			;;
+	3)
 
-			9)
-				echo "" > /usr/local/bin/Reboot-Log
-				echo ""
-				echo "Already clear log reboot server."
-				echo ""
-				exit
-			;;
+echo "0 */12 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 12 hour."
+echo ""
+exit
 
-		esac
+	;;
+
+	4)
+
+echo "0 0 * * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 1 day."
+echo ""
+exit
+
+	;;
+
+	5)
+
+echo "0 0 */7 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 7 day."
+echo ""
+exit
+
+	;;
+
+	6)
+
+echo "0 0 1 * * root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo ""
+echo "Already set time reboot every 30 day"
+echo ""
+exit
+
+	;;
+
+	7)
+
+rm -f /usr/local/bin/Reboot-Server
+echo ""
+echo "Already stop reboot server."
+echo ""
+exit
+
+	;;
+
+	8)
+
+if [[ -e /usr/local/bin/Reboot-Log ]]; then
+	echo ""
+	echo "You no have log reboot server."
+	echo ""
+	exit
+else
+	clear
+	echo ""
+	cat /usr/local/bin/Reboot-Log
+	echo ""
+	exit
+fi
+
+	;;
+
+	9)
+
+echo "" > /usr/local/bin/Reboot-Log
+echo ""
+echo "Already clear log reboot server."
+echo ""
+exit
+
+	;;
+
+esac
 	;;
 
 	7)
 	;;
+
 	8)
 	;;
+
 	9)
 	;;
-	10)
-		rm -f /usr/local/bin/menu
-		wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
-		chmod +x /usr/local/bin/menu
-	;;
 
-	
+	10)
+
+rm -f /usr/local/bin/menu
+wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
+chmod +x /usr/local/bin/menu
+
+	;;
 
 esac
