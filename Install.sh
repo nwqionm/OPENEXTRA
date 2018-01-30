@@ -32,7 +32,7 @@ if [[ -e /etc/debian_version ]]; then
 		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
 		echo ""
 		echo "Ubuntu 14.04 - 16.04 - 17.04"
-		echo "Debian 7- 8 - 9"
+		echo "Debian 7 - 8 - 9"
 		echo ""
 		exit
 	fi
@@ -42,7 +42,7 @@ else
 	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
 	echo ""
 	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 7- 8 - 9"
+	echo "Debian 7 - 8 - 9"
 	echo ""
 	exit
 fi
