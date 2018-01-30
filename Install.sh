@@ -112,7 +112,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
 	read -p "Do you really want to remove OpenVPN  (Y or N): " -e -i N REMOVE
 
-	if [[ "$REMOVE" = 'N' ]]; then
+	if [[ "$REMOVE" = 'Y' ]]; then
 		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 			if pgrep firewalld; then
 				IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
