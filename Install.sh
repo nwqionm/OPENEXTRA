@@ -105,7 +105,7 @@ newclient () {
 
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
-		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
@@ -114,28 +114,36 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 
 	if [[ "$REMOVE" = 'Y' ]]; then
 		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
-			if pgrep firewalld; then
-				IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
-				firewall-cmd --zone=public --remove-port=$PORT/tcp
-				firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
-				firewall-cmd --permanent --zone=public --remove-port=$PORT/tcp
-				firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
-				firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-				firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-			else
-				IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
-				iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
-				sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
-					if iptables -L -n | grep -qE '^ACCEPT'; then
-						iptables -D INPUT -p tcp --dport $PORT -j ACCEPT
-						iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
-						iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-						sed -i "/iptables -I INPUT -p tcp --dport $PORT -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
-						sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
-					fi
+		PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
+		if pgrep firewalld; then
+			IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
+			firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		else
+			IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
+			iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
+			if iptables -L -n | grep -qE '^ACCEPT'; then
+				iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+				iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
+				iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+				sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
 			fi
-		semanage port -d -t openvpn_port_t -p tcp $PORT
+		fi
+		if hash sestatus 2>/dev/null; then
+			if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
+				fi
+			fi
+		fi
+
 		apt-get remove --purge -y openvpn
 		rm -rf /etc/openvpn
 		echo ""
@@ -149,6 +157,20 @@ else
 	clear
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
+	echo "     |${RED}1${NC}| UDP"
+	echo "     |${RED}2${NC}| TCP"
+	read -p "Protocol [1-2]: " -e -i 2 PROTOCOL
+	case $PROTOCOL in
+		1) 
+		PROTOCOL=udp
+		;;
+		2) 
+		PROTOCOL=tcp
+		;;
+	esac
+	echo "     |${RED}1${NC}| DNS Current system"
+	echo "     |${RED}2${NC}| DNS Google"
+	read -p "DNS (1 or 2) : " -e -i 1 DNS
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name: " -e CLIENT
 	echo ""
@@ -168,7 +190,6 @@ else
 	chown -R root:root /etc/openvpn/easy-rsa/
 	rm -rf ~/EasyRSA-3.0.4.tgz
 	cd /etc/openvpn/easy-rsa/
-
 	./easyrsa init-pki
 	./easyrsa --batch build-ca nopass
 	./easyrsa gen-dh
@@ -180,7 +201,7 @@ else
 	openvpn --genkey --secret /etc/openvpn/ta.key
 
 	echo "port $PORT
-proto tcp
+proto $PROTOCOL
 dev tun
 sndbuf 0
 rcvbuf 0
@@ -194,9 +215,23 @@ topology subnet
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
-		grep -v '#' /etc/resolv.conf | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
+	case $DNS in
+		1)
+		if grep -q "127.0.0.53" "/etc/resolv.conf"; then
+			RESOLVCONF='/run/systemd/resolve/resolv.conf'
+		else
+			RESOLVCONF='/etc/resolv.conf'
+		fi
+		# Obtain the resolvers from resolv.conf and use them for OpenVPN
+		grep -v '#' $RESOLVCONF | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
 			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
 		done
+		;;
+		2)
+		echo 'push "dhcp-option DNS 8.8.8.8"' >> /etc/openvpn/server.conf
+		echo 'push "dhcp-option DNS 8.8.4.4"' >> /etc/openvpn/server.conf
+		;;
+	esac
 	echo "keepalive 10 120
 cipher AES-256-CBC
 comp-lzo
@@ -216,14 +251,13 @@ client-to-client" >> /etc/openvpn/server.conf
 
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 	if pgrep firewalld; then
-		firewall-cmd --zone=public --add-port=$PORT/tcp
+		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
-		firewall-cmd --permanent --zone=public --add-port=$PORT/tcp
+		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
 		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 	else
-
 		if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
 			echo '#!/bin/sh -e
 exit 0' > $RCLOCAL
@@ -233,12 +267,20 @@ exit 0' > $RCLOCAL
 		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
 		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
 		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
-			iptables -I INPUT -p tcp --dport $PORT -j ACCEPT
+			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
 			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
 			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-			sed -i "1 a\iptables -I INPUT -p tcp --dport $PORT -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
 			sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 			sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
+		fi
+	fi
+
+	if hash sestatus 2>/dev/null; then
+		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+			fi
 		fi
 	fi
 
@@ -262,7 +304,7 @@ exit 0' > $RCLOCAL
 
 	echo "client
 dev tun
-proto tcp
+proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 remote $IP:$PORT@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp $PORT
@@ -434,7 +476,11 @@ END
 	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
 	echo "IP server : $IP"
 	echo "Port : $PORT"
-	echo "Protocal : TCP"
+	if [[ "$PROTOCOL" = 'udp' ]]; then
+		echo "Protocal : UDP"
+	elif [[ "$PROTOCOL" = 'tcp' ]]; then
+		echo "Protocal : TCP"
+	fi
 	echo "Port nginx : 85"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
