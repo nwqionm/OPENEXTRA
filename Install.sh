@@ -442,6 +442,7 @@ END
 	echo "IP server : $IP"
 	echo "Port : $PORT"
 	echo "Protocal : TCP"
+	echo "Port nginx : 85"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
 	echo "Download config (only you) : $IP:85/$CLIENT.ovpn"
