@@ -71,7 +71,6 @@ do
 		fi
 
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
-		sleep 3
 		menu
 		exit
 
@@ -260,7 +259,6 @@ echo -e "ลูกค้ารายนี้หมดอายุในวั�
 echo ""
 read -p "เปลี่ยนวันหมดอายุ : " -e TimeActive
 
-rm -f /usr/local/bin/Expire-List
 userdel $CLIENT
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
