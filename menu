@@ -165,7 +165,7 @@ if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
 else
 	echo ""
 	echo -e "${RED}คำเตือน${NC} : การออกจากหน้านี้ต้องกด CTRL+C เท่านั้น"
-	echo "หากกด Enter จะทำการลบชื่อลูกค้าลำดับที่ 1 โดยอัตโนมัติ"
+	echo "         หากกด Enter จะทำการลบชื่อลูกค้าลำดับที่ 1 โดยอัตโนมัติ"
 	echo ""
 	read -p "เลือกลำดับรายชื่อลูกค้าที่ต้องการลบ [1 - $NUMBEROFCLIENTS]: " CLIENTNUMBER
 fi
@@ -183,7 +183,7 @@ chown nobody:$GROUPNAME /etc/openvpn/crl.pem
 rm -f /home/vps/public_html/$CLIENT.ovpn
 userdel $CLIENT
 echo ""
-echo "ลูกค้าชื่อ ${RED}$CLIENT${NC} ถูกลบออกจากระบบเรียบร้อยแล้ว"
+echo -e "ลูกค้าชื่อ ${RED}$CLIENT${NC} ถูกลบออกจากระบบเรียบร้อยแล้ว"
 echo ""
 exit
 
