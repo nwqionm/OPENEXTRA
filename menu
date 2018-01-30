@@ -53,7 +53,7 @@ echo ""
 			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 			chmod 644 /etc/openvpn/crl.pem
 			rm -f /home/vps/public_html/$CLIENT.ovpn
-			rm -f /usr/local/bin/Expire-List
+# rm -f /usr/local/bin/Expire-List
 			menu
 			exit
 		fi
@@ -236,7 +236,7 @@ fi
 
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 echo ""
-echo -e "ลูกค้ารายนี้หมดอายุในวันที่ : ${RED}$EXP${NC}"
+echo -e "ชื่อลูกค้านี้หมดอายุในวันที่ ${RED}$EXP${NC}"
 echo ""
 read -p "เปลี่ยนวันหมดอายุ : " -e TimeActive
 
