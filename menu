@@ -112,7 +112,7 @@ read -p "ชื่อลูกค้า : " -e CLIENT
 
 if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	echo ""
-	echo "มีชื่อลูกค้านี้อยู่ในระบบแล้ว"
+	echo "ชื่อลูกค้าที่ระบุอยู่ในระบบแล้ว"
 	echo ""
 	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
 
@@ -194,7 +194,7 @@ exit
 clear
 UIDN=1000
 echo ""
-echo -e "${RED}รายชื่อลูกค้า          วันหมดอายุ${NC}"
+echo -e "${RED}รายชื่อลูกค้า          วันหมดอายุ ${NC} "
 echo ""
 while read CHECKCLIENT
 do
@@ -223,7 +223,7 @@ if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 	b=$(((line-8)/2))
 
 	echo ""
-	echo -e "${RED}รายชื่อลูกค้าที่กำลังออนไลน์ในขณะนี้${NC}";
+	echo -e "${RED}รายชื่อลูกค้าที่กำลังออนไลน์ในขณะนี้ ${NC} ";
 	echo ""
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 	cat /usr/local/bin/Client-Login
