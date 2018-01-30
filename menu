@@ -42,22 +42,7 @@ for((i=1; i<=$TOTALACCOUNTS; i++ ))
 			if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
 				echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
 			fi
-
 	else
-
-		echo -e "     ${RED}$CLIENT${NC} หมดอายุแล้ว"
-		cd /etc/openvpn/easy-rsa/
-		./easyrsa --batch revoke $CLIENT
-		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-		rm -rf pki/reqs/$CLIENT.req
-		rm -rf pki/private/$CLIENT.key
-		rm -rf pki/issued/$CLIENT.crt
-		rm -rf /etc/openvpn/crl.pem
-		cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-		chmod 644 /etc/openvpn/crl.pem
-		rm -f /home/vps/public_html/$CLIENT.ovpn
-		rm -f /usr/local/bin/Expire-List
-
 		nowsecs=$( date +%s )
 		while read account
 			do
@@ -66,6 +51,17 @@ for((i=1; i<=$TOTALACCOUNTS; i++ ))
 			expiresecs=$(( $expiredays * 86400 ))
 			if [ $expiresecs -le $nowsecs ]; then
 				userdel -r "$username"
+				cd /etc/openvpn/easy-rsa/
+				./easyrsa --batch revoke $CLIENT
+				EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+				rm -rf pki/reqs/$CLIENT.req
+				rm -rf pki/private/$CLIENT.key
+				rm -rf pki/issued/$CLIENT.crt
+				rm -rf /etc/openvpn/crl.pem
+				cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+				chmod 644 /etc/openvpn/crl.pem
+				rm -f /home/vps/public_html/$CLIENT.ovpn
+				rm -f /usr/local/bin/Expire-List
 			fi
 		done < <( cut -d: -f1,8 /etc/shadow | sed /:$/d )
 
