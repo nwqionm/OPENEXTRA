@@ -157,8 +157,8 @@ else
 	clear
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
-	echo "     |${RED}1${NC}| UDP"
-	echo "     |${RED}2${NC}| TCP"
+	echo -e "     |${RED}1${NC}| UDP"
+	echo -e "     |${RED}2${NC}| TCP"
 	read -p "Protocol [1-2]: " -e -i 2 PROTOCOL
 	case $PROTOCOL in
 		1) 
@@ -168,8 +168,8 @@ else
 		PROTOCOL=tcp
 		;;
 	esac
-	echo "     |${RED}1${NC}| DNS Current system"
-	echo "     |${RED}2${NC}| DNS Google"
+	echo -e "     |${RED}1${NC}| DNS Current system"
+	echo -e "     |${RED}2${NC}| DNS Google"
 	read -p "DNS (1 or 2) : " -e -i 1 DNS
 	read -p "Port proxy : " -e -i 8080 PROXY
 	read -p "Client name: " -e CLIENT
