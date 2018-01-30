@@ -19,6 +19,18 @@ ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
 
 clear
 
+if [[ -e /etc/debian_version ]]; then
+	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
+else
+	echo ""
+	echo "สคริปท์นี้รองรับเฉพาะ OS Debian และ Ubuntu เท่านั้น"
+	echo ""
+	exit
+fi
+
 # Color
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -48,7 +60,7 @@ echo -e "|${RED}5${NC}| VNSTAT (CHECK BANDWIDTH or DATA) ${RED} ✖   ${NC}"
 echo -e "|${RED}6${NC}| SQUID PROXY ${GREEN} ✔   ${NC}"
 echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 8 - 9"
-echo -e "|${RED}7${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+echo -e "|${RED}7${NC}| VNSTAT MONITOR IN WEBSITE ${RED} ✖   ${NC}"
 echo -e "|${RED}8${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 echo ""
 echo -e "${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
@@ -58,18 +70,6 @@ read -p "กรุณาเลือกฟังก์ชั่นที่ต�
 case $MENUSCRIPT in
 
 	1)
-
-if [[ -e /etc/debian_version ]]; then
-	OS=debian
-	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
-	GROUPNAME=nogroup
-	RCLOCAL='/etc/rc.local'
-else
-	echo ""
-	echo "สคริปท์นี้รองรับเฉพาะ OS Debian และ Ubuntu เท่านั้น"
-	echo ""
-	exit
-fi
 
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
@@ -93,9 +93,41 @@ if [[ "$IP" = "" ]]; then
 fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
-	echo""
-	echo "คุณได้ติดตั้ง OpenVPN ไปก่อนหน้านี้แล้ว"
 	echo ""
+	read -p "Do you really want to remove OpenVPN  (y or n): " -e -i n REMOVE
+
+	if [[ "$REMOVE" = 'y' ]]; then
+		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
+			if pgrep firewalld; then
+				IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
+				firewall-cmd --zone=public --remove-port=$PORT/tcp
+				firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
+				firewall-cmd --permanent --zone=public --remove-port=$PORT/tcp
+				firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
+				firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+				firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			else
+				IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
+				iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+				sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
+					if iptables -L -n | grep -qE '^ACCEPT'; then
+						iptables -D INPUT -p tcp --dport $PORT -j ACCEPT
+						iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
+						iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+						sed -i "/iptables -I INPUT -p tcp --dport $PORT -j ACCEPT/d" $RCLOCAL
+						sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
+						sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
+					fi
+			fi
+		semanage port -d -t openvpn_port_t -p tcp $PORT
+		apt-get remove --purge -y openvpn
+		rm -rf /etc/openvpn
+		echo ""
+		echo "OpenVPN removed."
+	else
+		echo ""
+		echo "Removal aborted."
+	fi
 	exit
 else
 	clear
