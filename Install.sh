@@ -146,6 +146,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 
 		apt-get remove --purge -y openvpn
 		rm -rf /etc/openvpn
+		rm -f /usr/local/bin/menu
 		echo ""
 		echo "OpenVPN removed."
 	else
@@ -157,6 +158,7 @@ else
 	clear
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
+	echo ""
 	echo -e "     |${RED}1${NC}| UDP"
 	echo -e "     |${RED}2${NC}| TCP"
 	read -p "Protocol [1-2]: " -e -i 2 PROTOCOL
@@ -168,6 +170,7 @@ else
 		PROTOCOL=tcp
 		;;
 	esac
+	echo ""
 	echo -e "     |${RED}1${NC}| DNS Current system"
 	echo -e "     |${RED}2${NC}| DNS Google"
 	read -p "DNS (1 or 2) : " -e -i 1 DNS
@@ -463,6 +466,8 @@ END
 
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 	chmod +x /usr/local/bin/menu
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa build-client-full $CLIENT nopass
 	newclient "$CLIENT"
 	cp /root/$CLIENT.ovpn /home/vps/public_html/
 	rm -f /root/$CLIENT.ovpn
@@ -484,7 +489,7 @@ END
 	echo "Port nginx : 85"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
-	echo "Download config (only you) : $IP:85/$CLIENT.ovpn"
+	echo "Download config (only you) : http://$IP:85/$CLIENT.ovpn"
 	echo ""
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
