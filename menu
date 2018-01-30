@@ -219,9 +219,9 @@ fi
 	5)
 
 clear
+UIDN=1000
 echo ""
 read -p "Client name : " -e CLIENT
-read -p "Expire : " -e TimeActive
 
 if [[ ! -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	echo ""
@@ -229,6 +229,18 @@ if [[ ! -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	echo ""
 	exit
 fi
+
+while read CHECKCLIENT
+do
+	CLIENT="$(echo $CHECKCLIENT | cut -d: -f1)"
+	ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+	if [[ $ID -ge $UIDN ]]; then
+		printf "%-17s %2s\n" "$CLIENT" "$EXP"
+	fi
+done < /etc/passwd
+
+read -p "Expire : " -e TimeActive
 
 userdel $CLIENT
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
