@@ -743,29 +743,46 @@ fi
 
 if [[ -e /var/www/html/vnstat ]]; then
 	rm -r /var/www/html/vnstat
+fi
 
-else
+IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+if [[ "$IP" = "" ]]; then
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+fi
 
-	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-		apt-get -y install apache2 php5 php5-gd
-		/etc/init.d/apache2 restart
-		mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
-		wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
-		wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
-		wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
-		wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
-		exit
+if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+	apt-get -y install apache2 php5 php5-gd
+	/etc/init.d/apache2 restart
+	mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
+	wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
+	wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
+	wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
+	wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Vnstat on Website .....Install finish."
+	echo "Vnstat : http://$IP/vnstat"
+	echo ""
+	exit
 
-	elif [[ "$VERSION_ID" = 'VERSION_ID"9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-		apt-get -y install apache2 php php-gd
-		/etc/init.d/apache2 restart
-		mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
-		wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
-		wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
-		wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
-		wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
-		exit
-	fi
+elif [[ "$VERSION_ID" = 'VERSION_ID"9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	apt-get -y install apache2 php php-gd
+	/etc/init.d/apache2 restart
+	mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
+	wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
+	wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
+	wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
+	wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Vnstat on Website .....Install finish."
+	echo "Vnstat : http://$IP/vnstat"
+	echo ""
+	exit
 
 fi
 
@@ -791,7 +808,7 @@ fi
 
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
-		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
 echo ""
