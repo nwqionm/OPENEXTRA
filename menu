@@ -31,7 +31,7 @@ echo -e "|${RED} 8${NC}| "
 echo -e "|${RED} 9${NC}| "
 echo -e "|${RED}10${NC}| UPDATE MENU SCRIPT"
 echo ""
-if [[ -e /etc/vnstat.conf]]; then
+if [[ -e /etc/vnstat.conf ]]; then
 	TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
 	WEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
 	MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
