@@ -663,7 +663,7 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
-	service squid3 restart
+	/etc/init.d/squid3 restart
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -714,7 +714,7 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid/squid.conf;
-	service squid restart
+	/etc/init.d/squid restart
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -838,7 +838,7 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
-	service squid3 restart
+	/etc/init.d/squid3 restart
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -886,7 +886,7 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid/squid.conf;
-	service squid restart
+	/etc/init.d/squid restart
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
