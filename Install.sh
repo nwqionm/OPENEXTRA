@@ -744,7 +744,6 @@ fi
 	
 if [[ -e /etc/vnstat.conf ]]; then
 	apt-get remove --purge -y vnstat
-	exit
 fi
 
 apt-get -y install vnstat
