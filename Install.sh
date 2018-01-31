@@ -72,7 +72,7 @@ echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 8 - 9"
 echo -e "|${RED}3${NC}| SSH + DROPBEAR ${RED} ✖   ${NC}"
 echo -e "|${RED}4${NC}| WEB PANEL ${RED} ✖   ${NC}"
-echo -e "|${RED}5${NC}| VNSTAT (CHECK BANDWIDTH ON WEBSITE) ${GREEN} ✔   ${NC}"
+echo -e "|${RED}5${NC}| CHECK BANDWIDTH (ALERT BANDWIDTH ON MENU) ${GREEN} ✔   ${NC}"
 echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 7 - 8 - 9"
 echo -e "|${RED}6${NC}| SQUID PROXY ${GREEN} ✔   ${NC}"
@@ -473,6 +473,7 @@ fi
 
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 	chmod +x /usr/local/bin/menu
+	apt-get -y install vnstat
 	cd /etc/openvpn/easy-rsa/
 	./easyrsa build-client-full $CLIENT nopass
 	newclient "$CLIENT"
@@ -740,37 +741,15 @@ fi
 	;;
 
 	5)
-
-if [[ -e /var/www/html/vnstat ]]; then
-	rm -r /var/www/html/vnstat
+	
+if [[ -e /etc/vnstat.conf ]]; then
+	apt-get remove --purge -y vnstat
+	exit
 fi
 
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-fi
-
-if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-	apt-get -y install apache2 php5 php5-gd
-	/etc/init.d/apache2 restart
-
-elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-	apt-get -y install apache2 php php-gd
-	/etc/init.d/apache2 restart
-fi
-
-mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
-wget -O /var/www/html/vnstat/.gitignore "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/.gitignore"
-wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
-wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
-wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
-wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
+apt-get -y install vnstat
 echo ""
-echo "Source by Mnm Ami"
-echo "Donate via TrueMoney Wallet : 082-038-2600"
-echo ""
-echo "Vnstat on Website .....Install finish."
-echo "Vnstat : http://$IP/vnstat"
+echo "You can watch the Bandwidth on Menu Script."
 echo ""
 exit
 
