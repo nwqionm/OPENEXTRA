@@ -760,6 +760,7 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"'
 fi
 
 mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
+wget -O /var/www/html/vnstat/.gitignore "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/.gitignore"
 wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
 wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
 wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
