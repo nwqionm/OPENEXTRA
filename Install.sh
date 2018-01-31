@@ -514,9 +514,6 @@ if [[ "$IP" = "" ]]; then
 		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
-OS=debian
-VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
-
 # Debian 8
 if [[ "$VERSION_ID" = 'VERSION_ID="8"' ]]; then
 	echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongodb-org-3.6.list
