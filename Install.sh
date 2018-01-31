@@ -72,7 +72,9 @@ echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 8 - 9"
 echo -e "|${RED}3${NC}| SSH + DROPBEAR ${RED} ✖   ${NC}"
 echo -e "|${RED}4${NC}| WEB PANEL ${RED} ✖   ${NC}"
-echo -e "|${RED}5${NC}| VNSTAT (CHECK BANDWIDTH IN WEBSITE) ${RED} ✖   ${NC}"
+echo -e "|${RED}5${NC}| VNSTAT (CHECK BANDWIDTH ON WEBSITE) ${GREEN} ✔   ${NC}"
+echo "	Ubuntu 14.04 - 16.04 - 17.04"
+echo "	Debian 7- 8 - 9"
 echo -e "|${RED}6${NC}| SQUID PROXY ${GREEN} ✔   ${NC}"
 echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 7- 8 - 9"
@@ -738,6 +740,26 @@ fi
 	;;
 
 	5)
+	
+if [[ -e /var/www/html/vnstat ]]; then
+	rm -r /var/www/html/vnstat
+fi
+
+if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+	apt-get -y install apache2 php5 php5-gd
+	/etc/init.d/apache2 restart
+else [[ "$VERSION_ID" = 'VERSION_ID"9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	apt-get -y install apache2 php php-gd
+	/etc/init.d/apache2 restart
+fi
+
+mkdir /var/www/html/vnstat/ /var/www/html/vnstat/css/
+wget -O /var/www/html/vnstat/config.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/config.php"
+wget -O /var/www/html/vnstat/index.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/index.php"
+wget -O /var/www/html/vnstat/vnstat.php "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/vnstat.php"
+wget -O /var/www/html/vnstat/css/style.css "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/VNSTAT/style.css"
+exit
+
 	;;
 
 	6)
