@@ -32,7 +32,7 @@ echo -e "|${RED} 9${NC}| "
 echo -e "|${RED}10${NC}| UPDATE MENU SCRIPT"
 echo ""
 if [[ -e /var/www/html/vnstat ]]; then
-	echo -e "|${RED} -${NC}| VNSTAT : http://$IP/vnstat"
+	echo -e "${RED}-${NC} VNSTAT : http://$IP/vnstat"
 fi
 echo ""
 	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
