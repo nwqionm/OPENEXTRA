@@ -2,6 +2,11 @@
 
 clear
 
+IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+if [[ "$IP" = "" ]]; then
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+fi
+
 # Color
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -25,6 +30,7 @@ echo -e "|${RED} 7${NC}| "
 echo -e "|${RED} 8${NC}| "
 echo -e "|${RED} 9${NC}| "
 echo -e "|${RED}10${NC}| UPDATE MENU SCRIPT"
+echo -e "|${RED} -${NC}| VNSTAT : http://$IP/vnstat"
 echo ""
 	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
 	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
@@ -66,10 +72,6 @@ case $MENU in
 	1)
 
 clear
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-fi
 
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
