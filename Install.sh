@@ -514,25 +514,8 @@ if [[ "$IP" = "" ]]; then
 		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 fi
 
-if [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
-	echo ""
-	echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ยังไม่รองรับ"
-	echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
-	echo ""
-	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 8 - 9"
-	echo ""
-	exit
-else
-	echo ""
-	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
-	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
-	echo ""
-	echo "Ubuntu 14.04 - 16.04 - 17.04"
-	echo "Debian 8 - 9"
-	echo ""
-	exit
-fi
+OS=debian
+VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 
 # Debian 8
 if [[ "$VERSION_ID" = 'VERSION_ID="8"' ]]; then
@@ -665,6 +648,7 @@ END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
 	/etc/init.d/squid3 restart
+	clear
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -716,6 +700,7 @@ END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid/squid.conf;
 	/etc/init.d/squid restart
+	clear
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
