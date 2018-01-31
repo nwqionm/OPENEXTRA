@@ -65,7 +65,6 @@ echo ""
 			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 			chmod 644 /etc/openvpn/crl.pem
 			rm -f /home/vps/public_html/$CLIENT.ovpn
-# rm -f /usr/local/bin/Expire-List
 			menu
 			exit
 		fi
