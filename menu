@@ -35,9 +35,9 @@ echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
 echo ""
 if [[ -e /etc/vnstat.conf ]]; then
 	TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
-	WEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
 	MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
-	echo -e "BANDWIDTH : TODAY ${RED}$TODAY${NC} THIS WEEK ${RED}$WEEK${NC} THIS MOUNT ${RED}$MOUNT${NC}"
+	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
+	echo -e "BANDWIDTH : TODAY ${RED}$TODAY${NC} THIS MOUNT ${RED}$MOUNT${NC} TOTAL ${RED}$TOTAL${NC}"
 fi
 echo ""
 	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
