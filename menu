@@ -406,10 +406,62 @@ fi
 	;;
 
 	8)
-
 	;;
 
 	9)
+
+clear
+echo ""
+echo -e "|${RED}1${NC}| LOCK CLIENT"
+echo -e "|${RED}2${NC}| UNLOCK CLIENT"
+
+read -p "Select a Menu Lock and Unlock : " LandUL
+
+case $LandUL in
+
+	1)
+
+echo ""
+read -p "ชื่อลูกค้าที่ต้องการล็อค ? : " CLIENT
+
+egrep "^$CLIENT" /etc/passwd >/dev/null
+if [ $? -eq 0 ]; then
+	passwd -l $CLIENT
+	echo ""
+	echo "$CLIENT ได้ถูกล็อคเรียบร้อยแล้ว"
+	echo ""
+	exit
+else
+	echo ""
+	echo "ชื่อลูกค้าที่ระบุไม่มีอยู่ในระบบ"
+	echo ""
+	exit
+fi
+	;;
+
+	2)
+
+echo ""
+read -p "ชื่อลูกค้าที่ต้องการปลดล็อค ? : " CLIENT
+
+egrep "^$CLIENT" /etc/passwd >/dev/null
+if [ $? -eq 0 ]; then
+	passwd -u $CLIENT
+	echo ""
+	echo "$CLIENT ได้ถูกปลดล็อคเรียบร้อยแล้ว"
+	echo ""
+	exit
+else
+	echo ""
+	echo "ชื่อลูกค้าที่ระบุไม่มีอยู่ในระบบ"
+	echo ""
+	exit
+fi
+
+	;;
+
+esac
+
 	;;
 
 	0)
