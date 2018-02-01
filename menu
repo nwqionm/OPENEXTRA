@@ -417,6 +417,7 @@ fi
 rm -f /usr/local/bin/menu
 wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 chmod +x /usr/local/bin/menu
+menu
 
 	;;
 
