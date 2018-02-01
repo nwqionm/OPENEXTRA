@@ -1,7 +1,7 @@
 #!/bin/bash
 
 clear
-
+GROUPNAME=nogroup
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
 	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
@@ -67,6 +67,18 @@ echo ""
 			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 			chmod 644 /etc/openvpn/crl.pem
 			rm -f /home/vps/public_html/$CLIENT.ovpn
+			
+			cd /etc/openvpn/easy-rsa/
+			./easyrsa --batch revoke $CLIENT
+			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+			rm -rf pki/reqs/$CLIENT.req
+			rm -rf pki/private/$CLIENT.key
+			rm -rf pki/issued/$CLIENT.crt
+			rm -rf /etc/openvpn/crl.pem
+			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+			chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+			rm -f /home/vps/public_html/$CLIENT.ovpn
+			userdel $CLIENT
 			menu
 			exit
 		fi
