@@ -1,0 +1,576 @@
+#!/bin/bash
+
+clear
+color1='\e[031;1m'
+color3='\e[0m'
+
+	echo -e "--------- MENU SCRIPT ---------"
+	echo ""
+	echo -e "|${color1} 1${color3}| เพิ่มชื่อผู้ใช้"
+	echo -e "|${color1} 2${color3}| ลบชื่อผู้ใช้"
+	echo -e "|${color1} 3${color3}| รายชื่อผู้ใช้ทั้งหมด"
+	echo -e "|${color1} 4${color3}| เปลี่ยนรหัสผ่านผู้ใช้ใหม่"
+	echo -e "|${color1} 5${color3}| รายชื่อผู้ใช้ที่กำลังออนไลน์"
+	echo -e "|${color1} 6${color3}| แบนชื่อผู้ใช้"
+	echo -e "|${color1} 7${color3}| ปลดแบนชื่อผู้ใช้"
+	echo -e "|${color1} 8${color3}| ตั้งค่ารีบูทเซิฟเวอร์อัตโนมัติ"
+	echo -e "|${color1} 9${color3}| ตรวจสอบดาต้าที่ใช้ไปทั้งหมดในปัจจุบัน"
+	echo -e "|${color1}10${color3}| ทดสอบความเร็วอินเตอร์เน็ต"
+	echo -e "|${color1}11${color3}| รีสตาร์ทระบบ (สำหรับผู้ที่แก้ไขสคริปท์)"
+	echo -e "|${color1}12${color3}| ลิ้งค์ดาวน์โหลดคอนฟิกแบบใส่ชื่อผู้ใช้และรหัสผ่าน"
+	echo -e "|${color1}13${color3}| เก็บไฟล์สำรองข้อมูลผู้ใช้ หรือนำเข้าไฟล์สำรองข้อมูลผู้ใช้"
+	echo -e "|${color1}14${color3}| ยกเลิก"
+	echo -e ""
+	read -p "กรุณาเลือกหัวข้อที่ต้องการใช้งาน (ตัวเลข)  : " x
+	
+if test $x -eq 1; then
+	echo ""
+	echo -e "${color1}ตัวอย่างการสร้างชื่อผู้ใช้ ${color3} : openextra 1234 31"
+	echo "ชื่อผู้ใช้คือ openextra รหัสผ่านคือ 1234 หมดอายุในอีก 31 วัน"
+	echo ""
+	read -p "Username Password Expired : " Login Passwd TimeActive
+#	echo ""
+#	read -p "Password : " Passwd
+#	echo ""
+#	read -p "Expired (Day) : " TimeActive
+
+	IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $Login
+	exp="$(chage -l $Login | grep "Account expires" | awk -F": " '{print $2}')"
+	echo -e "$Passwd\n$Passwd\n"|passwd $Login &> /dev/null
+
+cd /etc/openvpn/
+cat > /etc/openvpn/$Login.ovpn <<END
+client
+dev tun
+proto tcp
+remote $IP:1194@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp 1194
+http-proxy $IP 8080
+http-proxy-retry
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+sndbuf 393216
+rcvbuf 393216
+push "sndbuf 393216"
+push "rcvbuf 393216"
+<auth-user-pass>
+$Login
+$Passwd
+</auth-user-pass>
+cipher none
+comp-lzo
+script-security 3
+key-proxy-DNS 8.8.8.8
+key-proxy-DNS 8.8.4.4
+management 127.0.0.1 5555
+
+<ca>
+-----BEGIN CERTIFICATE-----
+MIID4DCCA0mgAwIBAgIJAM3S4jaLTQBoMA0GCSqGSIb3DQEBBQUAMIGnMQswCQYD
+VQQGEwJJRDERMA8GA1UECBMIV2VzdEphdmExDjAMBgNVBAcTBUJvZ29yMRQwEgYD
+VQQKEwtKdWFsU1NILmNvbTEUMBIGA1UECxMLSnVhbFNTSC5jb20xFDASBgNVBAMT
+C0p1YWxTU0guY29tMRQwEgYDVQQpEwtKdWFsU1NILmNvbTEdMBsGCSqGSIb3DQEJ
+ARYObWVAanVhbHNzaC5jb20wHhcNMTMxMTA4MTQwODA3WhcNMjMxMTA2MTQwODA3
+WjCBpzELMAkGA1UEBhMCSUQxETAPBgNVBAgTCFdlc3RKYXZhMQ4wDAYDVQQHEwVC
+b2dvcjEUMBIGA1UEChMLSnVhbFNTSC5jb20xFDASBgNVBAsTC0p1YWxTU0guY29t
+MRQwEgYDVQQDEwtKdWFsU1NILmNvbTEUMBIGA1UEKRMLSnVhbFNTSC5jb20xHTAb
+BgkqhkiG9w0BCQEWDm1lQGp1YWxzc2guY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GN
+ADCBiQKBgQDO0s4v72Y+V1z3XpkQD8hVjYyJk1PzpaNGpubtVXf7b/2vhvYBfE3X
+46NvpgQejsAI4rW7XWMZrAjFzQBPE0zDAt1O0ukvGRFvHr16jLuC3cZCn3oQJ0+v
+HD7Z16sUhKqLWRTGAf1LDvNR3eVmzzRfBF8L3h+ZGaQFW9gsw1tSSwIDAQABo4IB
+EDCCAQwwHQYDVR0OBBYEFA5gsoPi0yORhvAA38zCXOQhX4wYMIHcBgNVHSMEgdQw
+gdGAFA5gsoPi0yORhvAA38zCXOQhX4wYoYGtpIGqMIGnMQswCQYDVQQGEwJJRDER
+MA8GA1UECBMIV2VzdEphdmExDjAMBgNVBAcTBUJvZ29yMRQwEgYDVQQKEwtKdWFs
+U1NILmNvbTEUMBIGA1UECxMLSnVhbFNTSC5jb20xFDASBgNVBAMTC0p1YWxTU0gu
+Y29tMRQwEgYDVQQpEwtKdWFsU1NILmNvbTEdMBsGCSqGSIb3DQEJARYObWVAanVh
+bHNzaC5jb22CCQDN0uI2i00AaDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUA
+A4GBAL3ScsXaFFuBqkS8bDqDUkx2hYM2iAYx9ZEuz8DOgtenQiNcyety4YzWSE5b
+1/4JSlrO0hoFAZpz6tZtB9XM5efx5zSEIn+w4+2bWUk34Ro2zM3JxwDUp1tTcpbT
+T0G3VTuVrzgSMZV1unfbCHk6XR4VT3MmmoTl+97cmmMZgWV0
+-----END CERTIFICATE-----
+</ca>
+END
+
+	cp $Login.ovpn /home/vps/public_html/
+	cd
+	if [ ! -e /usr/local/bin/payload ]; then
+        wget -O /usr/local/bin/payload "https://raw.githubusercontent.com/nwqionnwkn/OPENEXTRA/master/Config/payload"
+	chmod +x /usr/local/bin/payload
+        fi
+	clear
+	cd
+	echo -e ""
+	echo -e "======== Account ============"
+	echo -e "Download Config	: http://$IP:85/$Login.ovpn"
+	echo -e "Username	: $Login"
+	echo -e "Password	: $Passwd"
+	echo -e "Out of Date	: $exp"
+	echo -e ""
+	echo -e "ไฟล์เดียวสามารถใช้ได้ทั้งเครือข่าย Truemove และ Dtac"
+	echo -e "หมายเหตุ : สำหรับ Truemove ใช้ได้เฉพาะซิมแบบเติมเงินเท่านั้น"
+	echo -e "หมายเหตุ : สำหรับ Dtac ต้องสมัครโปรฯ Line ถึงจะสามารถใช้งาน VPN ได้"
+        echo -e ""
+        echo -e "นอกจากจะสามารถใช้งานผ่านแอพฯ OpenVPN Connect ได้แล้ว..."
+	echo -e "ยังสามารถใช้งานได้ทั้งแอพฯ HTTP Injector ,Ki4a ,eProxy ,KPN Tunnel"
+	echo -e "และแอพฯจำพวก HTTP อีกมากมาย..."
+	echo -e ""
+	echo -e "หากต้องการรูปแบบข้อมูลหรือเพโหลด... ให้พิมพ์คำสั่ง payload"
+	echo -e "IP         : $IP"
+	echo -e "Proxy      : $IP"
+	echo -e "Port Proxy : 8080"
+	echo -e ""
+	echo -e "หมายเหตุ : ขณะนี้ยังไม่สามารถใช้งานผ่านทางคอมพิวเตอร์ได้ กำลังทำการแก้ไข"
+	echo -e "============================="
+	echo -e ""
+
+elif test $x -eq 2; then
+	echo ""
+	read -p "Username : " User
+
+	if getent passwd $User > /dev/null 2>&1; then
+		userdel $User
+		echo ""
+		echo -e "ชื่อผู้ใช้ $User ได้ถูกลบออกจากระบบเรียบร้อยแล้ว"
+		echo ""
+	else
+		echo ""
+		echo -e "ไม่พบชื่อผู้ใช้ $User อยู่ในระบบ"
+		echo ""
+	fi
+	
+elif test $x -eq 3; then
+	if [ -f /etc/debian_version ]; then
+		UIDN=1000
+	elif [ -f /etc/redhat-release ]; then
+		UIDN=500
+	else
+		UIDN=500
+	fi
+
+	echo ""
+	echo "-------------------------------------"
+	while read checklist
+	do
+		account="$(echo $checklist | cut -d: -f1)"
+		ID="$(echo $checklist | grep -v nobody | cut -d: -f3)"
+		exp="$(chage -l $account | grep "Account expires" | awk -F": " '{print $2}')"
+		if [[ $ID -ge $UIDN ]]; then
+		printf "%-17s %2s\n" "$account" "$exp"
+		fi
+	done < /etc/passwd
+	total="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
+	echo "-------------------------------------"
+	echo "รวมทั้งหมด : $total USER"
+	echo "-------------------------------------"
+	echo ""
+
+elif test $x -eq 4; then
+        echo ""
+        read -p "ชื่อผู้ใช้ที่ต้องการเปลี่ยนรหัสผ่าน : " username
+        egrep "^$username" /etc/passwd >/dev/null
+        if [ $? -eq 0 ]; then
+        echo ""
+        read -p "กำหนดรหัสผ่านใหม่ของผู้ใช้ $username : " password
+	
+        egrep "^$username" /etc/passwd >/dev/null
+        echo -e "$password\n$password" | passwd $username
+        echo ""
+        echo "รหัสผ่านใหม่ของชื่อผู้ใช้ $username คือรหัส $password"
+        echo ""
+        else
+        echo ""
+        echo "ไม่พบชื่อผู้ใช้ $username อยู่ในระบบ"
+        echo ""
+        fi
+
+elif test $x -eq 5; then
+	clear
+        echo ""
+        echo "รายชื่อผู้ใช้ที่กำลังใช้งานอยู่ในขณะนี้"
+        echo "==========================================";
+
+        if [ -e "/var/log/auth.log" ]; then
+        LOG="/var/log/auth.log";
+        fi
+        if [ -e "/var/log/secure" ]; then
+        LOG="/var/log/secure";
+        fi
+		
+        data=( `ps aux | grep -i dropbear | awk '{print $2}'`);
+        echo "รายชื่อผู้ใช้ที่ใช้งานพอร์ตของ Dropbear";
+        echo "(ID - Username - IP)";
+        echo "==========================================";
+        cat $LOG | grep -i dropbear | grep -i "Password auth succeeded" > /tmp/login-db.txt;
+        for PID in "${data[@]}"
+        do
+        cat /tmp/login-db.txt | grep "dropbear\[$PID\]" > /tmp/login-db-pid.txt;
+        NUM=`cat /tmp/login-db-pid.txt | wc -l`;
+        USER=`cat /tmp/login-db-pid.txt | awk '{print $10}'`;
+        IP=`cat /tmp/login-db-pid.txt | awk '{print $12}'`;
+        if [ $NUM -eq 1 ]; then
+                echo "$PID - $USER - $IP";
+		fi
+        done
+        echo " "
+        echo "รายชื่อผู้ใช้ที่ใช้งานพอร์ตของ OpenSSH";
+        echo "(ID - Username - IP)";
+        echo "==========================================";
+        cat $LOG | grep -i sshd | grep -i "Accepted password for" > /tmp/login-db.txt
+        data=( `ps aux | grep "\[priv\]" | sort -k 72 | awk '{print $2}'`);
+
+        for PID in "${data[@]}"
+        do
+        cat /tmp/login-db.txt | grep "sshd\[$PID\]" > /tmp/login-db-pid.txt;
+        NUM=`cat /tmp/login-db-pid.txt | wc -l`;
+        USER=`cat /tmp/login-db-pid.txt | awk '{print $9}'`;
+        IP=`cat /tmp/login-db-pid.txt | awk '{print $11}'`;
+        if [ $NUM -eq 1 ]; then
+                echo "$PID - $USER - $IP";
+        fi
+        done
+        if [ -f "/etc/openvpn/log.log" ]; then
+	line=`cat /etc/openvpn/log.log | wc -l`
+	a=$((3+((line-8)/2)))
+	b=$(((line-8)/2))
+	echo " "
+	echo "รายชื่อผู้ใช้ที่ใช้งาน OpenVPN";
+	echo "(Username - IP - วันนี้ - เวลาที่เชื่อมต่อ)";
+	echo "==========================================";
+	cat /etc/openvpn/log.log | head -n $a | tail -n $b | cut -d "," -f 1,2,5 | sed -e 's/,/   /g' > /tmp/vpn-login-db.txt
+	cat /tmp/vpn-login-db.txt
+        fi
+
+        echo " "
+        echo " "
+        echo "==========================================";
+        echo " "
+	
+elif test $x -eq 6; then
+        echo ""
+        read -p "Username Ban : " username
+        egrep "^$username" /etc/passwd >/dev/null
+        if [ $? -eq 0 ]; then
+        passwd -l $username
+        echo ""
+        echo "ชื่อผู้ใช้ $username ได้ถูกแบนเรียบร้อยแล้ว"
+	echo ""
+        else
+	echo ""
+        echo "ไม่พบชื่อผู้ใช้ $username อยู่ในระบบ"
+	echo ""
+        exit 1
+        fi
+	
+elif test $x -eq 7; then
+        echo ""
+	read -p "Username Unban : " username
+        egrep "^$username" /etc/passwd >/dev/null
+        if [ $? -eq 0 ]; then
+        passwd -u $username
+        echo ""
+        echo "ชื่อผู้ใช้ $username ได้ถูกปลดแบนเรียบร้อยแล้ว"
+	echo ""
+        else
+	echo ""
+        echo "ไม่พบชื่อผู้ใช้ $username อยู่ในระบบ"
+	echo ""
+        exit 1
+        fi
+	
+elif test $x -eq 8; then
+        if [ ! -e /usr/local/bin/reboot_otomatis ]; then
+	echo '#!/bin/bash' > /usr/local/bin/reboot_otomatis 
+	echo 'tanggal=$(date +"%m-%d-%Y")' >> /usr/local/bin/reboot_otomatis 
+	echo 'waktu=$(date +"%T")' >> /usr/local/bin/reboot_otomatis 
+	echo 'echo "เซิร์ฟเวอร์ได้รับการรีบูตเมื่อวันที่ $tanggal เวลา $waktu" >> /root/log-reboot.txt' >> /usr/local/bin/reboot_otomatis 
+	echo '/sbin/shutdown -r now' >> /usr/local/bin/reboot_otomatis 
+	chmod +x /usr/local/bin/reboot_otomatis
+	fi
+
+	echo "---------------------------------"
+	echo "ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
+	echo "---------------------------------"
+	echo "1.  รีบูททุกๆ 1 ชั่วโมง"
+	echo "2.  รีบูททุกๆ 6 ชั่วโมง"
+	echo "3.  รีบูททุกๆ 12 ชั่วโมง"
+	echo "4.  รีบูททุกๆ 1 วัน"
+	echo "5.  รีบูททุกๆ 1 สัปดาห์"
+	echo "6.  รีบูททุกๆ 1 เดือน"
+	echo "7.  ปิดการรีบูทอัตโนมัติ"
+	echo "8.  ดูบันทึกการรีบูทอัตโนมัติ"
+	echo "9.  ลบบันทึกการรีบูทอัตโนมัติ"
+	echo ""
+	read -p "กรุณาเลือกหัวข้อที่ต้องการใช้งาน (ตัวเลข) : " x
+
+	if test $x -eq 1; then
+	echo "0 * * * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 1 ชั่วโมงเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 2; then
+	echo "0 */6 * * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 3; then
+	echo "0 */12 * * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 12 ชั่วโมงเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 4; then
+	echo "0 0 * * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 1 วันเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 5; then
+	echo "0 0 */7 * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 1 สัปดาห์เรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 6; then
+	echo "0 0 1 * * root /usr/local/bin/reboot_otomatis" > /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ตั้งค่ารีบูทอัตโนมัติทุกๆ 1 เดือนเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 7; then
+	rm -f /etc/cron.d/reboot_otomatis
+	echo ""
+	echo "ปิดการรีบูทอัตโนมัติเรียบร้อยแล้ว"
+	echo ""
+	elif test $x -eq 8; then
+	if [ ! -e /root/log-reboot.txt ]; then
+	echo ""
+	echo "ไม่มีบันทึกในปัจจุบัน"
+	echo ""
+	else
+	echo ""
+	cat /root/log-reboot.txt
+	echo ""
+	fi
+	elif test $x -eq 9; then
+	echo "" > /root/log-reboot.txt
+	echo ""
+	echo "ทำการลบบันทึกเรียบร้อยแล้ว"
+	echo ""
+	else
+	echo ""
+	echo "ไม่มีตัวเลือกในเมนู กรุณาลองใหม่อีกครั้ง"
+	echo ""
+	exit
+	fi
+	
+elif test $x -eq 9; then
+        clear
+        echo ""
+        echo ""
+        echo "ตรวจสอบดูตรงคำว่า Total ว่าได้ใช้ดาต้าไปทั้งหมดเท่าไหร่"
+        echo "ในส่วนของแถว estimated คือการประมาณดาต้าที่ใช้ (ส่วนนี้ไม่ต้องสนใจ)"
+        echo ""
+        echo "หน่วยวัดขนาดของดาต้าจะแสดงเป็น MiB , GiB และ TiB"
+        echo "     MiB คือเมกะไบต์ (Megabyte หรือ Mb)"
+        echo "     GiB คิอกิกะไบต์ (Gigabyte หรือ Gb) (เช่น 1000Mb เท่ากับ 1Gb"
+        echo "     TiB คือเทราไบต์ (Terabyte หรือ Tb) (เช่น 1Tb เท่ากับ 1000Gb)"
+	echo ""
+        echo "ส่วนของคำว่า month คือการแสดงบอกให้รู้ว่าแต่ละเดือนใช้งานดาต้าไปเท่าไหร่"
+        echo "หน่วยวัด rx (Receive) คือขนาดการรับข้อมูลจากทางผู้ใช้งานอินเตอร์เน็ตไปยังเซิฟเวอร์"
+        echo "หน่วยวัด tx (Transmit) คือขนาดการส่งข้อมูลออกจากเซิฟเวอร์ให้กับผู้ใช้งานอินเตอร์เน็ต"
+        echo "หน่วยวัด avg. rate (Average Rate) คืออัตราการใช้งานดาต้าต่อวินาที"
+        echo ""
+	vnstat -m
+	
+elif test $x -eq 10; then
+	speedtest --share
+	
+elif test $x -eq 11; then
+        clear
+        echo ""
+        echo ""
+        echo "1. หากคุณได้ทำการแก้ไขส่วนต่างๆภายในสคริปท์ และต้องการรีสตาร์ทระบบเดี๋ยวนี้"
+        echo "2. หากคุณไม่ได้แก้ไขสคริปท์ คุณไม่จำเป็นที่จะต้องต้องรีสตาร์ทระะบบ"
+        echo ""
+	read -p "กรุณาพิมพ์ตัวเลขที่ต้องการใช้งาน (ตัวเลข) : " x
+	if test $x -eq 1; then
+        clear
+        echo ""
+        echo "เซิฟเวอร์จะใช้งานไม่ได้ชั่วขณะเมื่อทำการรีสตาร์ทระบบ"
+        echo "และจะกลับมาใช้งานได้อีกครั้งภายใน 30 วินาที"
+        echo "nginx ,openvpn ,cron ,ssh ,dropbear ,squid3 ....Restarting"
+        echo ""
+	/etc/init.d/nginx restart
+	service openvpn restart
+	service cron restart
+	service ssh restart
+	service dropbear restart
+	service squid3 restart
+        elif test $x -eq 2; then
+        exit
+        else
+        clear
+        menu
+        fi
+	
+elif test $x -eq 12; then
+if [ ! -e /home/vps/public_html/Client.ovpn ]; then
+	IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+
+cat > /home/vps/public_html/Client.ovpn <<-END
+client
+dev tun
+proto tcp
+remote $IP:1194@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp 1194
+http-proxy $IP 8080
+http-proxy-retry
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+sndbuf 393216
+rcvbuf 393216
+push "sndbuf 393216"
+push "rcvbuf 393216"
+auth-user-pass
+cipher none
+comp-lzo
+script-security 3
+key-proxy-DNS 8.8.8.8
+key-proxy-DNS 8.8.4.4
+<ca>
+-----BEGIN CERTIFICATE-----
+MIID4DCCA0mgAwIBAgIJAM3S4jaLTQBoMA0GCSqGSIb3DQEBBQUAMIGnMQswCQYD
+VQQGEwJJRDERMA8GA1UECBMIV2VzdEphdmExDjAMBgNVBAcTBUJvZ29yMRQwEgYD
+VQQKEwtKdWFsU1NILmNvbTEUMBIGA1UECxMLSnVhbFNTSC5jb20xFDASBgNVBAMT
+C0p1YWxTU0guY29tMRQwEgYDVQQpEwtKdWFsU1NILmNvbTEdMBsGCSqGSIb3DQEJ
+ARYObWVAanVhbHNzaC5jb20wHhcNMTMxMTA4MTQwODA3WhcNMjMxMTA2MTQwODA3
+WjCBpzELMAkGA1UEBhMCSUQxETAPBgNVBAgTCFdlc3RKYXZhMQ4wDAYDVQQHEwVC
+b2dvcjEUMBIGA1UEChMLSnVhbFNTSC5jb20xFDASBgNVBAsTC0p1YWxTU0guY29t
+MRQwEgYDVQQDEwtKdWFsU1NILmNvbTEUMBIGA1UEKRMLSnVhbFNTSC5jb20xHTAb
+BgkqhkiG9w0BCQEWDm1lQGp1YWxzc2guY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GN
+ADCBiQKBgQDO0s4v72Y+V1z3XpkQD8hVjYyJk1PzpaNGpubtVXf7b/2vhvYBfE3X
+46NvpgQejsAI4rW7XWMZrAjFzQBPE0zDAt1O0ukvGRFvHr16jLuC3cZCn3oQJ0+v
+HD7Z16sUhKqLWRTGAf1LDvNR3eVmzzRfBF8L3h+ZGaQFW9gsw1tSSwIDAQABo4IB
+EDCCAQwwHQYDVR0OBBYEFA5gsoPi0yORhvAA38zCXOQhX4wYMIHcBgNVHSMEgdQw
+gdGAFA5gsoPi0yORhvAA38zCXOQhX4wYoYGtpIGqMIGnMQswCQYDVQQGEwJJRDER
+MA8GA1UECBMIV2VzdEphdmExDjAMBgNVBAcTBUJvZ29yMRQwEgYDVQQKEwtKdWFs
+U1NILmNvbTEUMBIGA1UECxMLSnVhbFNTSC5jb20xFDASBgNVBAMTC0p1YWxTU0gu
+Y29tMRQwEgYDVQQpEwtKdWFsU1NILmNvbTEdMBsGCSqGSIb3DQEJARYObWVAanVh
+bHNzaC5jb22CCQDN0uI2i00AaDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUA
+A4GBAL3ScsXaFFuBqkS8bDqDUkx2hYM2iAYx9ZEuz8DOgtenQiNcyety4YzWSE5b
+1/4JSlrO0hoFAZpz6tZtB9XM5efx5zSEIn+w4+2bWUk34Ro2zM3JxwDUp1tTcpbT
+T0G3VTuVrzgSMZV1unfbCHk6XR4VT3MmmoTl+97cmmMZgWV0
+-----END CERTIFICATE-----
+</ca>
+END
+fi
+        IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+        echo ""
+        echo -e "Download Config	: http://$IP:85/Client.ovpn"
+        echo ""
+
+elif test $x -eq 13; then
+clear
+color1='\e[031;1m'
+color2='\e[34;1m'
+color3='\e[0m'
+	echo ""
+	echo "กรุณาเลือกหัวข้อที่ต้องการในหมวดของ"
+	echo "     เก็บไฟล์สำรองข้อมูลผู้ใช้ หรือนำเข้าไฟล์สำรองข้อมูลผู้ใช้"
+	echo ""
+	echo -e "|${color1} 1${color3}| เก็บไฟล์สำรองข้อมูลผู้ใช้ (Export Backup File)"
+	echo -e "|${color1} 2${color3}| นำเข้าไฟล์สำรองข้อมูลผู้ใช้ (Import Backup File)"
+	echo ""
+	read -p "กรุณาเลือกหัวข้อที่ต้องการใช้งาน (ตัวเลข) : " x
+	
+	
+	if test $x -eq 1; then
+	IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+	rm -r /home/vps/public_html/backup.tgz
+	rm -r /home/vps/public_html/etc
+	tar -czvf /home/vps/public_html/backup.tgz /etc/passwd /etc/group /etc/shadow /etc/gshadow
+	clear
+	echo ""
+	echo "ทำการเก็บไฟล์สำรองข้อมูลผู้ใช้เสร็จสิ้น..."
+	echo "ไฟล์สำรองข้อมูลผู้ใช้ถูกเก็บไว้ที่ /home/vps/public_html/"
+	echo ""
+	echo "ลิ้งค์ดาวน์โหลดไฟล์สำรองข้อมูลผู้ใช้"
+	echo "Your File : $IP:85/backup.tgz"
+	echo ""
+	echo "หมายเหตุ"
+	echo "การนำเข้าไฟล์สำรองข้อมูลผู้ใช้ไม่ควรปิดหรือลบ IP ปัจจุบันนี้ก่อนทำการนำเข้าไฟล์สำรองข้อมูลผู้ใช้ไปยัง IP ใหม่"
+	echo ""
+	
+	elif test $x -eq 2; then
+	rm -r /home/vps/public_html/backup.tgz
+	rm -r /home/vps/public_html/etc
+	clear
+	echo ""
+	echo ""
+	read -p "กรุณากรอกลิ้งค์ดาวน์โหลดไฟล์สำรองข้อมูลผู้ใช้ของคุณ : " Download
+	wget -O /home/vps/public_html/backup.tgz "$Download"
+	cd /home/vps/public_html
+	tar -xzvf backup.tgz
+	rm -r /etc/passwd /etc/group /etc/shadow /etc/gshadow
+	cp -r etc/* /etc/
+	echo ""
+	echo "ทำการนำเข้าไฟล์สำรองข้อมูลผู้ใช้เสร็จสิ้น..."
+		sleep 5
+		clear
+		echo ""
+		echo -e "|${color1} 1${color3}| เก็บไว้ (แนะนำ)"
+		echo -e "|${color1} 2${color3}| ลบทิ้ง"
+		echo ""
+		read -p "ต้องการเก็บไฟล์สำรองข้อมูลผู้ใช้ที่นำเข้าไว้หรือไม่ (ตัวเลข) : " x
+		
+		if test $x -eq 1; then
+		echo ""
+		echo "ไฟล์สำรองข้อมูลผู้ใช้ของคุณยังคงถูกเก็บไว้ที่ /home/vps/public_html/ เช่นเดิม"
+		echo ""
+		elif test $x -eq 2; then
+		rm -r /home/vps/public_html/backup.tgz
+		rm -r /home/vps/public_html/etc
+		echo ""
+		echo "ไฟล์สำรองข้อมูลผู้ใช้ที่คุณนำมากจาก IP อื่น"
+		echo "ถูกลบออกจากระบบแล้ว..."
+		echo ""
+		else
+		echo ""
+		echo "คุณไม่ได้เลือกหัวข้อที่ให้มีให้เลือกไว้"
+		echo "ดังนั้นเราจึงไม่ลบไฟล์สำรองข้อมูลผู้ใช้ของคุณ"
+		echo "และยังคงเก็บไว้ที่ /home/vps/public_html/"
+		echo ""
+		exit
+		fi
+
+	else
+	echo ""
+	echo "ไม่มีตัวเลือกในเมนู กรุณาลองใหม่อีกครั้ง"
+	echo ""
+	exit
+	fi
+	
+	
+	
+elif test $x -eq 14; then
+	exit
+	
+else
+	clear
+	menu
+fi
