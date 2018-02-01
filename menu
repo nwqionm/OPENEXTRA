@@ -393,12 +393,10 @@ esac
 	7)
 
 if [[ -e /usr/local/bin/speedtest ]]; then
-
 	wget -O speedtest "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/speedtest"
 	chmod +x speedtest
 fi
-	speedtest
-	exit
+	speedtest --share
 
 	;;
 
