@@ -410,9 +410,6 @@ fi
 
 	9)
 
-
-	2)
-
 clear
 echo ""
 echo -e "|${RED}1${NC}| LOCK CLIENT"
