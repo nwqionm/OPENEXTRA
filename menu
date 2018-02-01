@@ -485,9 +485,9 @@ elif [[ -e /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req ]]; then
 	cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req
 	cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key /etc/openvpn/easy-rsa/pki/private/$CLIENT.key
 	cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt
-	rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req
-	rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key
-	rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt
+	rm -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req
+	rm -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key
+	rm -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt
 	echo ""
 	echo "$CLIENT ได้ถูกปลดล็อกเรียบร้อยแล้ว"
 	echo ""
