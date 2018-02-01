@@ -10,6 +10,7 @@ fi
 # Color
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+GREY='\033[0;30m'
 NC='\033[0m'
 
 # Menu
@@ -28,7 +29,7 @@ echo -e "|${RED}5${NC}| RENEW EXPIRE DATE OF CLIENT"
 echo -e "|${RED}6${NC}| SET TIME AUTO REBOOT SERVER"
 echo -e "|${RED}7${NC}| SPEEDTEST"
 echo -e "|${RED}8${NC}| "
-echo -e "|${RED}9${NC}| "
+echo -e "|${RED}9${NC}| ${GREY}LOCK CLIENT AND UNLOCK CLIENT${NC} (ยังไม่สมบูรณ์)"
 echo ""
 echo -e "|${RED}0${NC}| UPDATE MENU SCRIPT"
 echo ""
@@ -56,6 +57,7 @@ echo ""
 				fi
 		else
 			userdel -r "$CLIENT"
+			$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
 			cd /etc/openvpn/easy-rsa/
 			./easyrsa --batch revoke $CLIENT
 			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
@@ -443,6 +445,9 @@ elif [[ -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
 		rm -rf /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req
 		rm -rf /etc/openvpn/easy-rsa/pki/private/$CLIENT.key
 		rm -rf /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt
+		EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+		cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+		chmod 644 /etc/openvpn/crl.pem
 		echo ""
 		echo "$CLIENT ได้ถูกล็อกเรียบร้อยแล้ว"
 		echo ""
