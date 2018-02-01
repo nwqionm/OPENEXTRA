@@ -410,53 +410,99 @@ fi
 
 	9)
 
+
+	2)
+
 clear
 echo ""
 echo -e "|${RED}1${NC}| LOCK CLIENT"
 echo -e "|${RED}2${NC}| UNLOCK CLIENT"
-
+echo ""
 read -p "Select a Menu Lock and Unlock : " LandUL
 
 case $LandUL in
 
 	1)
 
-echo ""
-read -p "ชื่อลูกค้าที่ต้องการล็อค ? : " CLIENT
+if [[ ! -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
+	echo ""
+	echo "ไม่มีชื่อลูกค้าที่คุณระบุอยู่ในระบบ"
+	echo ""
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
 
-egrep "^$CLIENT" /etc/passwd >/dev/null
-if [ $? -eq 0 ]; then
-	passwd -l $CLIENT
-	echo ""
-	echo "$CLIENT ได้ถูกล็อคเรียบร้อยแล้ว"
-	echo ""
-	exit
-else
-	echo ""
-	echo "ชื่อลูกค้าที่ระบุไม่มีอยู่ในระบบ"
-	echo ""
-	exit
+	if [[ "$REMOVE" = 'Y' ]]; then
+		menu
+		exit
+	elif [[ "$REMOVE" = 'N' ]]; then
+		exit
+	fi
+elif [[ -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
+	if [[ -e /etc/openvpn/easy-rsa/Lock-Backup ]]; then
+		cp -rf /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req
+		cp -rf /etc/openvpn/easy-rsa/pki/private/$CLIENT.key /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key
+		cp -rf /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt
+		rm -rf /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req
+		rm -rf /etc/openvpn/easy-rsa/pki/private/$CLIENT.key
+		rm -rf /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt
+		echo ""
+		echo "$CLIENT ได้ถูกล็อกเรียบร้อยแล้ว"
+		echo ""
+		exit
+	else
+		mkdir /etc/openvpn/easy-rsa/Lock-Backup
+		cp -rf /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req
+		cp -rf /etc/openvpn/easy-rsa/pki/private/$CLIENT.key /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key
+		cp -rf /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt
+		rm -rf /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req
+		rm -rf /etc/openvpn/easy-rsa/pki/private/$CLIENT.key
+		rm -rf /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt
+		echo ""
+		echo "$CLIENT ได้ถูกล็อกเรียบร้อยแล้ว"
+		echo ""
+		exit
+	fi
 fi
+
 	;;
 
 	2)
 
-echo ""
-read -p "ชื่อลูกค้าที่ต้องการปลดล็อค ? : " CLIENT
+if [[ -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
+	echo ""
+	echo "ชื่อลูกค้าที่คุณระบุไม่ได้ถูกล็อกไว้"
+	echo ""
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
 
-egrep "^$CLIENT" /etc/passwd >/dev/null
-if [ $? -eq 0 ]; then
-	passwd -u $CLIENT
+	if [[ "$REMOVE" = 'Y' ]]; then
+		menu
+		exit
+	elif [[ "$REMOVE" = 'N' ]]; then
+		exit
+	fi
+elif [[ ! -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
 	echo ""
-	echo "$CLIENT ได้ถูกปลดล็อคเรียบร้อยแล้ว"
+	echo "ไม่มีชื่อลูกค้าที่คุณระบุอยู่ในระบบ"
 	echo ""
-	exit
-else
-	echo ""
-	echo "ชื่อลูกค้าที่ระบุไม่มีอยู่ในระบบ"
-	echo ""
-	exit
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y REMOVE
+
+	if [[ "$REMOVE" = 'Y' ]]; then
+		menu
+		exit
+	elif [[ "$REMOVE" = 'N' ]]; then
+		exit
+	fi
 fi
+
+cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req
+cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key /etc/openvpn/easy-rsa/pki/private/$CLIENT.key
+cp -rf /etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt /etc/openvpn/easy-rsa/pki/issued/$CLIENT.crt
+rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.req
+rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.key
+rm -rf etc/openvpn/easy-rsa/Lock-Backup/$CLIENT.crt
+echo ""
+echo "$CLIENT ได้ถูกปลดล็อกเรียบร้อยแล้ว"
+echo ""
+exit
 
 	;;
 
