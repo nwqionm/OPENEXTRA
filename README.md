@@ -1,7 +1,5 @@
 # Install
 
-  wget -O /usr/local/bin/install "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh"
+wget -O /usr/local/bin/install "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh" && chmod +x /usr/local/bin/install
 
-  chmod +x /usr/local/bin/install
-
-  install
+# หลังจากอัพโหลดสคริปท์ให้พิมคำสั่ง install เพื่อเข้าสู่เมนูการติดตั้ง
