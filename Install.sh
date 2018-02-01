@@ -425,6 +425,8 @@ END
 		sed -i $IP2 /etc/squid3/squid.conf;
 		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 			service squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
 		else
 			/etc/init.d/squid3 restart
 			/etc/init.d/openvpn restart
