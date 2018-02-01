@@ -423,9 +423,13 @@ refresh_pattern .               0       20%     4320
 END
 		IP2="s/xxxxxxxxx/$IP/g";
 		sed -i $IP2 /etc/squid3/squid.conf;
-		/etc/init.d/squid3 restart
-		/etc/init.d/openvpn restart
-		/etc/init.d/nginx restart
+		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			service squid3 restart
+		else
+			/etc/init.d/squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
+		fi
 
 	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ -e /etc/squid/squid.conf ]]; then
@@ -644,7 +648,11 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
-	/etc/init.d/squid3 restart
+	if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		service squid3 restart
+	else
+		/etc/init.d/squid3 restart
+	fi
 	clear
 	echo ""
 	echo "Source by Mnm Ami"
@@ -799,7 +807,11 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
-	/etc/init.d/squid3 restart
+	if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		service squid3 restart
+	else
+		/etc/init.d/squid3 restart
+	fi
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
