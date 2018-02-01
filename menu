@@ -20,17 +20,18 @@ echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
 echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
-echo -e "|${RED}1${NC}| ADD NEW CLIENT"
-echo -e "|${RED}2${NC}| REMOVE CLIENT"
-echo -e "|${RED}3${NC}| CHECK ALL CLIENT"
-echo -e "|${RED}4${NC}| CHECK ALL CLIENT ONLINE"
-echo -e "|${RED}5${NC}| RENEW EXPIRE DATE OF CLIENT"
-echo -e "|${RED}6${NC}| SET TIME AUTO REBOOT SERVER"
-echo -e "|${RED}7${NC}| SPEEDTEST"
-echo -e "|${RED}8${NC}| "
-echo -e "|${RED}9${NC}| LOCK AND UNLOCK CLIENT ${RED}(ยังไม่สมบูรณ์)${NC}"
+echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
+echo -e "|${RED} 2${NC}| REMOVE CLIENT"
+echo -e "|${RED} 3${NC}| CHECK ALL CLIENT"
+echo -e "|${RED} 4${NC}| CHECK ALL CLIENT ONLINE"
+echo -e "|${RED} 5${NC}| RENEW EXPIRE DATE OF CLIENT"
+echo -e "|${RED} 6${NC}| SET TIME AUTO REBOOT SERVER"
+echo -e "|${RED} 7${NC}| SPEEDTEST"
+echo -e "|${RED} 8${NC}| "
+echo -e "|${RED} 9${NC}| LOCK AND UNLOCK CLIENT (${RED}(ยังไม่สมบูรณ์${NC})"
+echo -e "|${RED}10${NC}| EDIT CONFIG OF CLOUD VPS (${RED}สำหรับการแก้ไขส่วนต่างๆภายในเครื่องเซิฟเวอร์${NC})"
 echo ""
-echo -e "|${RED}0${NC}| UPDATE MENU SCRIPT"
+echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
 echo ""
 if [[ -e /etc/vnstat.conf ]]; then
 	TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
@@ -516,6 +517,17 @@ fi
 	;;
 
 esac
+
+	;;
+
+	10)
+
+if [[ ! -e /usr/local/bin/ed ]]; then
+	wget -O /usr/local/bin/ed "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/ed"
+	ed
+else
+	ed
+fi
 
 	;;
 
