@@ -96,9 +96,10 @@ if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	fi
 fi
 echo ""
-echo -e "     ${RED}เช่น${NC} : ระบุตัวเลข 30 จะทำให้ลูกค้าที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
+echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้ลูกค้าที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
 read -p "กำหนดวันหมดอายุ : " -e TimeActive
 
+clear
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
 	echo "<ca>" >> ~/$1.ovpn
@@ -123,8 +124,6 @@ rm -f /root/$CLIENT.ovpn
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
-
-clear
 echo ""
 echo "ชื่อลูกค้า : $CLIENT"
 echo "หมดอายุในวันที่ : $EXP"
