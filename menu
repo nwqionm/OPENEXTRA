@@ -35,8 +35,8 @@ echo ""
 if [[ -e /etc/vnstat.conf ]]; then
 	TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
 	WEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
-	TOTAL=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
-	echo -e "${RED}-${NC} BANDWIDTH : TODAY ${RED}$TODAY${NC} | WEEK ${RED}$WEEK${NC} | TOTAL ${RED}$TOTAL${NC}"
+	MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
+	echo -e "${RED}-${NC} BANDWIDTH : TODAY ${RED}$TODAY${NC} | WEEK ${RED}$WEEK${NC} | MOUNT ${RED}$MOUNT${NC}"
 fi
 echo ""
 	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
@@ -55,19 +55,7 @@ echo ""
 					echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
 				fi
 		else
-			userdel -r "$CLIENT"
 			$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
-			cd /etc/openvpn/easy-rsa/
-			./easyrsa --batch revoke $CLIENT
-			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-			rm -rf pki/reqs/$CLIENT.req
-			rm -rf pki/private/$CLIENT.key
-			rm -rf pki/issued/$CLIENT.crt
-			rm -rf /etc/openvpn/crl.pem
-			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-			chmod 644 /etc/openvpn/crl.pem
-			rm -f /home/vps/public_html/$CLIENT.ovpn
-			
 			cd /etc/openvpn/easy-rsa/
 			./easyrsa --batch revoke $CLIENT
 			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
