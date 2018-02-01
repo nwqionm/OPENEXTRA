@@ -80,7 +80,7 @@ echo "	Ubuntu 14.04 - 16.04 - 17.04"
 echo "	Debian 7 - 8 - 9"
 echo -e "|${RED}7${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 echo ""
-echo -e "|${RED}8${NC}| UPDATE FUNCTION SCRIPT"
+echo -e "|${RED}0${NC}| UPDATE FUNCTION SCRIPT"
 echo ""
 echo -e "     ${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
 echo ""
@@ -903,7 +903,7 @@ fi
 
 	;;
 
-	8)
+	0)
 
 rm Install.sh
 wget https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh
