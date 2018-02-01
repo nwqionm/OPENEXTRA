@@ -420,6 +420,8 @@ read -p "Select a Menu Lock and Unlock : " LandUL
 case $LandUL in
 
 	1)
+echo ""
+read -p "ชื่อลูกค้าที่ต้องการล็อก : " CLIENT
 
 if [[ ! -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
 	echo ""
@@ -463,6 +465,9 @@ fi
 	;;
 
 	2)
+
+echo ""
+read -p "ชื่อลูกค้าที่ต้องการปลดล็อก : " CLIENT
 
 if [[ -e /etc/openvpn/easy-rsa/pki/reqs/$CLIENT.req ]]; then
 	echo ""
