@@ -144,7 +144,7 @@ if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 fi
 
 echo ""
-tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
+tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s '. '
 if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
 	echo ""
 	echo -e "${RED}คำเตือน${NC} : การออกจากหน้านี้ต้องกด CTRL+C เท่านั้น"
