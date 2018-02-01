@@ -524,6 +524,7 @@ esac
 
 if [[ ! -e /usr/local/bin/ed ]]; then
 	wget -O /usr/local/bin/ed "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/ed"
+	chmod +x /usr/local/bin/ed
 	ed
 else
 	ed
