@@ -1,0 +1,47 @@
+#!/bin/bash
+
+clear
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+# Menu
+echo ""
+echo -e "${RED}  (\_(\  ${NC}"
+echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
+echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
+echo ""
+echo -e "EDIT CONFIG OF SERVER ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+echo ""
+echo -e "|${RED}1${NC}| OPENVPN CONFIG"
+echo -e "|${RED}1${NC}| OPENVPN SERVER"
+echo -e "|${RED}1${NC}| VNSTAT"
+echo -e "|${RED}1${NC}| MENU"
+echo -e "|${RED}1${NC}| "
+echo -e "|${RED}1${NC}| "
+echo ""
+echo -e "     ${RED}สามารถลัดเข้าฟังก์ชั่นนี้ด้วยการพิมคำว่า ed${NC}"
+echo ""
+read -p "Select a EDIT CONFIG OF SERVER : " EDIT
+
+case $EDIT in
+
+  1)
+nano /etc/openvpn/client-common.txt
+exit
+  ;;
+  2)
+nano /etc/openvpn/server.conf
+exit
+  ;;
+  3)
+nano /etc/vnstat.conf
+exit
+  ;;
+  4)
+nano /usr/local/bin/menu
+exit
+  ;;
+  
+esac
