@@ -78,7 +78,8 @@ case $MENU in
 
 	1)
 
-read -p "ชื่อลูกค้า : " -e CLIENT
+echo ""
+read -p "ชื่อลูกค้าที่ต้องการสร้าง : " -e CLIENT
 
 
 if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
@@ -94,8 +95,9 @@ if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 		exit
 	fi
 fi
-
-read -p "วันหมดอายุ : " -e TimeActive
+echo ""
+echo -e "     ${RED}เช่น${NC} : ระบุตัวเลข 30 จะทำให้ลูกค้าที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
+read -p "กำหนดวันหมดอายุ : " -e TimeActive
 
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
