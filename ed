@@ -12,18 +12,18 @@ echo -e "${RED}  (\_(\  ${NC}"
 echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
 echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
-echo -e "EDIT CONFIG OF SERVER ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+echo -e "EDIT CONFIG OF CLOUD VPS ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
 echo -e "|${RED}1${NC}| OPENVPN CONFIG"
-echo -e "|${RED}1${NC}| OPENVPN SERVER"
-echo -e "|${RED}1${NC}| VNSTAT"
-echo -e "|${RED}1${NC}| MENU"
+echo -e "|${RED}2${NC}| OPENVPN SERVER"
+echo -e "|${RED}3${NC}| VNSTAT"
+echo -e "|${RED}4${NC}| MENU"
 echo -e "|${RED}1${NC}| "
-echo -e "|${RED}1${NC}| "
+echo -e "|${RED}0${NC}| UPDATE EDIT CONFIG OF CLOUD VPS"
 echo ""
 echo -e "     ${RED}สามารถลัดเข้าฟังก์ชั่นนี้ด้วยการพิมคำว่า ed${NC}"
 echo ""
-read -p "Select a EDIT CONFIG OF SERVER : " EDIT
+read -p "Select a Choice : " EDIT
 
 case $EDIT in
 
@@ -31,17 +31,29 @@ case $EDIT in
 nano /etc/openvpn/client-common.txt
 exit
   ;;
+
   2)
 nano /etc/openvpn/server.conf
 exit
   ;;
+
   3)
 nano /etc/vnstat.conf
 exit
   ;;
+
   4)
 nano /usr/local/bin/menu
 exit
   ;;
-  
+
+  0)
+
+rm -f /usr/local/bin/ed
+wget -O /usr/local/bin/ed "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/ed"
+chmod +x /usr/local/bin/ed
+ed
+
+  ;;
+
 esac
