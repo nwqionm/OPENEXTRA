@@ -162,8 +162,8 @@ else
 	read -p "IP address : " -e -i $IP IP
 	read -p "Port : " -e -i 1194 PORT
 	echo ""
-	echo -e "   |${RED}1${NC}| UDP"
-	echo -e "   |${RED}2${NC}| TCP"
+	echo -e " |${RED}1${NC}| UDP"
+	echo -e " |${RED}2${NC}| TCP"
 	echo ""
 	read -p "Protocol : " -e -i 2 PROTOCOL
 	case $PROTOCOL in
@@ -175,11 +175,17 @@ else
 		;;
 	esac
 	echo ""
-	echo -e "   |${RED}1${NC}| DNS Current system"
-	echo -e "   |${RED}2${NC}| DNS Google"
+	echo -e " |${RED}1${NC}| DNS Current system"
+	echo -e " |${RED}2${NC}| DNS Google"
 	echo ""
 	read -p "DNS : " -e -i 1 DNS
 	read -p "Port proxy : " -e -i 8080 PROXY
+	echo ""
+	echo -e " |${RED}1${NC}| Client to Client : 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น"
+	echo -e " |${RED}2${NC}| Username as Common Name : 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
+	echo -e " |${RED}3${NC}| Duplicate CN : 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
+	echo ""
+	read -p "OpenVPN system : " -e -i 1 SYSTEM
 	read -p "Client name: " -e CLIENT
 	echo ""
 	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
@@ -249,8 +255,21 @@ persist-key
 persist-tun
 status openvpn-status.log
 verb 3
-crl-verify crl.pem
-client-to-client" >> /etc/openvpn/server.conf
+	crl-verify crl.pem
+	case $SYSTEM in
+		1)
+		echo 'push "client-to-client"' >> /etc/openvpn/server.conf
+		;;
+		2)
+		echo 'push "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login"' >> /etc/openvpn/server.conf
+		echo 'push "client-cert-not-required"' >> /etc/openvpn/server.conf
+		echo 'push "username-as-common-name"' >> /etc/openvpn/server.conf
+		;;
+		3)
+		echo 'push "duplicate-cn"' >> /etc/openvpn/server.conf
+		;;
+	esac
+" >> /etc/openvpn/server.conf
 
 	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
 	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
