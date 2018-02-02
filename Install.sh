@@ -185,9 +185,7 @@ else
 	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
 	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
 	echo ""
-	while [[ $OPENVPNSYSTEM != "CTC" && $OPENVPNSYSTEM != "UACN" && $OPENVPNSYSTEM != "DC" ]]; do
-		read -p "OpenVPN system : " -e OPENVPNSYSTEM
-	done
+	read -p "OpenVPN system : " -e OPENVPNSYSTEM
 	read -p "Client name: " -e CLIENT
 	echo ""
 	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
@@ -258,16 +256,19 @@ persist-tun
 status openvpn-status.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
-
-	if [[ "$OPENVPNSYSTEM" = "CTC" ]]; then
+	case $OPENVPNSYSTEM in
+		1)
 		echo 'push "client-to-client"' >> /etc/openvpn/server.conf
-	elif [[ "$OPENVPNSYSTEM" = "UACN" ]]; then
+		;;
+		2)
 		echo 'push "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login"' >> /etc/openvpn/server.conf
 		echo 'push "client-cert-not-required"' >> /etc/openvpn/server.conf
 		echo 'push "username-as-common-name"' >> /etc/openvpn/server.conf
-	elif [[ "$OPENVPNSYSTEM" = "DC" ]]; then
+		;;
+		3)
 		echo 'push "duplicate-cn"' >> /etc/openvpn/server.conf
-	fi
+		;;
+	esac
 	
 	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
 	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
