@@ -422,7 +422,6 @@ TXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $6" "substr ($1
 TOTAL=$(vnstat -i eth0 | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 RXTOTAL=$(vnstat -i eth0 | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
 TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
-ALLDATE=$(vnstat -i eth0 -d | awk '{print $1,$8" "substr ($3, 1, 1)}' | cut -d '-' -f 1 | cut -d 'e' -f 1 | cut -d 'd' -f 1)
 
 clear
 echo ""
@@ -439,7 +438,7 @@ echo -e "THIS MOUNT TOTAL ${RED}$MOUNT${NC}"
 echo ""
 echo -e "RECEIVE (rx) ${RED}$RXTOTAL${NC} TRANSMIT (tx) ${RED}$TXTOTAL${NC}"
 echo -e "TOTAL ${RED}$TOTAL${NC}"
-echo -e "$ALLDATE"
+echo ""
 exit
 
 	;;
