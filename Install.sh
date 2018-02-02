@@ -921,10 +921,8 @@ fi
 
 	0)
 
-rm Install.sh
-wget https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh
-chmod +x Install.sh
-./Install.sh
+rm /usr/local/bin/install
+wget -O /usr/local/bin/install "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh" && chmod +x /usr/local/bin/install && install
 
 	;;
 
