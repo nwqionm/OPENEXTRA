@@ -167,10 +167,10 @@ else
 	echo ""
 	read -p "Protocol : " -e -i 2 PROTOCOL
 	case $PROTOCOL in
-		1) 
+		1)
 		PROTOCOL=udp
 		;;
-		2) 
+		2)
 		PROTOCOL=tcp
 		;;
 	esac
@@ -268,7 +268,7 @@ crl-verify crl.pem" >> /etc/openvpn/server.conf
 	elif [[ "$OPENVPNSYSTEM" = "DC" ]]; then
 		echo 'push "duplicate-cn"' >> /etc/openvpn/server.conf
 	fi
-	
+
 	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
 	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
 		echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
