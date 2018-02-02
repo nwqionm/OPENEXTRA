@@ -79,6 +79,7 @@ case $MENU in
 
 	1)
 
+CHECKSYSTEM=$(tail -n +2 /etc/openvpn/server.conf | grep "^username-as-common-name")
 echo ""
 read -p "ชื่อลูกค้าที่ต้องการสร้าง : " -e CLIENT
 
@@ -95,6 +96,9 @@ if [[ -e /home/vps/public_html/$CLIENT.ovpn ]]; then
 	elif [[ "$REMOVE" = 'N' ]]; then
 		exit
 	fi
+fi
+if [[ $CHECKSYSTEM ]]; then
+	read -p "รหัสผ่าน : " -e PASSWD
 fi
 echo ""
 echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้ลูกค้าที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
@@ -124,9 +128,11 @@ cp /root/$CLIENT.ovpn /home/vps/public_html/
 rm -f /root/$CLIENT.ovpn
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
-echo ""
+echo -e "$PASSWD\n$PASSWD\n"|passwd $CLIENT &> /dev/null
 echo "ชื่อลูกค้า : $CLIENT"
+if [[ $CHECKSYSTEM ]]; then
+	echo "รหัสผ่าน : $PASSWD"
+fi
 echo "หมดอายุในวันที่ : $EXP"
 echo ""
 echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$CLIENT.ovpn"
