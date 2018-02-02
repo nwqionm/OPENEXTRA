@@ -16,7 +16,7 @@ echo -e "EDIT CONFIG OF CLOUD VPS ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡
 echo ""
 echo -e "|${RED}1${NC}| OPENVPN CONFIG"
 echo -e "|${RED}2${NC}| OPENVPN SERVER"
-echo -e "|${RED}3${NC}| VNSTAT"
+echo -e "|${RED}3${NC}| SQUID PROXY"
 echo -e "|${RED}4${NC}| MENU"
 echo -e "|${RED}5${NC}| "
 echo -e "|${RED}6${NC}| "
@@ -30,23 +30,40 @@ read -p "Select a Choice : " EDIT
 case $EDIT in
 
   1)
+  
 nano /etc/openvpn/client-common.txt
 exit
+
   ;;
 
   2)
+  
 nano /etc/openvpn/server.conf
 exit
+
   ;;
 
   3)
-nano /etc/vnstat.conf
-exit
+
+if [[ -e /etc/debian_version ]]; then
+	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
+  	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+				nano /etc/squid/squid.conf
+        exit
+    elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+				nano /etc/squid/squid.conf
+        exit
+    fi
+fi
+
   ;;
 
   4)
+
 nano /usr/local/bin/menu
 exit
+
   ;;
 
   0)
