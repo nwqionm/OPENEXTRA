@@ -327,10 +327,8 @@ setenv opt block-outside-dns
 key-direction 1
 verb 3" > /etc/openvpn/client-common.txt
 
-	apt-get -y install nginx
 	cd
-	rm /etc/nginx/sites-enabled/default
-	rm /etc/nginx/sites-available/default
+	apt-get -y install nginx
 	cat > /etc/nginx/nginx.conf <<END
 user www-data;
 worker_processes 2;
