@@ -413,6 +413,9 @@ fi
 
 TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
 YESTERDAY=$(vnstat -i eth0 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
+WEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
+RXWEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $3" "substr ($10, 1, 1)}')
+TXWEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $6" "substr ($10, 1, 1)}')
 MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
 RXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $3" "substr ($10, 1, 1)}')
 TXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $6" "substr ($10, 1, 1)}')
@@ -426,6 +429,9 @@ echo -e "BANDWIDTH ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
 echo -e "TODAY ${RED}$TODAY${NC}"
 echo -e "YESTERDAY ${RED}$YESTERDAY${NC}"
+echo ""
+echo -e "RECEIVE (rx) ${RED}$RXWEEK${NC} TRANSMIT (tx) ${RED}$TXWEEK${NC}"
+echo -e "CURRENT WEEK ${RED}$WEEK${NC}"
 echo ""
 echo -e "RECEIVE (rx) ${RED}$RXMOUNT${NC} TRANSMIT (tx) ${RED}$TXMOUNT${NC}"
 echo -e "THIS MOUNT TOTAL ${RED}$MOUNT${NC}"
