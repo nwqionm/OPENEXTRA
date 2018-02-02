@@ -52,7 +52,7 @@ if [[ -e /etc/debian_version ]]; then
 				nano /etc/squid/squid.conf
         exit
     elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-				nano /etc/squid/squid.conf
+				nano /etc/squid3/squid.conf
         exit
     fi
 fi
