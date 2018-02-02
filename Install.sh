@@ -181,9 +181,9 @@ else
 	read -p "DNS : " -e -i 1 DNS
 	read -p "Port proxy : " -e -i 8080 PROXY
 	echo ""
-	echo -e " |${RED}1${NC}| Client to Client : 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น สามารถสร้างไฟล์เพิ่มได้"
-	echo -e " |${RED}2${NC}| Username as Common Name : 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
-	echo -e " |${RED}3${NC}| Duplicate CN : 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
+	echo -e " |${RED}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น สามารถสร้างไฟล์เพิ่มได้"
+	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
+	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
 	echo ""
 	while [[ $OPENVPNSYSTEM != "1" && $OPENVPNSYSTEM != "2" && $OPENVPNSYSTEM != "3" ]]; do
 		read -p "OpenVPN system : " -e OPENVPNSYSTEM
