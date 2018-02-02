@@ -27,7 +27,7 @@ echo -e "|${RED} 4${NC}| CHECK ALL CLIENT ONLINE"
 echo -e "|${RED} 5${NC}| RENEW EXPIRE DATE OF CLIENT"
 echo -e "|${RED} 6${NC}| SET TIME AUTO REBOOT SERVER"
 echo -e "|${RED} 7${NC}| SPEEDTEST"
-echo -e "|${RED} 8${NC}| "
+echo -e "|${RED} 8${NC}| CHECK ALL BANDWIDTH"
 echo -e "|${RED} 9${NC}| LOCK AND UNLOCK CLIENT ${RED}ยังไม่สมบูรณ์  ${NC}"
 echo -e "|${RED}10${NC}| EDIT CONFIG OF CLOUD VPS ${RED}สำหรับการแก้ไขส่วนต่างๆภายในเครื่องเซิฟเวอร์  ${NC}"
 echo ""
@@ -410,6 +410,33 @@ fi
 	;;
 
 	8)
+
+TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
+YESTERDAY=$(vnstat -i eth0 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
+MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
+RXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $3" "substr ($10, 1, 1)}')
+TXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $6" "substr ($10, 1, 1)}')
+TOTAL=$(vnstat -i eth0 | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
+RXTOTAL=$(vnstat -i eth0 | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
+TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
+
+clear
+echo ""
+echo -e "BANDWIDTH ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+echo ""
+echo -e "TODAY ${RED}$TODAY${NC}"
+echo -e "YESTERDAY ${RED}$YESTERDAY${NC}"
+echo ""
+echo -e "THIS MOUNT RECEIVE (rx) ${RED}$RXMOUNT${NC}"
+echo -e "THIS MOUNT TRANSMIT (tx) ${RED}$TXMOUNT${NC}"
+echo -e "THIS MOUNT TOTAL ${RED}$MOUNT${NC}"
+echo ""
+echo -e "TOTAL RECEIVE (rx) ${RED}$RXTOTAL${NC}"
+echo -e "TOTAL TRANSMIT (tx) ${RED}$TXTOTAL${NC}"
+echo -e "TOTAL ${RED}$TOTAL${NC}"
+echo ""
+exit
+
 	;;
 
 	9)
