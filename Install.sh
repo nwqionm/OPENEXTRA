@@ -503,14 +503,7 @@ fi
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 	chmod +x /usr/local/bin/menu
 	apt-get -y install vnstat
-	cd /etc/openvpn/easy-rsa/
-	./easyrsa build-client-full $CLIENT nopass
-	newclient "$CLIENT"
-	cp /root/$CLIENT.ovpn /home/vps/public_html/
-	rm -f /root/$CLIENT.ovpn
-	useradd -e `date -d "365 days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
-	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+	clear
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -526,7 +519,6 @@ fi
 	echo "Port nginx : 85"
 	echo "Proxy : $IP"
 	echo "Port proxy : $PROXY"
-	echo "Download config (only you) : http://$IP:85/$CLIENT.ovpn"
 	echo ""
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
