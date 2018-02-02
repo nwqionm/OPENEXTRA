@@ -185,7 +185,7 @@ else
 	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
 	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
 	echo ""
-	while [[ $OPENVPNSYSTEM != "1" && $OPENVPNSYSTEM != "2" && $OPENVPNSYSTEM != "3" ]]; do
+	while [[ $OPENVPNSYSTEM != "CTC" && $OPENVPNSYSTEM != "UACN" && $OPENVPNSYSTEM != "DC" ]]; do
 		read -p "OpenVPN system : " -e OPENVPNSYSTEM
 	done
 	read -p "Client name: " -e CLIENT
@@ -259,14 +259,14 @@ status openvpn-status.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
 
-	if [[ "$OPENVPNSYSTEM" = "1" ]]; then
-		echo 'push "client-to-client"' >> etc/openvpn/server.conf
-	elif [[ "$OPENVPNSYSTEM" = "2" ]]; then
-		echo 'push "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login"' >> etc/openvpn/server.conf
-		echo 'push "client-cert-not-required"' >> etc/openvpn/server.conf
-		echo 'push "username-as-common-name"' >> etc/openvpn/server.conf
-	elif [[ "$OPENVPNSYSTEM" = "3" ]]; then
-		echo 'push "duplicate-cn"' >> etc/openvpn/server.conf
+	if [[ "$OPENVPNSYSTEM" = "CTC" ]]; then
+		echo 'push "client-to-client"' >> /etc/openvpn/server.conf
+	elif [[ "$OPENVPNSYSTEM" = "UACN" ]]; then
+		echo 'push "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login"' >> /etc/openvpn/server.conf
+		echo 'push "client-cert-not-required"' >> /etc/openvpn/server.conf
+		echo 'push "username-as-common-name"' >> /etc/openvpn/server.conf
+	elif [[ "$OPENVPNSYSTEM" = "DC" ]]; then
+		echo 'push "duplicate-cn"' >> /etc/openvpn/server.conf
 	fi
 	
 	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
