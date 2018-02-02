@@ -258,15 +258,15 @@ verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
 	case $OPENVPNSYSTEM in
 		1)
-		echo 'push "client-to-client"' >> /etc/openvpn/server.conf
+		echo "client-to-client" >> /etc/openvpn/server.conf
 		;;
 		2)
-		echo 'push "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login"' >> /etc/openvpn/server.conf
-		echo 'push "client-cert-not-required"' >> /etc/openvpn/server.conf
-		echo 'push "username-as-common-name"' >> /etc/openvpn/server.conf
+		echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+		echo "client-cert-not-required" >> /etc/openvpn/server.conf
+		echo "username-as-common-name" >> /etc/openvpn/server.conf
 		;;
 		3)
-		echo 'push "duplicate-cn"' >> /etc/openvpn/server.conf
+		echo "duplicate-cn" >> /etc/openvpn/server.conf
 		;;
 	esac
 	
@@ -344,6 +344,12 @@ comp-lzo
 setenv opt block-outside-dns
 key-direction 1
 verb 3" > /etc/openvpn/client-common.txt
+
+	case $OPENVPNSYSTEM in
+		2)
+		echo "auth-user-pass" >> /etc/openvpn/client-common.txt
+		;;
+	esac
 
 	cd
 	apt-get -y install nginx
