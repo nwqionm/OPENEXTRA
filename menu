@@ -509,6 +509,7 @@ echo "client-to-client" >> /etc/openvpn/server.conf
 if [[ -e /usr/local/bin/Check-System ]]; then
 	rm -rf /usr/local/bin/Check-System
 fi
+service openvpn restart
 
 	;;
 
@@ -525,6 +526,7 @@ echo "auth-user-pass" >> /etc/openvpn/client-common.txt
 if [[ ! -e /usr/local/bin/Check-System ]]; then
 	echo "Check System" >> /usr/local/bin/Check-System
 fi
+service openvpn restart
 
 	;;
 
@@ -538,6 +540,7 @@ echo "duplicate-cn" >> /etc/openvpn/server.conf
 if [[ -e /usr/local/bin/Check-System ]]; then
 	rm -rf /usr/local/bin/Check-System
 fi
+service openvpn restart
 
 	;;
 	
