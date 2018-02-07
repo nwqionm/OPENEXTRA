@@ -794,6 +794,12 @@ fi
 if [[ -e /etc/default/dropbear ]]; then
 	apt-get remove --purge -y dropbear
 	/etc/init.d/ssh stop
+	clear
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "SSH Dropbear .....Removed."
 	exit
 
 elif [[ ! -e /etc/default/dropbear ]]; then
