@@ -657,6 +657,14 @@ fi
 
 	3)
 
+NUMBEROFCLIENTS=$(tail -n +2 /usr/local/bin/Ban-Unban)
+if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
+	echo ""
+	echo "ไม่เคยมีบัญชีอยู่ในระบบ"
+	echo ""
+	exit
+fi
+
 echo ""
 echo -e "${RED}รายชื่อบัญชีที่ถูกแบน ${NC} "
 echo ""
