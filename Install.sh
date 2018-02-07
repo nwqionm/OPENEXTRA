@@ -201,6 +201,11 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		echo "Removal Aborted."
 	fi
 	exit
+elif [[ -e /etc/apt/sources.list.d/pritunl.list ]]; then
+	echo ""
+	echo "ไม่สามารถติดตั้ง OpenVPN ได้"
+	echo "เนื่องจาก IP นี้ได้ติดตั้ง OpenVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ไปก่อนหน้านี้แล้ว"
+	exit
 else
 	clear
 	read -p "IP Server : " -e -i $IP IP
