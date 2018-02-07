@@ -492,7 +492,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "รวมทั้งหมด ${RED}$TOTAL${NC}"
 	echo ""
 	exit
-	
+
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "BANDWIDTH ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
