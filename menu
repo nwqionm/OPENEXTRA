@@ -543,6 +543,8 @@ fi
 	
 esac
 
+	;;
+
 	10)
 
 clear
