@@ -82,8 +82,6 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	fi
 	echo -e "|${RED}4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
 	echo -e "|${RED}5${NC}| "
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 7 - 8 - 9"
 	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 		echo -e "|${RED}6${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
 		echo "	Ubuntu 14.04 - 16.04 - 17.04"
@@ -118,8 +116,6 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	fi
 	echo -e "|${RED}4${NC}| INSTALL WEB PANEL ${RED} ✖   ${NC}"
 	echo -e "|${RED}5${NC}| "
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 7 - 8 - 9"
 	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 		echo -e "|${RED}6${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
 		echo "	Ubuntu 14.04 - 16.04 - 17.04"
