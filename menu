@@ -607,7 +607,7 @@ if [ $? -eq 0 ]; then
 	echo ""
 	echo "$CLIENT" >> /usr/local/bin/Ban-Unban
 	exit
-else
+elif [ $? -eq 1 ]; then
 	clear
 	echo ""
 	echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
@@ -630,15 +630,15 @@ echo ""
 read -p "ชื่อบัญชีที่ต้องการปลดแบน : " CLIENT
 
 if [ $? -eq 0 ]; then
-	clear
 	passwd -u $CLIENT
+	clear
 	echo ""
 	echo "บัญชีชื่อ $CLIENT ได้ถูกปลดแบนเรียบร้อยแล้ว"
 	echo ""
 	sed -i 's/$CLIENT/# $CLIENT/g' /usr/local/bin/Ban-Unban
 	exit
 
-else
+elif [ $? -eq 1 ]; then
 	clear
 	echo ""
 	echo "ชื่อบัญชีที่ระบุไม่ได้ถูกแบน หรือไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
@@ -657,11 +657,11 @@ fi
 
 	3)
 
-echoo ""
+echo ""
 echo -e "${RED}รายชื่อบัญชีที่ถูกแบน ${NC} "
-echoo ""
+echo ""
 sed '/#/ d' /usr/local/bin/Ban-Unban
-echoo ""
+echo ""
 exit
 
 	;;
