@@ -475,7 +475,7 @@ RXTOTAL=$(vnstat -i eth0 | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
 TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
 
 clear
-if [[ -e /usr/local/bin/Check-System ]]; then
+if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "แบนด์วิดท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
@@ -493,7 +493,7 @@ if [[ -e /usr/local/bin/Check-System ]]; then
 	echo ""
 	exit
 	
-elif [[ ! -e /usr/local/bin/Check-System ]]; then
+elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "BANDWIDTH ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
