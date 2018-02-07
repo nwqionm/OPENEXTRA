@@ -19,6 +19,10 @@ ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
 
 clear
 
+IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+if [[ "$IP" = "" ]]; then
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+fi
 
 if [[ -e /etc/debian_version ]]; then
 	OS=debian
@@ -58,35 +62,80 @@ echo -e "${RED}  (\_(\  ${NC}"
 echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
 echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
-echo -e "FUNCTION SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
-echo ""
-if [[ -e /etc/openvpn/server.conf ]]; then
-echo -e "|${RED}1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
-else
-echo -e "|${RED}1${NC}| OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+if [[ -e /usr/local/bin/Check-Thai ]]; then
+	echo -e "ฟังก์ชั่นสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+	echo ""
+	if [[ -e /etc/openvpn/server.conf ]]; then
+		echo -e "|${RED}1${NC}| ถอนการติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+	else
+		echo -e "|${RED}1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+	fi
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 7 - 8 - 9"
+	echo -e "|${RED}2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 8 - 9"
+	if [[ ! -e /etc/default/dropbear ]]; then
+		echo -e "|${RED}3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	elif [[ -e /etc/default/dropbear ]]; then
+		echo -e "|${RED}3${NC}| ถอนการติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	fi
+	echo -e "|${RED}4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
+	echo -e "|${RED}5${NC}| "
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 7 - 8 - 9"
+	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED}6${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		echo "	Ubuntu 14.04 - 16.04 - 17.04"
+		echo "	Debian 7 - 8 - 9"
+	else
+		echo -e "|${RED}6${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+	fi
+	echo ""
+	echo -e "|${RED}0${NC}| อัพเดตฟังก์ชั่นสคริปท์"
+	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
+	echo ""
+	echo ""
+	read -p "เลือกหัวข้อฟังก์ชั่นที่ต้องการใช้งาน : " FUNCTIONSCRIPT
+	
+elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+	echo -e "FUNCTION SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+	echo ""
+	if [[ -e /etc/openvpn/server.conf ]]; then
+		echo -e "|${RED}1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+	else
+		echo -e "|${RED}1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+	fi
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 7 - 8 - 9"
+	echo -e "|${RED}2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 8 - 9"
+	if [[ ! -e /etc/default/dropbear ]]; then
+		echo -e "|${RED}3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	elif [[ -e /etc/default/dropbear ]]; then
+		echo -e "|${RED}3${NC}| REMOVE SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	fi
+	echo -e "|${RED}4${NC}| INSTALL WEB PANEL ${RED} ✖   ${NC}"
+	echo -e "|${RED}5${NC}| "
+	echo "	Ubuntu 14.04 - 16.04 - 17.04"
+	echo "	Debian 7 - 8 - 9"
+	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED}6${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
+		echo "	Ubuntu 14.04 - 16.04 - 17.04"
+		echo "	Debian 7 - 8 - 9"
+	else
+		echo -e "|${RED}6${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
+	fi
+	echo ""
+	echo -e "|${RED}0${NC}| UPDATE FUNCTION SCRIPT"
+	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาไทย"
+	echo ""
+	echo ""
+	read -p "Select a Function Script : " FUNCTIONSCRIPT
 fi
-echo "	Ubuntu 14.04 - 16.04 - 17.04"
-echo "	Debian 7 - 8 - 9"
-echo -e "|${RED}2${NC}| OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
-echo "	Ubuntu 14.04 - 16.04 - 17.04"
-echo "	Debian 8 - 9"
-echo -e "|${RED}3${NC}| SSH + DROPBEAR ${RED} ✖   ${NC}"
-echo -e "|${RED}4${NC}| WEB PANEL ${RED} ✖   ${NC}"
-echo -e "|${RED}5${NC}| CHECK BANDWIDTH (ALERT BANDWIDTH ON MENU) ${GREEN} ✔   ${NC}"
-echo "	Ubuntu 14.04 - 16.04 - 17.04"
-echo "	Debian 7 - 8 - 9"
-echo -e "|${RED}6${NC}| SQUID PROXY ${GREEN} ✔   ${NC}"
-echo "	Ubuntu 14.04 - 16.04 - 17.04"
-echo "	Debian 7 - 8 - 9"
-echo -e "|${RED}7${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
-echo ""
-echo -e "|${RED}0${NC}| UPDATE FUNCTION SCRIPT"
-echo ""
-echo -e "     ${RED}ฟังก์ชั่นที่ 1 และ 2 เลือกอย่างใดอย่างหนึ่งเท่านั้น${NC}"
-echo ""
-read -p "Select a Function Script : " MENUSCRIPT
 
-case $MENUSCRIPT in
+case $FUNCTIONSCRIPT in
 
 	1)
 
@@ -105,11 +154,6 @@ newclient () {
 	cat /etc/openvpn/ta.key >> ~/$1.ovpn
 	echo "</tls-auth>" >> ~/$1.ovpn
 }
-
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-fi
 
 if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
@@ -151,16 +195,17 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		rm -rf /etc/openvpn
 		rm -f /usr/local/bin/menu
 		echo ""
-		echo "OpenVPN removed."
+		echo "OpenVPN Removed."
 	else
 		echo ""
-		echo "Removal aborted."
+		echo "Removal Aborted."
 	fi
 	exit
 else
 	clear
-	read -p "IP address : " -e -i $IP IP
-	read -p "Port : " -e -i 1194 PORT
+	read -p "IP Server : " -e -i $IP IP
+	read -p "Port Server : " -e -i 1194 PORT
+	read -p "Port Proxy : " -e -i 8080 PROXY
 	echo ""
 	echo -e " |${RED}1${NC}| UDP"
 	echo -e " |${RED}2${NC}| TCP"
@@ -175,18 +220,17 @@ else
 		;;
 	esac
 	echo ""
-	echo -e " |${RED}1${NC}| DNS Current system"
+	echo -e " |${RED}1${NC}| DNS Current System"
 	echo -e " |${RED}2${NC}| DNS Google"
 	echo ""
 	read -p "DNS : " -e -i 1 DNS
-	read -p "Port proxy : " -e -i 8080 PROXY
 	echo ""
 	echo -e " |${RED}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น สามารถสร้างไฟล์เพิ่มได้"
 	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
 	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
 	echo ""
-	read -p "OpenVPN system : " -e OPENVPNSYSTEM
-	read -p "Client name: " -e CLIENT
+	read -p "OpenVPN System : " -e OPENVPNSYSTEM
+	read -p "Server Name: " -e CLIENT
 	echo ""
 	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
 
@@ -348,6 +392,7 @@ verb 3" > /etc/openvpn/client-common.txt
 	case $OPENVPNSYSTEM in
 		2)
 		echo "auth-user-pass" >> /etc/openvpn/client-common.txt
+		echo "Check System" >> /usr/local/bin/Check-System
 		;;
 	esac
 
@@ -509,16 +554,16 @@ fi
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
 	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
-	echo "IP server : $IP"
-	echo "Port : $PORT"
+	echo "IP Server : $IP"
+	echo "Port Server : $PORT"
 	if [[ "$PROTOCOL" = 'udp' ]]; then
 		echo "Protocal : UDP"
 	elif [[ "$PROTOCOL" = 'tcp' ]]; then
 		echo "Protocal : TCP"
 	fi
-	echo "Port nginx : 85"
-	echo "Proxy : $IP"
-	echo "Port proxy : $PROXY"
+	echo "Port Nginx : 85"
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
 	echo ""
 	echo "====================================================="
 	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
@@ -530,9 +575,12 @@ fi
 
 	2)
 
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-		IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+if [[ -e /etc/openvpn/server.conf ]]; then
+	echo ""
+	echo "ไม่สามารถติดตั้ง Pritunl ได้"
+	echo "เนื่องจาก IP นี้ได้ติดตั้ง OpenVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอลไปก่อนหน้านี้แล้ว"
+	echo ""
+	exit
 fi
 
 # Debian 8
@@ -675,9 +723,9 @@ END
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
-	echo "Pritunl .....Install Finish."
-	echo "Proxy : $IP"
-	echo "Port  : $PROXY"
+	echo "Pritunl, Squid Proxy .....Install Finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
 	echo ""
 	echo "Pritunl : http://$IP"
 	echo ""
@@ -727,9 +775,9 @@ END
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
-	echo "Pritunl .....Install Finish."
-	echo "Proxy : $IP"
-	echo "Port  : $PROXY"
+	echo "Pritunl, Squid Proxy .....Install Finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
 	echo ""
 	echo "Pritunl : http://$IP"
 	echo ""
@@ -742,56 +790,80 @@ fi
 	;;
 
 	3)
+
+if [[ -e /etc/default/dropbear ]]; then
+	apt-get remove --purge -y dropbear
+	/etc/init.d/ssh stop
+	exit
+
+elif [[ ! -e /etc/default/dropbear ]]; then
+	apt-get -y install dropbear
+	sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
+	/etc/init.d/dropbear restart
+	PORTSSH=$(grep '^port ' /etc/ssh/sshd_config | cut -d " " -f 2)
+	clear
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "SSH Dropbear .....Install Finish."
+	echo "IP Addrsss : $IP"
+	echo "Port SSH : $PORTSSH"
+	echo ""
+	if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
+		if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			PROXY=$(grep '^http_port ' /etc/squid3/squid.conf | cut -d " " -f 2)
+			echo "IP Proxy : $IP"
+			echo "Port Proxy : $PROXY"
+
+		elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+			PROXY=$(grep '^http_port ' /etc/squid/squid.conf | cut -d " " -f 2)
+			echo "IP Proxy : $IP"
+			echo "Port Proxy : $PROXY"
+		fi
+
+	else
+		echo "No Proxy"
+	fi
+	echo ""
+	exit
+fi
+
 	;;
 
 	4)
 	;;
 
 	5)
-	
-if [[ -e /etc/vnstat.conf ]]; then
-	apt-get remove --purge -y vnstat
-fi
-
-apt-get -y install vnstat
-echo ""
-echo "You can watch the Bandwidth on Menu Script."
-echo ""
-exit
-
 	;;
 
 	6)
 
 if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-
-	while [[ $EVERSQUID != "Y" && $EVERSQUID != "N" ]]; do
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		apt-get -y remove --purge squid3
 		echo ""
-		echo "OS ของคุณเคยติดตั้ง Squid Proxy ไปก่อนหน้านี้แล้ว"
-		echo "หากเซิฟเวอร์เกิดเหตุขัดข้องที่เกี่ยวกับ Squid Proxy"
-		echo "สามารถที่จะติดตั้งใหม่ได้อีกครั้ง"
+		echo "Source by Mnm Ami"
+		echo "Donate via TrueMoney Wallet : 082-038-2600"
 		echo ""
-		read -p "ต้องการติดตั้ง Squid Proxy ใหม่ หรือไม่ ? (Y or N) : " -e -i Y EVERSQUID
-	done
+		echo "Squid Proxy .....Removed."
+		exit
 
-	if [[ "$EVERSQUID" = "N" ]]; then
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		apt-get -y remove --purge squid
+		echo ""
+		echo "Source by Mnm Ami"
+		echo "Donate via TrueMoney Wallet : 082-038-2600"
+		echo ""
+		echo "Squid Proxy .....Removed."
 		exit
 	fi
 fi
 
-IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-if [[ "$IP" = "" ]]; then
-	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-fi
-
 echo ""
-read -p "Port proxy : " -e -i 8080 PROXY
+read -p "Port Proxy : " -e -i 8080 PROXY
 
 if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-	if [[ -e /etc/squid3/squid.conf ]]; then
-		apt-get -y remove --purge squid3
-	fi
-
 	apt-get -y install squid3
 	cat > /etc/squid3/squid.conf <<END
 http_port $PROXY
@@ -833,17 +905,13 @@ END
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
-	echo "Squid proxy .....Install finish."
-	echo "Proxy : $IP"
-	echo "Port proxy : $PROXY"
+	echo "Squid Proxy .....Install finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
 	echo ""
 	exit
 
 elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-	if [[ -e /etc/squid/squid.conf ]]; then
-		apt-get -y remove --purge squid
-	fi
-
 	apt-get -y install squid
 	cat > /etc/squid/squid.conf <<END
 http_port $PROXY
@@ -881,35 +949,9 @@ END
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
-	echo "Squid proxy .....Install finish."
-	echo "Proxy : $IP"
-	echo "Port proxy : $PROXY"
-	echo ""
-	exit
-
-fi
-
-	;;
-
-	7)
-
-if [[ -e /etc/squid/squid.conf ]]; then
-	apt-get -y remove --purge squid
-	echo ""
-	echo "Squid proxy removed."
-	echo ""
-	exit
-
-elif [[ -e /etc/squid3/squid.conf ]]; then
-	apt-get -y remove --purge squid3
-	echo ""
-	echo "Squid proxy removed."
-	echo ""
-	exit
-
-else
-	echo ""
-	echo "คุณยังไม่เคยติดตั้ง Squid Proxy"
+	echo "Squid Proxy .....Install finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
 	echo ""
 	exit
 
@@ -921,6 +963,18 @@ fi
 
 rm /usr/local/bin/install
 wget -O /usr/local/bin/install "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh" && chmod +x /usr/local/bin/install && install
+
+	;;
+
+	00)
+
+if [[ -e /usr/local/bin/Check-Thai ]]; then
+	rm -f /usr/local/bin/Check-Thai
+	install
+elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+	echo "Check Thai" >> /usr/local/bin/Check-Thai
+	install
+fi
 
 	;;
 
