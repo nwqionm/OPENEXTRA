@@ -422,13 +422,12 @@ exit
 
 	8)
 
-if [[ -e /usr/local/bin/Reboot-Log ]]; then
+if [[ ! -e /usr/local/bin/Reboot-Log ]]; then
 	echo ""
 	echo "ไม่มีบันทึกการรีบูทเซิฟเวอร์"
 	echo ""
 	exit
 else
-	clear
 	echo ""
 	cat /usr/local/bin/Reboot-Log
 	echo ""
@@ -439,7 +438,7 @@ fi
 
 	9)
 
-echo "" > /usr/local/bin/Reboot-Log
+rm -rf /usr/local/bin/Reboot-Log
 echo ""
 echo "ลบบันทึกการรีบูทเซิฟเวอร์เรียบร้อยแล้ว"
 echo ""
