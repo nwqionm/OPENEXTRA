@@ -61,7 +61,8 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "|${RED}10${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
 	fi
 	echo -e "|${RED}11${NC}| START-STOP-RESTART OPERATION SYSTEM"
-	echo -e "|${RED}12${NC}| EDIT CONFIG ${RED}For modifying parts within the server.  ${NC}"
+	echo -e "|${RED}12${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${RED}13${NC}| EDIT CONFIG ${RED}For modifying parts within the server.  ${NC}"
 	echo ""
 	echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาไทย"
