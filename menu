@@ -16,6 +16,7 @@ NC='\033[0m'
 if [[ ! -e /usr/lib/ruby ]]; then
 	apt-get -y install ruby-full
 	gem install lolcat
+	menu
 fi
 
 # Menu
