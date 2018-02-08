@@ -412,7 +412,7 @@ exit
 
 	7)
 
-rm -f /usr/local/bin/Reboot-Server
+rm -rf /usr/local/bin/Reboot-Server
 echo ""
 echo "หยุดการรีบูทเซิฟเวอร์เรียบร้อยแล้ว"
 echo ""
