@@ -774,21 +774,21 @@ echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
 echo ""
 echo ""
 echo -e "${RED}โปรดอ่าน${NC} : หน่วยวัดที่ต้องระบุจะเป็น Kilobyte (Kb)"
-echo "                5 Mb =       ${RED}5120${NC} Kb"
-echo "              10 Mb =     ${RED}10240${NC} Kb"
-echo "              20 Mb =     ${RED}20480${NC} Kb"
-echo "              50 Mb =     ${RED}51200${NC} Kb"
-echo "            100 Mb =   ${RED}102400${NC} Kb"
-echo "            500 Mb =   ${RED}512000${NC} Kb"
-echo "          1000 Mb = ${RED}1024000${NC} Kb"
-echo "          2000 Mb = ${RED}2048000${NC} Kb"
+echo -e "             5 Mb =       ${RED}5120${NC} Kb"
+echo -e "            10 Mb =     ${RED}10240${NC} Kb"
+echo -e "            20 Mb =     ${RED}20480${NC} Kb"
+echo -e "            50 Mb =     ${RED}51200${NC} Kb"
+echo -e "           100 Mb =   ${RED}102400${NC} Kb"
+echo -e "           500 Mb =   ${RED}512000${NC} Kb"
+echo -e "          1000 Mb = ${RED}1024000${NC} Kb"
+echo -e "          2000 Mb = ${RED}2048000${NC} Kb"
 echo ""
 read -p "ปรับความเร็วอินเตอร์เน็ต (ดาวน์โหลด) : " -e DOWNLOAD
 read -p "ปรับความเร็วอินเตอร์เน็ต (อัพโหลด) : " -e UPLOAD
 
 trickle -d $DOWNLOAD -u $UPLOAD bash
 echo ""
-echo "Success : Download ${RED}$DOWNLOAD${NC} Kbps | Upload ${RED}$UPLOAD${NC} Kbps"
+echo -e "Success : Download ${RED}$DOWNLOAD${NC} Kbps | Upload ${RED}$UPLOAD${NC} Kbps"
 echo ""
 exit
 
