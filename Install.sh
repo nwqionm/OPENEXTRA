@@ -396,6 +396,7 @@ dev tun
 proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
+remote $CLIENT 999 udp
 remote $IP:$PORT@static.tlcdn1.com/cdn.line-apps.com/line.naver.jp/nelo2-col.linecorp.com/mdm01.cpall.co.th/lvs.truehits.in.th/dl-obs.official.line.naver.jp $PORT
 http-proxy $IP $PROXY
 resolv-retry infinite
