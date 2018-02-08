@@ -13,11 +13,16 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+if [[ ! -e /usr/lib/ruby ]]; then
+	apt-get -y install ruby-full
+	gem install lolcat
+fi
+
 # Menu
 echo ""
-echo -e "${RED}  (\_(\  ${NC}"
-echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
-echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "เมนูสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
@@ -179,6 +184,7 @@ rm -f /root/$CLIENT.ovpn
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 echo -e "$PASSWD\n$PASSWD\n"|passwd $CLIENT &> /dev/null
+clear
 echo "ชื่อบัญชี : $CLIENT"
 if [[ $CHECKSYSTEM ]]; then
 	echo "รหัสผ่าน : $PASSWD"
@@ -193,7 +199,7 @@ exit
 
 	2) # ==================================================================================================================
 
-clear
+
 NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
 if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 	echo ""
@@ -202,6 +208,11 @@ if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 	exit
 fi
 
+clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s '. '
 if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
@@ -240,6 +251,11 @@ exit
 	3) # ==================================================================================================================
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
+echo ""
 UIDN=1000
 echo ""
 echo -e "${RED}รายชื่อบัญชี          วันหมดอายุ ${NC} "
@@ -265,12 +281,16 @@ exit
 	4) # ==================================================================================================================
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
+echo ""
 if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
 	a=$((3+((line-8)/2)))
 	b=$(((line-8)/2))
 
-	echo ""
 	echo -e "${RED}รายชื่อบัญชีที่กำลังออนไลน์ในขณะนี้ ${NC} ";
 	echo ""
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
@@ -285,6 +305,10 @@ fi
 	5) # ==================================================================================================================
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 read -p "ชื่อบัญชีที่ต้องการเปลี่ยนวันหมดอายุ : " -e CLIENT
 
@@ -333,6 +357,10 @@ exit
 fi
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 echo -e "${RED}ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ ${NC} "
 echo ""
@@ -479,6 +507,11 @@ RXTOTAL=$(vnstat -i eth0 | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
 TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
+echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "แบนด์วิดท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
@@ -521,6 +554,10 @@ fi
 	9) # ==================================================================================================================
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 echo -e "${RED}ปรับเปลี่ยนระบบของเซิฟเวอร์ ${NC} "
 echo ""
@@ -584,6 +621,10 @@ esac
 	10) # ==================================================================================================================
 
 clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 echo -e "${RED}แบนและปลดแบนบัญชีผู้ใช้ ${NC} "
 echo ""
@@ -666,9 +707,9 @@ esac
 
 clear
 echo ""
-echo -e "${RED}  (\_(\  ${NC}"
-echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
-echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 echo -e "เปิด-ปิด-รีสตาร์ท การทำงานของระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
@@ -766,14 +807,14 @@ esac
 
 	12) # ==================================================================================================================
 
+clear
+echo ""
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
+echo ""
 if [[ ! -e /etc/trickled.conf ]]; then
 	apt-get install trickle
-	clear
-	echo ""
-	echo -e "${RED}  (\_(\  ${NC}"
-	echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
-	echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
-	echo ""
 	echo -e "${RED}โปรดอ่าน${NC} : หน่วยวัดขนาดความเร็วต้องระบุเป็น Kilobyte (Kb)"
 	echo "          วิธีการคำนวนเพื่อให้ได้หน่วยวัด Kilobyte ( 1024 x Mb = Kb )"
 	echo "          นำเลข 1024 คูณด้วยจำนวน Mb ที่ต้องการ ผลลัพธ์ที่ออกจะได้เป็น Kb"
@@ -798,12 +839,6 @@ if [[ ! -e /etc/trickled.conf ]]; then
 	exit
 
 elif [[ -e /etc/trickled.conf ]]; then
-	clear
-	echo ""
-	echo -e "${RED}  (\_(\  ${NC}"
-	echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
-	echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
-	echo ""
 	echo -e "${RED}โปรดอ่าน${NC} : หน่วยวัดขนาดความเร็วต้องระบุเป็น Kilobyte (Kb)"
 	echo "          วิธีการคำนวนเพื่อให้ได้หน่วยวัด Kilobyte ( 1024 x Mb = Kb )"
 	echo "          นำเลข 1024 คูณด้วยจำนวน Mb ที่ต้องการ ผลลัพธ์ที่ออกจะได้เป็น Kb"
@@ -834,9 +869,9 @@ fi
 
 clear
 echo ""
-echo -e "${RED}  (\_(\  ${NC}"
-echo -e "${RED} (=’ :’) :* ${NC} Script by Mnm Ami"
-echo -e "${RED}  (,(”)(”) °.¸¸.• ${NC}"
+echo -e "  (\_(\" | lolcat
+echo -e " (=’ :’) :* Script by Mnm Ami" | lolcat
+echo -e "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 echo -e "แก้ไขคอนฟิกต่างๆในระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
