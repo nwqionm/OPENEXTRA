@@ -789,10 +789,10 @@ echo ""
 read -p "ปรับความเร็วอินเตอร์เน็ต (ดาวน์โหลด) : " -e DOWNLOAD
 read -p "ปรับความเร็วอินเตอร์เน็ต (อัพโหลด) : " -e UPLOAD
 
-trickle -d $DOWNLOAD -u $UPLOAD bash
 echo ""
 echo -e "Success : Download ${RED}$DOWNLOAD${NC} Kbps | Upload ${RED}$UPLOAD${NC} Kbps"
 echo ""
+trickle -d $DOWNLOAD -u $UPLOAD bash
 exit
 
 	;;
