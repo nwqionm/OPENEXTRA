@@ -862,7 +862,7 @@ fi
 	4)
 	;;
 
-	)
+	5)
 
 if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
