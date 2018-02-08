@@ -66,31 +66,31 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "ฟังก์ชั่นสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	if [[ -e /etc/openvpn/server.conf ]]; then
-		echo -e "|${RED}1${NC}| ถอนการติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 1${NC}| ถอนการติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
 	else
-		echo -e "|${RED}1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
 	fi
 	echo "	Ubuntu 14.04 - 16.04 - 17.04"
 	echo "	Debian 7 - 8 - 9"
-	echo -e "|${RED}2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
+	echo -e "|${RED} 2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
 	echo "	Ubuntu 14.04 - 16.04 - 17.04"
 	echo "	Debian 8 - 9"
 	if [[ ! -e /etc/default/dropbear ]]; then
-		echo -e "|${RED}3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	elif [[ -e /etc/default/dropbear ]]; then
-		echo -e "|${RED}3${NC}| ถอนการติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 3${NC}| ถอนการติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	fi
-	echo -e "|${RED}4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
-	echo -e "|${RED}5${NC}| "
-	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-		echo -e "|${RED}6${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+	echo -e "|${RED} 4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
+	echo -e "|${RED} 5${NC}| "
+	if [[ ! -e /etc/squid/squid.conf || ! -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED} 6${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
 		echo "	Ubuntu 14.04 - 16.04 - 17.04"
 		echo "	Debian 7 - 8 - 9"
-	else
-		echo -e "|${RED}6${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+	elif [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED} 6${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
 	fi
 	echo ""
-	echo -e "|${RED}0${NC}| อัพเดตฟังก์ชั่นสคริปท์"
+	echo -e "|${RED} 0${NC}| อัพเดตฟังก์ชั่นสคริปท์"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
 	echo ""
 	echo ""
@@ -100,31 +100,31 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "FUNCTION SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	if [[ -e /etc/openvpn/server.conf ]]; then
-		echo -e "|${RED}1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
 	else
-		echo -e "|${RED}1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
 	fi
 	echo "	Ubuntu 14.04 - 16.04 - 17.04"
 	echo "	Debian 7 - 8 - 9"
-	echo -e "|${RED}2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
+	echo -e "|${RED} 2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
 	echo "	Ubuntu 14.04 - 16.04 - 17.04"
 	echo "	Debian 8 - 9"
 	if [[ ! -e /etc/default/dropbear ]]; then
-		echo -e "|${RED}3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	elif [[ -e /etc/default/dropbear ]]; then
-		echo -e "|${RED}3${NC}| REMOVE SSH DROPBEAR ${GREEN} ✔   ${NC}"
+		echo -e "|${RED} 3${NC}| REMOVE SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	fi
-	echo -e "|${RED}4${NC}| INSTALL WEB PANEL ${RED} ✖   ${NC}"
-	echo -e "|${RED}5${NC}| "
-	if [[ ! -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-		echo -e "|${RED}6${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
+	echo -e "|${RED} 4${NC}| INSTALL WEB PANEL ${RED} ✖   ${NC}"
+	echo -e "|${RED} 5${NC}| "
+	if [[ ! -e /etc/squid/squid.conf || ! -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED} 6${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
 		echo "	Ubuntu 14.04 - 16.04 - 17.04"
 		echo "	Debian 7 - 8 - 9"
-	else
-		echo -e "|${RED}6${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
+	elif [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
+		echo -e "|${RED} 6${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 	fi
 	echo ""
-	echo -e "|${RED}0${NC}| UPDATE FUNCTION SCRIPT"
+	echo -e "|${RED} 0${NC}| UPDATE FUNCTION SCRIPT"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาไทย"
 	echo ""
 	echo ""
