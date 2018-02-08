@@ -81,13 +81,23 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "|${RED} 3${NC}| ถอนการติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	fi
 	echo -e "|${RED} 4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
-	echo -e "|${RED} 5${NC}| "
-	if [[ ! -e /etc/squid/squid.conf || ! -e /etc/squid3/squid.conf ]]; then
-		echo -e "|${RED} 6${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
-		echo "	Ubuntu 14.04 - 16.04 - 17.04"
-		echo "	Debian 7 - 8 - 9"
-	elif [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-		echo -e "|${RED} 6${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${RED} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+			echo "	Ubuntu 14.04 - 16.04 - 17.04"
+			echo "	Debian 7 - 8 - 9"
+		elif [[ -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${RED} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo -e "|${RED} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+			echo "	Ubuntu 14.04 - 16.04 - 17.04"
+			echo "	Debian 7 - 8 - 9"
+		elif [[ -e /etc/squid/squid.conf ]]; then
+			echo -e "|${RED} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
 	fi
 	echo ""
 	echo -e "|${RED} 0${NC}| อัพเดตฟังก์ชั่นสคริปท์"
