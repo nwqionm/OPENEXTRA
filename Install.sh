@@ -17,12 +17,13 @@ fi
 # Set Localtime GMT +7
 ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
 
-clear
 if [[ ! -e /usr/lib/ruby ]]; then
 	apt-get -y install ruby-full
 	gem install lolcat
 	install
 fi
+
+clear
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
 	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
