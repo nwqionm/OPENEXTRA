@@ -84,7 +84,7 @@ if [[ -e /etc/vnstat.conf ]]; then
 		echo -e "บัญชีที่ออนไลน์ในขณะนี้ : ${RED}$TOTALONLINE${NC} "
 		echo -e "แบนด์วิดท์ : วันนี้ ${RED}$TODAY${NC} เดือนนี้ ${RED}$MOUNT${NC} รวมทั้งหมด ${RED}$TOTAL${NC}"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "TOTAL CLIENT ONLINE : ${RED}$TOTALONLINE${NC} "
+		echo -e "CLIENT ONLINE NOW : ${RED}$TOTALONLINE${NC} "
 		echo -e "BANDWIDTH : TODAY ${RED}$TODAY${NC} THIS MOUNT ${RED}$MOUNT${NC} TOTAL ${RED}$TOTAL${NC}"
 	fi
 fi
