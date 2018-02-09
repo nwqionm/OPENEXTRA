@@ -79,10 +79,10 @@ if [[ -e /etc/vnstat.conf ]]; then
 	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "แบนด์วิดท์ : ${RED}$TOTAL${NC}"
+		echo -e "แบนด์วิดท์ : ${RED}$TOTALb${NC}"
 		echo -e "บัญชีที่ออนไลน์ในขณะนี้ : ${RED}$TOTALONLINE${NC} "
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "BANDWIDTH : ${RED}$TOTAL${NC}"
+		echo -e "BANDWIDTH : ${RED}$TOTALb${NC}"
 		echo -e "CLIENT ONLINE NOW : ${RED}$TOTALONLINE${NC} "
 	fi
 fi
@@ -522,17 +522,17 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "แบนด์วิดท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
-	echo -e "วันนี้ ${RED}$TODAY${NC}"
-	echo -e "เมื่อวานนี้ ${RED}$YESTERDAY${NC}"
+	echo -e "วันนี้ ${RED}$TODAYb${NC}"
+	echo -e "เมื่อวานนี้ ${RED}$YESTERDAYb${NC}"
 	echo ""
-	echo -e "รับข้อมูล (rx) ${RED}$RXWEEK${NC} ส่งข้อมูล (tx) ${RED}$TXWEEK${NC}"
-	echo -e "สัปดาห์นี้ ${RED}$WEEK${NC}"
+	echo -e "รับข้อมูล (rx) ${RED}$RXWEEKb${NC} ส่งข้อมูล (tx) ${RED}$TXWEEKb${NC}"
+	echo -e "สัปดาห์นี้ ${RED}$WEEKb${NC}"
 	echo ""
-	echo -e "รับข้อมูล (rx) ${RED}$RXMOUNT${NC} ส่งข้อมูล (tx) ${RED}$TXMOUNT${NC}"
-	echo -e "รวมทั้งหมดเฉพาะเดือนนี้ ${RED}$MOUNT${NC}"
+	echo -e "รับข้อมูล (rx) ${RED}$RXMOUNTb${NC} ส่งข้อมูล (tx) ${RED}$TXMOUNTb${NC}"
+	echo -e "รวมทั้งหมดเฉพาะเดือนนี้ ${RED}$MOUNTb${NC}"
 	echo ""
-	echo -e "รับข้อมูล (rx) ${RED}$RXTOTAL${NC} ส่งข้อมูล (tx) ${RED}$TXTOTAL${NC}"
-	echo -e "รวมทั้งหมด ${RED}$TOTAL${NC}"
+	echo -e "รับข้อมูล (rx) ${RED}$RXTOTALb${NC} ส่งข้อมูล (tx) ${RED}$TXTOTALb${NC}"
+	echo -e "รวมทั้งหมด ${RED}$TOTALb${NC}"
 	echo ""
 	exit
 
@@ -540,17 +540,17 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo ""
 	echo -e "BANDWIDTH ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
-	echo -e "TODAY ${RED}$TODAY${NC}"
-	echo -e "YESTERDAY ${RED}$YESTERDAY${NC}"
+	echo -e "TODAY ${RED}$TODAYb${NC}"
+	echo -e "YESTERDAY ${RED}$YESTERDAYb${NC}"
 	echo ""
-	echo -e "RECEIVE (rx) ${RED}$RXWEEK${NC} TRANSMIT (tx) ${RED}$TXWEEK${NC}"
-	echo -e "CURRENT WEEK ${RED}$WEEK${NC}"
+	echo -e "RECEIVE (rx) ${RED}$RXWEEKb${NC} TRANSMIT (tx) ${RED}$TXWEEKb${NC}"
+	echo -e "CURRENT WEEK ${RED}$WEEKb${NC}"
 	echo ""
-	echo -e "RECEIVE (rx) ${RED}$RXMOUNT${NC} TRANSMIT (tx) ${RED}$TXMOUNT${NC}"
-	echo -e "THIS MOUNT TOTAL ${RED}$MOUNT${NC}"
+	echo -e "RECEIVE (rx) ${RED}$RXMOUNTb${NC} TRANSMIT (tx) ${RED}$TXMOUNTb${NC}"
+	echo -e "THIS MOUNT TOTAL ${RED}$MOUNTb${NC}"
 	echo ""
-	echo -e "RECEIVE (rx) ${RED}$RXTOTAL${NC} TRANSMIT (tx) ${RED}$TXTOTAL${NC}"
-	echo -e "TOTAL ${RED}$TOTAL${NC}"
+	echo -e "RECEIVE (rx) ${RED}$RXTOTALb${NC} TRANSMIT (tx) ${RED}$TXTOTALb${NC}"
+	echo -e "TOTAL ${RED}$TOTALb${NC}"
 	echo ""
 	exit
 fi
