@@ -44,7 +44,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	fi
 	echo -e "|${RED}11${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
 	echo -e "|${RED}12${NC}| ปรับความเร็วอินเตอร์เน็ต"
-	echo -e "|${RED}13${NC}| แก้ไขคอนฟิกต่างๆในระบบ ${RED}สำหรับการแก้ไขส่วนต่างๆภายในเครื่องเซิฟเวอร์  ${NC}"
+	echo -e "|${RED}13${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
 	echo -e "|${RED} 0${NC}| อัพเดตเมนูสคริปท์"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
@@ -68,7 +68,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	fi
 	echo -e "|${RED}11${NC}| START-STOP-RESTART OPERATION SYSTEM"
 	echo -e "|${RED}12${NC}| UP-DOWN SPEED INTERNET"
-	echo -e "|${RED}13${NC}| EDIT CONFIG ${RED}For modifying parts within the server.  ${NC}"
+	echo -e "|${RED}13${NC}| EDIT CONFIG"
 	echo ""
 	echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาไทย"
