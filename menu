@@ -273,7 +273,7 @@ done < /etc/passwd
 
 TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 echo ""
-echo -e "รวมรายชื่อบัญชีทั้งหมด : ${RED}$TOTAL${NC} บัญชี"
+echo -e "บัญชีทั้งหมด : ${RED}$TOTAL${NC} "
 echo ""
 exit
 
@@ -300,7 +300,7 @@ if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 fi
 TOTAL=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 echo ""
-echo -e "รวมบัญชีที่กำลังออนไลน์ทั้งหมด : ${RED}$TOTAL${NC} บัญชี"
+echo -e "ออนไลน์ทั้งหมด : ${RED}$TOTAL${NC} "
 echo ""
 exit
 
