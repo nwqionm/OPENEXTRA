@@ -81,7 +81,7 @@ if [[ -e /etc/vnstat.conf ]]; then
 	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "บัญชีที่ออนไลน์ทั้งหมด : ${RED}$TOTALONLINE${NC} "
+		echo -e "บัญชีที่ออนไลน์ในขณะนี้ : ${RED}$TOTALONLINE${NC} "
 		echo -e "แบนด์วิดท์ : วันนี้ ${RED}$TODAY${NC} เดือนนี้ ${RED}$MOUNT${NC} รวมทั้งหมด ${RED}$TOTAL${NC}"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "TOTAL CLIENT ONLINE : ${RED}$TOTALONLINE${NC} "
