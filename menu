@@ -31,7 +31,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 1${NC}| เพิ่มบัญชีผู้ใช้"
 	echo -e "|${RED} 2${NC}| ลบบัญชีผู้ใช้"
 	echo -e "|${RED} 3${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด"
-	echo -e "|${RED} 4${NC}| ตรวจสอบผู้ใช้ที่กำลังเชื่อมต่อในขณะนี้"
+	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีที่กำลังเชื่อมต่อในขณะนี้"
 	echo -e "|${RED} 5${NC}| เปลี่ยนวันหมดอายุของผู้ใช้"
 	echo -e "|${RED} 6${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${RED} 7${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
@@ -79,11 +79,9 @@ if [[ -e /etc/vnstat.conf ]]; then
 	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "แบนด์วิดท์ : ${RED}$TOTAL${NC}"
-		echo -e "บัญชีที่ออนไลน์ในขณะนี้ : ${RED}$TOTALONLINE${NC} "
+		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTAL${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${RED}$TOTALONLINE${NC} บัญชี"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "BANDWIDTH : ${RED}$TOTAL${NC}"
-		echo -e "CLIENT ONLINE NOW : ${RED}$TOTALONLINE${NC} "
+		echo -e "TOTAL BANDWIDTH ${RED}$TOTAL${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${RED}$TOTALONLINE${NC} CLIENT"
 	fi
 fi
 echo ""
@@ -293,7 +291,7 @@ if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 	a=$((3+((line-8)/2)))
 	b=$(((line-8)/2))
 
-	echo -e "${RED}รายชื่อบัญชีที่กำลังออนไลน์ในขณะนี้ ${NC} ";
+	echo -e "${RED}บัญชีที่กำลังเชื่อมต่ออยู่ในขณะนี้ ${NC} ";
 	echo ""
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 	cat /usr/local/bin/Client-Login
@@ -301,7 +299,7 @@ if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 fi
 TOTAL=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 echo ""
-echo -e "ออนไลน์ทั้งหมด : ${RED}$TOTAL${NC} "
+echo -e "เชื่อมต่อทั้งหมด : ${RED}$TOTAL${NC} "
 echo ""
 exit
 
