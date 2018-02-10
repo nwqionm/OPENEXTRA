@@ -18,7 +18,7 @@ fi
 ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
 
 if [[ ! -e /usr/lib/ruby ]]; then
-	apt-get -y install ruby-full
+	apt-get -y install ruby
 	gem install lolcat
 	install
 fi
