@@ -13,12 +13,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-if [[ ! -e /usr/lib/ruby ]]; then
-	apt-get -y install ruby
-	gem install lolcat
-	menu
-fi
-
 # Menu
 echo ""
 echo "  (\_(\ " | lolcat
