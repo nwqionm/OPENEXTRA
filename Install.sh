@@ -31,9 +31,9 @@ if [[ -e /etc/debian_version ]]; then
 
 	if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
 		echo ""
-		echo "  (\_(\ " | lolcat
-		echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-		echo "  (,(”)(”) °.¸¸.•" | lolcat
+		echo "  (\_(\ "
+		echo " (=’ :’) :* Script by Mnm Ami"
+		echo "  (,(”)(”) °.¸¸.•"
 		echo ""
 		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ยังไม่รองรับ"
 		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
@@ -45,9 +45,9 @@ if [[ -e /etc/debian_version ]]; then
 	fi
 else
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
 	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
@@ -65,9 +65,9 @@ NC='\033[0m'
 
 # Menu
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "ฟังก์ชั่นสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
@@ -77,11 +77,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	else
 		echo -e "|${RED} 1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
 	fi
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 7 - 8 - 9"
 	echo -e "|${RED} 2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 8 - 9"
 	if [[ ! -e /etc/default/dropbear ]]; then
 		echo -e "|${RED} 3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	elif [[ -e /etc/default/dropbear ]]; then
@@ -91,8 +87,6 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
-			echo "	Ubuntu 14.04 - 16.04 - 17.04"
-			echo "	Debian 7 - 8 - 9"
 		elif [[ -e /etc/squid3/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
 		fi
@@ -100,8 +94,6 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ ! -e /etc/squid/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
-			echo "	Ubuntu 14.04 - 16.04 - 17.04"
-			echo "	Debian 7 - 8 - 9"
 		elif [[ -e /etc/squid/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
 		fi
@@ -121,11 +113,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	else
 		echo -e "|${RED} 1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
 	fi
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 7 - 8 - 9"
 	echo -e "|${RED} 2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
-	echo "	Ubuntu 14.04 - 16.04 - 17.04"
-	echo "	Debian 8 - 9"
 	if [[ ! -e /etc/default/dropbear ]]; then
 		echo -e "|${RED} 3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	elif [[ -e /etc/default/dropbear ]]; then
@@ -135,8 +123,6 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
-			echo "	Ubuntu 14.04 - 16.04 - 17.04"
-			echo "	Debian 7 - 8 - 9"
 		elif [[ -e /etc/squid3/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 		fi
@@ -144,8 +130,6 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ ! -e /etc/squid/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
-			echo "	Ubuntu 14.04 - 16.04 - 17.04"
-			echo "	Debian 7 - 8 - 9"
 		elif [[ -e /etc/squid/squid.conf ]]; then
 			echo -e "|${RED} 5${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
 		fi
@@ -581,9 +565,9 @@ fi
 	apt-get -y install vnstat
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -698,9 +682,9 @@ fi
 if [[ "$Squid3" = "N" || "$Squid" = "N" ]]; then
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -758,9 +742,9 @@ END
 	fi
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -813,9 +797,9 @@ END
 	/etc/init.d/squid restart
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -840,9 +824,9 @@ if [[ -e /etc/default/dropbear ]]; then
 	/etc/init.d/ssh stop
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -856,9 +840,9 @@ elif [[ ! -e /etc/default/dropbear ]]; then
 	PORTSSH=$(grep '^port ' /etc/ssh/sshd_config | cut -d " " -f 2)
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -897,9 +881,9 @@ if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 		apt-get -y remove --purge squid3
 		clear
 		echo ""
-		echo "  (\_(\ " | lolcat
-		echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-		echo "  (,(”)(”) °.¸¸.•" | lolcat
+		echo "  (\_(\ "
+		echo " (=’ :’) :* Script by Mnm Ami"
+		echo "  (,(”)(”) °.¸¸.•"
 		echo ""
 		echo "Donate via TrueMoney Wallet : 082-038-2600"
 		echo ""
@@ -910,9 +894,9 @@ if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 		apt-get -y remove --purge squid
 		clear
 		echo ""
-		echo "  (\_(\ " | lolcat
-		echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-		echo "  (,(”)(”) °.¸¸.•" | lolcat
+		echo "  (\_(\ "
+		echo " (=’ :’) :* Script by Mnm Ami"
+		echo "  (,(”)(”) °.¸¸.•"
 		echo ""
 		echo "Source by Mnm Ami"
 		echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -923,9 +907,9 @@ if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
 fi
 
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 read -p "Port Proxy : " -e -i 8080 PROXY
 
@@ -969,9 +953,9 @@ END
 	fi
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
@@ -1018,9 +1002,9 @@ END
 	/etc/init.d/squid restart
 	clear
 	echo ""
-	echo "  (\_(\ " | lolcat
-	echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-	echo "  (,(”)(”) °.¸¸.•" | lolcat
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Source by Mnm Ami"
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
