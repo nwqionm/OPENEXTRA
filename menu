@@ -15,9 +15,9 @@ NC='\033[0m'
 
 # Menu
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "เมนูสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
@@ -204,9 +204,9 @@ fi
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s '. '
 if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
@@ -246,9 +246,9 @@ exit
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 UIDN=1000
 echo ""
@@ -276,9 +276,9 @@ exit
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 if [ -f "/etc/openvpn/openvpn-status.log" ]; then
 	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
@@ -303,10 +303,6 @@ exit
 	5) # ==================================================================================================================
 
 clear
-echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
 echo ""
 read -p "ชื่อบัญชีที่ต้องการเปลี่ยนวันหมดอายุ : " -e CLIENT
 
@@ -356,9 +352,9 @@ fi
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 echo -e "${RED}ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ ${NC} "
 echo ""
@@ -551,9 +547,9 @@ fi
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 echo -e "${RED}ปรับเปลี่ยนระบบของเซิฟเวอร์ ${NC} "
 echo ""
@@ -618,9 +614,9 @@ esac
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 echo -e "${RED}แบนและปลดแบนบัญชีผู้ใช้ ${NC} "
 echo ""
@@ -703,9 +699,9 @@ esac
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 echo -e "เปิด-ปิด-รีสตาร์ท การทำงานของระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
@@ -805,9 +801,9 @@ esac
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 if [[ ! -e /etc/trickled.conf ]]; then
 	apt-get install trickle
@@ -865,9 +861,9 @@ fi
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 echo -e "แก้ไขคอนฟิกต่างๆในระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 echo ""
