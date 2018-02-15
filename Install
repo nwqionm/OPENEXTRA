@@ -78,11 +78,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "|${RED} 1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
 	fi
 	echo -e "|${RED} 2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
-	if [[ ! -e /etc/default/dropbear ]]; then
-		echo -e "|${RED} 3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
-	elif [[ -e /etc/default/dropbear ]]; then
-		echo -e "|${RED} 3${NC}| ถอนการติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
-	fi
+	echo -e "|${RED} 3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	echo -e "|${RED} 4${NC}| ติดตั้ง WEB PANEL ${RED} ✖   ${NC}"
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
@@ -114,11 +110,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "|${RED} 1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
 	fi
 	echo -e "|${RED} 2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
-	if [[ ! -e /etc/default/dropbear ]]; then
-		echo -e "|${RED} 3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
-	elif [[ -e /etc/default/dropbear ]]; then
-		echo -e "|${RED} 3${NC}| REMOVE SSH DROPBEAR ${GREEN} ✔   ${NC}"
-	fi
+	echo -e "|${RED} 3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
 	echo -e "|${RED} 4${NC}| INSTALL WEB PANEL ${RED} ✖   ${NC}"
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
@@ -869,17 +861,9 @@ fi
 	3) # ==================================================================================================================
 
 if [[ -e /etc/default/dropbear ]]; then
-	apt-get remove --purge -y dropbear
-	/etc/init.d/ssh stop
-	clear
 	echo ""
-	echo "  (\_(\ "
-	echo " (=’ :’) :* Script by Mnm Ami"
-	echo "  (,(”)(”) °.¸¸.•"
+	echo "IP นี้ได้ติดตั้ง SSH Dropbear ไปก่อนหน้านี้แล้ว"
 	echo ""
-	echo "Donate via TrueMoney Wallet : 082-038-2600"
-	echo ""
-	echo "SSH Dropbear .....Removed."
 	exit
 
 elif [[ ! -e /etc/default/dropbear ]]; then
@@ -899,18 +883,15 @@ elif [[ ! -e /etc/default/dropbear ]]; then
 	echo "IP Addrsss : $IP"
 	echo "Port SSH : $PORTSSH"
 	echo ""
-	if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-		if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+	if [[ -e /etc/squid3/squid.conf ]]; then
 			PROXY=$(grep '^http_port ' /etc/squid3/squid.conf | cut -d " " -f 2)
 			echo "IP Proxy : $IP"
 			echo "Port Proxy : $PROXY"
-
-		elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	elif [[ -e /etc/squid/squid.conf ]]; then
 			PROXY=$(grep '^http_port ' /etc/squid/squid.conf | cut -d " " -f 2)
 			echo "IP Proxy : $IP"
 			echo "Port Proxy : $PROXY"
-		fi
-
+			
 	else
 		echo "No Proxy"
 	fi
