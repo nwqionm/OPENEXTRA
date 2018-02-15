@@ -70,6 +70,9 @@ fi
 
 echo ""
 if [[ -e /etc/vnstat.conf ]]; then
+	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
+	a=$((3+((line-8)/2)))
+	b=$(((line-8)/2))
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
 	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
