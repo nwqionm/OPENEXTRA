@@ -1055,10 +1055,10 @@ wget https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install.sh && ch
 
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	rm -f /usr/local/bin/Check-Thai
-	install
+	bash Install.sh
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo "Check Thai" >> /usr/local/bin/Check-Thai
-	install
+	bash Install.sh
 fi
 
 	;;
