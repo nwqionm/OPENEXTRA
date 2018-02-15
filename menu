@@ -832,7 +832,7 @@ case $SERVICE in
 
 	echo ""
 	echo -e "	|${RED}1${NC}| เปิด"
-	echo -e "	|${RED}2${NC}| ปิด"
+	echo -e "	|${RED}2${NC}| ปิด ${RED}หากปิดการทำงานจะไม่สามารถเข้าสู่เทอมินอลได้ ${NC} "
 	echo -e "	|${RED}3${NC}| รีสตาร์ท"
 	echo ""
 	read -p "	เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEDROPBEAR
