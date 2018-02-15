@@ -812,6 +812,10 @@ case $SERVICE in
 
 	;;
 
+esac
+
+	;;
+
 	2)
 
 	echo ""
@@ -974,9 +978,9 @@ case $SERVICE in
 	fi
 		;;
 
-	esac
+		esac
 
-	;;
+		;;
 
 esac
 
