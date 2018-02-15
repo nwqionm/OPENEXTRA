@@ -880,7 +880,7 @@ case $SERVICE in
 	echo -e "|${RED}2${NC}| SQUID PROXY ปิด"
 	echo -e "|${RED}3${NC}| SQUID PROXY รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-PROXY
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEPROXY
 
 	case $SERVICEPROXY in
 
