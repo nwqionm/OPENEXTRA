@@ -245,6 +245,16 @@ else
 	echo ""
 	read -p "OpenVPN System : " -e OPENVPNSYSTEM
 	read -p "Server Name: " -e CLIENT
+	case $OPENVPNSYSTEM in
+		2)
+		read -p "Your Username : " -e Usernames
+		;;
+	esac
+	case $OPENVPNSYSTEM in
+		2)
+		read -p "Your Password : " -e Passwords
+		;;
+	esac
 	echo ""
 	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
 
@@ -563,6 +573,16 @@ fi
 	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
 	chmod +x /usr/local/bin/menu
 	apt-get -y install vnstat
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa build-client-full $CLIENT nopass
+	newclient "$CLIENT"
+	cp /root/$CLIENT.ovpn /home/vps/public_html/
+	rm -f /root/$CLIENT.ovpn
+	case $OPENVPNSYSTEM in
+		2)
+		useradd -p $Usernames $Passwords
+		;;
+	esac
 	clear
 	echo ""
 	echo "  (\_(\ "
@@ -583,8 +603,18 @@ fi
 	echo "IP Proxy : $IP"
 	echo "Port Proxy : $PROXY"
 	echo ""
+	echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
+	echo ""
+	case $OPENVPNSYSTEM in
+		2)
+		echo "Your Username : $Usernames"
+		echo "Your Password : $Passwords"
+		echo "Expire : Never"
+		;;
+	esac
+	echo ""
 	echo "====================================================="
-	echo "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง menu เพื่อไปยังขั้นตอนถัดไป"
+	echo -e "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง ${RED}menu${NC} เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
 	echo ""
 	exit
