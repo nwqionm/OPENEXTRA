@@ -36,8 +36,8 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	elif [[ ! -e /usr/local/bin/Check-System ]]; then
 		echo -e "|${RED}10${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
-	echo -e "|${RED}11${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
-	echo -e "|${RED}12${NC}| ปรับความเร็วอินเตอร์เน็ต"
+	echo -e "|${RED}11${NC}| ปรับความเร็วอินเตอร์เน็ต"
+	echo -e "|${RED}12${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
 	echo -e "|${RED}13${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
 	echo -e "|${RED} 0${NC}| อัพเดตเมนูสคริปท์"
@@ -60,8 +60,8 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	elif [[ ! -e /usr/local/bin/Check-System ]]; then
 		echo -e "|${RED}10${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
 	fi
-	echo -e "|${RED}11${NC}| START-STOP-RESTART OPERATION SYSTEM"
-	echo -e "|${RED}12${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${RED}11${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${RED}12${NC}| START-STOP-RESTART OPERATION SYSTEM"
 	echo -e "|${RED}13${NC}| EDIT CONFIG"
 	echo ""
 	echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
@@ -703,108 +703,6 @@ echo "  (\_(\ "
 echo " (=’ :’) :* Script by Mnm Ami"
 echo "  (,(”)(”) °.¸¸.•"
 echo ""
-echo -e "เปิด-ปิด-รีสตาร์ท การทำงานของระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
-echo ""
-echo -e "|${RED}1${NC}| OPENVPN เปิด"
-echo -e "|${RED}2${NC}| OPENVPN ปิด"
-echo -e "|${RED}3${NC}| OPENVPN รีสตาร์ท"
-echo -e "|${RED}4${NC}| SSH DROPBEAR เปิด"
-echo -e "|${RED}5${NC}| SSH DROPBEAR ปิด"
-echo -e "|${RED}6${NC}| SSH DROPBEAR รีสตาร์ท"
-echo -e "|${RED}7${NC}| SQUID PROXY เปิด"
-echo -e "|${RED}8${NC}| SQUID PROXY ปิด"
-echo -e "|${RED}9${NC}| SQUID PROXY รีสตาร์ท"
-echo ""
-read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE
-
-case $SERVICE in
-
-	1)
-service openvpn start
-exit
-	;;
-	2)
-service openvpn stop
-exit
-	;;
-	3)
-service openvpn restart
-exit
-	;;
-	4)
-if [[ -e /etc/default/dropbear ]]; then
-	service ssh start
-	exit
-elif [[ ! -e /etc/default/dropbear ]]; then
-	echo ""
-	echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
-	echo ""
-	exit
-fi
-	;;
-	5)
-if [[ -e /etc/default/dropbear ]]; then
-	service ssh stop
-	exit
-elif [[ ! -e /etc/default/dropbear ]]; then
-	echo ""
-	echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
-	echo ""
-	exit
-fi
-	;;
-	6)
-if [[ -e /etc/default/dropbear ]]; then
-	service ssh restart
-	exit
-elif [[ ! -e /etc/default/dropbear ]]; then
-	echo ""
-	echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
-	echo ""
-	exit
-fi
-	;;
-	7)
-if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-	service squid start
-	exit
-elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-	service squid3 start
-	exit
-fi
-	;;
-	8)
-if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-	service squid stop
-	exit
-elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-	service squid3 stop
-	exit
-fi
-	;;
-	9)
-if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-	service squid restart
-	exit
-elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-	service squid3 restart
-	exit
-fi
-
-	;;
-
-esac
-
-	;;
-
-	12) # ==================================================================================================================
-
-clear
-echo ""
-echo "  (\_(\ "
-echo " (=’ :’) :* Script by Mnm Ami"
-echo "  (,(”)(”) °.¸¸.•"
-echo ""
 if [[ ! -e /etc/trickled.conf ]]; then
 	apt-get install trickle
 	echo -e "${RED}โปรดอ่าน${NC} : หน่วยวัดขนาดความเร็วต้องระบุเป็น Kilobyte (Kb)"
@@ -856,6 +754,231 @@ elif [[ -e /etc/trickled.conf ]]; then
 fi
 
 	;;
+
+	12) # ==================================================================================================================
+
+clear
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
+echo -e "เปิด-ปิด-รีสตาร์ท การทำงานของระบบ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+echo ""
+echo -e "|${RED}1${NC}| OPENVPN"
+echo -e "|${RED}2${NC}| SSH DROPBEAR"
+echo -e "|${RED}3${NC}| SQUID PROXY"
+echo ""
+read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE
+
+case $SERVICE in
+
+	1)
+
+	echo ""
+	echo -e "|${RED}1${NC}| OPENVPN เปิด"
+	echo -e "|${RED}2${NC}| OPENVPN ปิด"
+	echo -e "|${RED}3${NC}| OPENVPN รีสตาร์ท"
+	echo ""
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-OPENVPN
+
+	case $SERVICE-OPENVPN in
+
+		1)
+	echo ""
+	echo -e "OPENVPN ${RED}STARTED${NC}"
+	echo ""
+	service openvpn start
+	exit
+		;;
+
+		2)
+	echo ""
+	echo -e "OPENVPN ${RED}STOPPED${NC}"
+	echo ""
+	service openvpn stop
+	exit
+		;;
+
+		3)
+	echo ""
+	echo -e "OPENVPN ${RED}RESTARTED${NC}"
+	echo ""
+	service openvpn restart
+	exit
+		;;
+
+	esac
+
+	;;
+
+	2)
+
+	echo ""
+	echo -e "|${RED}1${NC}| SSH DROPBEAR เปิด"
+	echo -e "|${RED}2${NC}| SSH DROPBEAR ปิด"
+	echo -e "|${RED}3${NC}| SSH DROPBEAR รีสตาร์ท"
+	echo ""
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-DROPBEAR
+
+	case $SERVICE-DROPBEAR in
+
+		1)
+
+	if [[ -e /etc/default/dropbear ]]; then
+		echo ""
+		echo -e "DROPBEAR ${RED}STARTED${NC}"
+		echo ""
+		service ssh start
+		exit
+	elif [[ ! -e /etc/default/dropbear ]]; then
+		echo ""
+		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo ""
+		exit
+	fi
+		;;
+
+		2)
+	if [[ -e /etc/default/dropbear ]]; then
+		echo ""
+		echo -e "DROPBEAR ${RED}STOPPED${NC}"
+		echo ""
+		service ssh stop
+		exit
+	elif [[ ! -e /etc/default/dropbear ]]; then
+		echo ""
+		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo ""
+		exit
+	fi
+		;;
+
+		3)
+	if [[ -e /etc/default/dropbear ]]; then
+		echo ""
+		echo -e "DROPBEAR ${RED}RESTARTED${NC}"
+		echo ""
+		service ssh restart
+		exit
+	elif [[ ! -e /etc/default/dropbear ]]; then
+		echo ""
+		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo ""
+		exit
+	fi
+		;;
+
+	esac
+
+	;;
+
+	3)
+
+	echo ""
+	echo -e "|${RED}7${NC}| SQUID PROXY เปิด"
+	echo -e "|${RED}8${NC}| SQUID PROXY ปิด"
+	echo -e "|${RED}9${NC}| SQUID PROXY รีสตาร์ท"
+	echo ""
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-PROXY
+
+	case $SERVICE-PROXY in
+
+		1)
+	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid start
+			echo ""
+			echo -e "SQUID PROXY ${RED}STARTED${NC}"
+			echo ""
+			exit
+		fi
+	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid3 start
+			echo ""
+			echo -e "SQUID PROXY ${RED}STARTED${NC}"
+			echo ""
+			exit
+		fi
+	fi
+		;;
+
+		2)
+	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid stop
+			echo ""
+			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo ""
+			exit
+		fi
+	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid3 stop
+			echo ""
+			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo ""
+			exit
+		fi
+	fi
+		;;
+
+		3)
+	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid stop
+			echo ""
+			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo ""
+			exit
+		fi
+	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo ""
+			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo ""
+			exit
+		else
+			service squid3 stop
+			echo ""
+			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo ""
+			exit
+		fi
+	fi
+		;;
+
+	esac
+
+	;;
+
+esac
 
 	13) # ==================================================================================================================
 
