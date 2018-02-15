@@ -208,20 +208,28 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		rm -rf /home/vps/public_html
 		rm -rf /etc/openvpn
 		rm -rf /usr/local/bin/*
-		UIDN=1000
-		while read CHECKCLIENT
-		do
-			ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
-			ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
-			if [[ $ID -ge $UIDN ]]; then
-				userdel $ACCOUNT
-			fi
-		done < /etc/passwd
 		echo ""
-		echo "OpenVPN Removed."
+		read -p "ต้องการลบข้อมูลบัญชีทั้งหมดหรือไม่ (Y or N) : " -e -i N DELETEACCOUNT
+		if [[ "$DELETEACCOUNT" = "Y" ]]; then
+			UIDN=1000
+			while read CHECKCLIENT
+			do
+				ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
+				ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+				if [[ $ID -ge $UIDN ]]; then
+					userdel $ACCOUNT
+				fi
+			done < /etc/passwd
+		fi
+		echo ""
+		echo -e "${RED}OpenVPN Removed. ${NC} "
+		echo ""
+		exit
 	else
 		echo ""
-		echo "Removal Aborted."
+		echo -e "${RED}Removal Aborted. ${NC} "
+		echo ""
+		exit
 	fi
 	exit
 
