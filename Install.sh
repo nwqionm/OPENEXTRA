@@ -580,7 +580,8 @@ fi
 	rm -f /root/$CLIENT.ovpn
 	case $OPENVPNSYSTEM in
 		2)
-		useradd -p $Usernames $Passwords
+		useradd $Usernames
+		echo -e "$Passwords\n$Passwords\n"|passwd $Usernames &> /dev/null
 		;;
 	esac
 	clear
