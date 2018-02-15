@@ -164,7 +164,7 @@ newclient () {
 
 if [[ -e /etc/openvpn/server.conf ]]; then
 	echo ""
-	read -p "Do you really want to remove OpenVPN  (Y or N): " -e -i N REMOVE
+	read -p "ต้องการถอนการติดตั้ง OpenVPN หรือไม่  (Y or N): " -e -i N REMOVE
 
 	if [[ "$REMOVE" = 'Y' ]]; then
 		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
@@ -198,9 +198,17 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			fi
 		fi
 
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		elif [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
 		apt-get remove --purge -y openvpn
+		apt-get remove --purge -y nginx
+		apt-get remove --purge -y 
+		rm -rf /home/vps/public_html
 		rm -rf /etc/openvpn
-		rm -f /usr/local/bin/menu
+		rm -rf /usr/local/bin/menu
 		echo ""
 		echo "OpenVPN Removed."
 	else
@@ -850,15 +858,15 @@ fi
 
 	3)
 
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
 if [[ -e /etc/default/dropbear ]]; then
 	apt-get remove --purge -y dropbear
 	/etc/init.d/ssh stop
 	clear
-	echo ""
-	echo "  (\_(\ "
-	echo " (=’ :’) :* Script by Mnm Ami"
-	echo "  (,(”)(”) °.¸¸.•"
-	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
 	echo "SSH Dropbear .....Removed."
@@ -870,11 +878,6 @@ elif [[ ! -e /etc/default/dropbear ]]; then
 	/etc/init.d/dropbear restart
 	PORTSSH=$(grep '^port ' /etc/ssh/sshd_config | cut -d " " -f 2)
 	clear
-	echo ""
-	echo "  (\_(\ "
-	echo " (=’ :’) :* Script by Mnm Ami"
-	echo "  (,(”)(”) °.¸¸.•"
-	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
 	echo "SSH Dropbear .....Install Finish."
@@ -907,41 +910,29 @@ fi
 
 	5)
 
-if [[ -e /etc/squid/squid.conf || -e /etc/squid3/squid.conf ]]; then
-	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-		apt-get -y remove --purge squid3
-		clear
-		echo ""
-		echo "  (\_(\ "
-		echo " (=’ :’) :* Script by Mnm Ami"
-		echo "  (,(”)(”) °.¸¸.•"
-		echo ""
-		echo "Donate via TrueMoney Wallet : 082-038-2600"
-		echo ""
-		echo "Squid Proxy .....Removed."
-		exit
-
-	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
-		apt-get -y remove --purge squid
-		clear
-		echo ""
-		echo "  (\_(\ "
-		echo " (=’ :’) :* Script by Mnm Ami"
-		echo "  (,(”)(”) °.¸¸.•"
-		echo ""
-		echo "Source by Mnm Ami"
-		echo "Donate via TrueMoney Wallet : 082-038-2600"
-		echo ""
-		echo "Squid Proxy .....Removed."
-		exit
-	fi
-fi
-
 echo ""
 echo "  (\_(\ "
 echo " (=’ :’) :* Script by Mnm Ami"
 echo "  (,(”)(”) °.¸¸.•"
 echo ""
+if [[ -e /etc/squid3/squid.conf ]]; then
+	apt-get -y remove --purge squid3
+	clear
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Removed."
+	exit
+elif [[ -e /etc/squid/squid.conf ]]; then
+	apt-get -y remove --purge squid
+	clear
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Removed."
+	exit
+fi
+
 read -p "Port Proxy : " -e -i 8080 PROXY
 
 if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
