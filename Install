@@ -208,6 +208,15 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		rm -rf /home/vps/public_html
 		rm -rf /etc/openvpn
 		rm -rf /usr/local/bin/*
+		UIDN=1000
+		while read CHECKCLIENT
+		do
+			ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
+			ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+			if [[ $ID -ge $UIDN ]]; then
+				userdel $ACCOUNT
+			fi
+		done < /etc/passwd
 		echo ""
 		echo "OpenVPN Removed."
 	else
