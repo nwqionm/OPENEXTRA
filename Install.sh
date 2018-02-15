@@ -208,7 +208,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		apt-get remove --purge -y 
 		rm -rf /home/vps/public_html
 		rm -rf /etc/openvpn
-		rm -rf /usr/local/bin/menu
+		rm -rf /usr/local/bin/*
 		echo ""
 		echo "OpenVPN Removed."
 	else
