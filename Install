@@ -197,12 +197,6 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 				fi
 			fi
 		fi
-
-		if [[ -e /etc/squid3/squid.conf ]]; then
-			apt-get -y remove --purge squid3
-		elif [[ -e /etc/squid/squid.conf ]]; then
-			apt-get -y remove --purge squid
-		fi
 		apt-get remove --purge -y openvpn
 		apt-get remove --purge -y nginx
 		rm -rf /home/vps/public_html
