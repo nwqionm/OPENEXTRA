@@ -910,14 +910,13 @@ fi
 
 	5)
 
-echo ""
-echo "  (\_(\ "
-echo " (=’ :’) :* Script by Mnm Ami"
-echo "  (,(”)(”) °.¸¸.•"
-echo ""
 if [[ -e /etc/squid3/squid.conf ]]; then
 	apt-get -y remove --purge squid3
 	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
@@ -926,6 +925,10 @@ if [[ -e /etc/squid3/squid.conf ]]; then
 elif [[ -e /etc/squid/squid.conf ]]; then
 	apt-get -y remove --purge squid
 	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
 	echo ""
 	echo "Donate via TrueMoney Wallet : 082-038-2600"
 	echo ""
