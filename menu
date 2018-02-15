@@ -780,9 +780,9 @@ case $SERVICE in
 	echo -e "|${RED}2${NC}| OPENVPN ปิด"
 	echo -e "|${RED}3${NC}| OPENVPN รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-OPENVPN
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEOPENVPN
 
-	case $SERVICE-OPENVPN in
+	case $SERVICEOPENVPN in
 
 		1)
 	echo ""
@@ -819,9 +819,9 @@ case $SERVICE in
 	echo -e "|${RED}2${NC}| SSH DROPBEAR ปิด"
 	echo -e "|${RED}3${NC}| SSH DROPBEAR รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-DROPBEAR
+	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEDROPBEAR
 
-	case $SERVICE-DROPBEAR in
+	case $SERVICEDROPBEAR in
 
 		1)
 
@@ -876,13 +876,13 @@ case $SERVICE in
 	3)
 
 	echo ""
-	echo -e "|${RED}7${NC}| SQUID PROXY เปิด"
-	echo -e "|${RED}8${NC}| SQUID PROXY ปิด"
-	echo -e "|${RED}9${NC}| SQUID PROXY รีสตาร์ท"
+	echo -e "|${RED}1${NC}| SQUID PROXY เปิด"
+	echo -e "|${RED}2${NC}| SQUID PROXY ปิด"
+	echo -e "|${RED}3${NC}| SQUID PROXY รีสตาร์ท"
 	echo ""
 	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICE-PROXY
 
-	case $SERVICE-PROXY in
+	case $SERVICEPROXY in
 
 		1)
 	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
