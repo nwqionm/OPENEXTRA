@@ -776,35 +776,35 @@ case $SERVICE in
 	1)
 
 	echo ""
-	echo -e "|${RED}1${NC}| OPENVPN เปิด"
-	echo -e "|${RED}2${NC}| OPENVPN ปิด"
-	echo -e "|${RED}3${NC}| OPENVPN รีสตาร์ท"
+	echo -e "	|${RED}1${NC}| เปิด"
+	echo -e "	|${RED}2${NC}| ปิด"
+	echo -e "	|${RED}3${NC}| รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEOPENVPN
+	read -p "	เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEOPENVPN
 
 	case $SERVICEOPENVPN in
 
 		1)
-	echo ""
-	echo -e "OPENVPN ${RED}STARTED${NC}"
-	echo ""
 	service openvpn start
+	echo ""
+	echo -e "	OpenVPN ${RED}STARTED${NC}"
+	echo ""
 	exit
 		;;
 
 		2)
-	echo ""
-	echo -e "OPENVPN ${RED}STOPPED${NC}"
-	echo ""
 	service openvpn stop
+	echo ""
+	echo -e "	OpenVPN ${RED}STOPPED${NC}"
+	echo ""
 	exit
 		;;
 
 		3)
-	echo ""
-	echo -e "OPENVPN ${RED}RESTARTED${NC}"
-	echo ""
 	service openvpn restart
+	echo ""
+	echo -e "	OpenVPN ${RED}RESTARTED${NC}"
+	echo ""
 	exit
 		;;
 
@@ -815,25 +815,25 @@ case $SERVICE in
 	2)
 
 	echo ""
-	echo -e "|${RED}1${NC}| SSH DROPBEAR เปิด"
-	echo -e "|${RED}2${NC}| SSH DROPBEAR ปิด"
-	echo -e "|${RED}3${NC}| SSH DROPBEAR รีสตาร์ท"
+	echo -e "	|${RED}1${NC}| เปิด"
+	echo -e "	|${RED}2${NC}| ปิด"
+	echo -e "	|${RED}3${NC}| รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEDROPBEAR
+	read -p "	เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEDROPBEAR
 
 	case $SERVICEDROPBEAR in
 
 		1)
 
 	if [[ -e /etc/default/dropbear ]]; then
-		echo ""
-		echo -e "DROPBEAR ${RED}STARTED${NC}"
-		echo ""
 		service ssh start
+		echo ""
+		echo -e "	SSH Dropbear ${RED}STARTED${NC}"
+		echo ""
 		exit
 	elif [[ ! -e /etc/default/dropbear ]]; then
 		echo ""
-		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo "	ยังไม่ได้ติดตั้ง SSH Dropbear"
 		echo ""
 		exit
 	fi
@@ -841,14 +841,14 @@ case $SERVICE in
 
 		2)
 	if [[ -e /etc/default/dropbear ]]; then
-		echo ""
-		echo -e "DROPBEAR ${RED}STOPPED${NC}"
-		echo ""
 		service ssh stop
+		echo ""
+		echo -e "	SSH Dropbear ${RED}STOPPED${NC}"
+		echo ""
 		exit
 	elif [[ ! -e /etc/default/dropbear ]]; then
 		echo ""
-		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo "	ยังไม่ได้ติดตั้ง SSH Dropbear"
 		echo ""
 		exit
 	fi
@@ -856,14 +856,14 @@ case $SERVICE in
 
 		3)
 	if [[ -e /etc/default/dropbear ]]; then
-		echo ""
-		echo -e "DROPBEAR ${RED}RESTARTED${NC}"
-		echo ""
 		service ssh restart
+		echo ""
+		echo -e "	SSH Dropbear ${RED}RESTARTED${NC}"
+		echo ""
 		exit
 	elif [[ ! -e /etc/default/dropbear ]]; then
 		echo ""
-		echo "ยังไม่ได้ติดตั้ง SSH Dropbear"
+		echo "	ยังไม่ได้ติดตั้ง SSH Dropbear"
 		echo ""
 		exit
 	fi
@@ -876,11 +876,11 @@ case $SERVICE in
 	3)
 
 	echo ""
-	echo -e "|${RED}1${NC}| SQUID PROXY เปิด"
-	echo -e "|${RED}2${NC}| SQUID PROXY ปิด"
-	echo -e "|${RED}3${NC}| SQUID PROXY รีสตาร์ท"
+	echo -e "	|${RED}1${NC}| เปิด"
+	echo -e "	|${RED}2${NC}| ปิด"
+	echo -e "	|${RED}3${NC}| รีสตาร์ท"
 	echo ""
-	read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEPROXY
+	read -p "	เลือกหัวข้อที่ต้องการใช้งาน : " SERVICEPROXY
 
 	case $SERVICEPROXY in
 
@@ -888,26 +888,26 @@ case $SERVICE in
 	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ ! -e /etc/squid/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
 			service squid start
 			echo ""
-			echo -e "SQUID PROXY ${RED}STARTED${NC}"
+			echo -e "	Squid Proxy ${RED}STARTED${NC}"
 			echo ""
 			exit
 		fi
 	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
 			service squid3 start
 			echo ""
-			echo -e "SQUID PROXY ${RED}STARTED${NC}"
+			echo -e "	Squid Proxy ${RED}STARTED${NC}"
 			echo ""
 			exit
 		fi
@@ -918,26 +918,26 @@ case $SERVICE in
 	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ ! -e /etc/squid/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
 			service squid stop
 			echo ""
-			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo -e "	Squid Proxy ${RED}STOPPED${NC}"
 			echo ""
 			exit
 		fi
 	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
 			service squid3 stop
 			echo ""
-			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo -e "	Squid Proxy ${RED}STOPPED${NC}"
 			echo ""
 			exit
 		fi
@@ -948,26 +948,26 @@ case $SERVICE in
 	if [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 		if [[ ! -e /etc/squid/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
-			service squid stop
+			service squid restart
 			echo ""
-			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo -e "	Squid Proxy ${RED}RESTARTED${NC}"
 			echo ""
 			exit
 		fi
 	elif [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ ! -e /etc/squid3/squid.conf ]]; then
 			echo ""
-			echo "ยังไม่ได้ติดตั้ง Squid Proxy"
+			echo "	ยังไม่ได้ติดตั้ง Squid Proxy"
 			echo ""
 			exit
 		else
-			service squid3 stop
+			service squid3 restart
 			echo ""
-			echo -e "SQUID PROXY ${RED}STOPPED${NC}"
+			echo -e "	Squid Proxy ${RED}RESTARTED${NC}"
 			echo ""
 			exit
 		fi
