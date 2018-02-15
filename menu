@@ -182,7 +182,11 @@ cp /root/$CLIENT.ovpn /home/vps/public_html/
 rm -f /root/$CLIENT.ovpn
 useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-echo -e "$PASSWD\n$PASSWD\n"|passwd $CLIENT &> /dev/null
+if [[ $CHECKSYSTEM ]]; then
+	echo -e "$PASSWD\n$PASSWD\n"|passwd $CLIENT &> /dev/null
+else
+	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+fi
 clear
 echo "ชื่อบัญชี : $CLIENT"
 if [[ $CHECKSYSTEM ]]; then
