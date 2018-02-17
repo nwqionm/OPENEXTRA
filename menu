@@ -510,9 +510,9 @@ TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
 
 clear
 echo ""
-echo "  (\_(\ " | lolcat
-echo " (=’ :’) :* Script by Mnm Ami" | lolcat
-echo "  (,(”)(”) °.¸¸.•" | lolcat
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "แบนด์วิดท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
