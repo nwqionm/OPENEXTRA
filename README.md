@@ -1,5 +1,5 @@
 # Script Installation
-# OpenVPN, Pritunl, Proxy, SHH+Dropbear, Web Panel
+# OpenVPN, Pritunl, Proxy, SHH Dropbear, Web Panel
 
 - wget https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install
 - chmod +x Install
