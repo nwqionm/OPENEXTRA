@@ -23,22 +23,23 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "เมนูสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	echo -e "|${RED} 1${NC}| เพิ่มบัญชีผู้ใช้"
-	echo -e "|${RED} 2${NC}| ลบบัญชีผู้ใช้"
-	echo -e "|${RED} 3${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด"
-	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีที่กำลังเชื่อมต่อในขณะนี้"
-	echo -e "|${RED} 5${NC}| เปลี่ยนวันหมดอายุของผู้ใช้"
-	echo -e "|${RED} 6${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
-	echo -e "|${RED} 7${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
-	echo -e "|${RED} 8${NC}| ตรวจสอบแบนด์วิดท์"
-	echo -e "|${RED} 9${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
+	echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้"
+	echo -e "|${RED} 3${NC}| ลบบัญชีผู้ใช้"
+	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด"
+	echo -e "|${RED} 5${NC}| ตรวจสอบบัญชีที่กำลังเชื่อมต่อในขณะนี้"
+	echo -e "|${RED} 6${NC}| เปลี่ยนวันหมดอายุของผู้ใช้"
+	echo -e "|${RED} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
+	echo -e "|${RED} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
+	echo -e "|${RED} 9${NC}| ตรวจสอบแบนด์วิดท์"
+	echo -e "|${RED}10${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
 	if [[ -e /usr/local/bin/Check-System ]]; then
-		echo -e "|${RED}10${NC}| แบนและปลดแบนบัญชีผู้ใช้"
+		echo -e "|${RED}11${NC}| แบนและปลดแบนบัญชีผู้ใช้"
 	elif [[ ! -e /usr/local/bin/Check-System ]]; then
-		echo -e "|${RED}10${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+		echo -e "|${RED}11${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
-	echo -e "|${RED}11${NC}| ปรับความเร็วอินเตอร์เน็ต"
-	echo -e "|${RED}12${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
-	echo -e "|${RED}13${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
+	echo -e "|${RED}12${NC}| ปรับความเร็วอินเตอร์เน็ต"
+	echo -e "|${RED}13${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
+	echo -e "|${RED}14${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
 	echo -e "|${RED} 0${NC}| อัพเดตเมนูสคริปท์"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
@@ -47,22 +48,23 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
-	echo -e "|${RED} 2${NC}| REMOVE CLIENT"
-	echo -e "|${RED} 3${NC}| CHECK ALL CLIENT"
-	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT ONLINE"
-	echo -e "|${RED} 5${NC}| RENEW EXPIRE DATE OF CLIENT"
-	echo -e "|${RED} 6${NC}| SET TIME AUTO REBOOT SERVER"
-	echo -e "|${RED} 7${NC}| SPEEDTEST"
-	echo -e "|${RED} 8${NC}| CHECK ALL BANDWIDTH"
-	echo -e "|${RED} 9${NC}| CHANGE SYSTEM SERVER"
+	echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME"
+	echo -e "|${RED} 3${NC}| REMOVE CLIENT"
+	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT"
+	echo -e "|${RED} 5${NC}| CHECK ALL CLIENT ONLINE"
+	echo -e "|${RED} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
+	echo -e "|${RED} 7${NC}| SET TIME AUTO REBOOT SERVER"
+	echo -e "|${RED} 8${NC}| SPEEDTEST"
+	echo -e "|${RED} 9${NC}| CHECK ALL BANDWIDTH"
+	echo -e "|${RED}10${NC}| CHANGE SYSTEM SERVER"
 	if [[ -e /usr/local/bin/Check-System ]]; then
-		echo -e "|${RED}10${NC}| BAN AND UNBAN CLIENT"
+		echo -e "|${RED}11${NC}| BAN AND UNBAN CLIENT"
 	elif [[ ! -e /usr/local/bin/Check-System ]]; then
-		echo -e "|${RED}10${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
+		echo -e "|${RED}11${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
 	fi
-	echo -e "|${RED}11${NC}| UP-DOWN SPEED INTERNET"
-	echo -e "|${RED}12${NC}| START-STOP-RESTART OPERATION SYSTEM"
-	echo -e "|${RED}13${NC}| EDIT CONFIG"
+	echo -e "|${RED}12${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${RED}13${NC}| START-STOP-RESTART OPERATION SYSTEM"
+	echo -e "|${RED}14${NC}| EDIT CONFIG"
 	echo ""
 	echo -e "|${RED} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${RED}00${NC}| เปลี่ยนเป็นภาษาไทย"
@@ -129,7 +131,7 @@ fi
 case $MENU in
 
 	1) # ==================================================================================================================
-clear
+
 CHECKSYSTEM=$(tail -n +2 /etc/openvpn/server.conf | grep "^username-as-common-name")
 echo ""
 read -p "ชื่อบัญชีที่ต้องการสร้าง : " -e CLIENT
@@ -187,6 +189,7 @@ else
 	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
 fi
 clear
+echo ""
 echo "ชื่อบัญชี : $CLIENT"
 if [[ $CHECKSYSTEM ]]; then
 	echo "รหัสผ่าน : $PASSWD"
@@ -200,6 +203,67 @@ exit
 	;;
 
 	2) # ==================================================================================================================
+
+echo ""
+if [[ $CHECKSYSTEM ]]; then
+	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้และรหัสผ่านเป็นตัวอักษรจำนวน 4 หลักให้อัตโนมัติ"
+else
+	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้เป็นตัวอักษรจำนวน 4 หลักให้อัตโนมัติ"
+fi
+echo ""
+echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
+read -p "กำหนดวันหมดอายุ : " -e TimeActive
+echo ""
+
+clear
+CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w 4 | head -n 1)
+PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w 4 | head -n 1)
+
+newclient () {
+	cp /etc/openvpn/client-common.txt ~/$1.ovpn
+	echo "<ca>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+	echo "</ca>" >> ~/$1.ovpn
+	echo "<cert>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+	echo "</cert>" >> ~/$1.ovpn
+	echo "<key>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+	echo "</key>" >> ~/$1.ovpn
+	echo "<tls-auth>" >> ~/$1.ovpn
+	cat /etc/openvpn/ta.key >> ~/$1.ovpn
+	echo "</tls-auth>" >> ~/$1.ovpn
+}
+
+cd /etc/openvpn/easy-rsa/
+./easyrsa build-client-full $CLIENTRANDOM nopass
+newclient "$CLIENTRANDOM"
+cp /root/$CLIENTRANDOM.ovpn /home/vps/public_html/
+rm -f /root/$CLIENTRANDOM.ovpn
+
+useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
+EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
+
+if [[ $CHECKSYSTEM ]]; then
+	echo -e "$PASSWORDRANDOM\n$PASSWORDRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
+else
+	echo -e "$CLIENTRANDOM\n$CLIENTRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
+fi
+
+echo ""
+echo "ชื่อบัญชี : $CLIENTRANDOM"
+if [[ $CHECKSYSTEM ]]; then
+	echo "รหัสผ่าน : $PASSWORDRANDOM"
+fi
+echo "หมดอายุในวันที่ : $EXP"
+echo ""
+echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$CLIENTRANDOM.ovpn"
+echo ""
+exit
+
+	;;
+
+	3) # ==================================================================================================================
 
 
 NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
@@ -250,7 +314,7 @@ exit
 
 	;;
 
-	3) # ==================================================================================================================
+	4) # ==================================================================================================================
 
 clear
 echo ""
@@ -280,7 +344,7 @@ exit
 
 	;;
 
-	4) # ==================================================================================================================
+	5) # ==================================================================================================================
 
 clear
 echo ""
@@ -307,8 +371,7 @@ exit
 
 	;;
 
-
-	5) # ==================================================================================================================
+	6) # ==================================================================================================================
 
 clear
 echo ""
@@ -346,7 +409,7 @@ exit
 
 	;;
 
-	6) # ==================================================================================================================
+	7) # ==================================================================================================================
 
  if [ ! -e /usr/local/bin/Reboot-Server ]; then
 	echo '#!/bin/bash' > /usr/local/bin/Reboot-Server
@@ -480,7 +543,7 @@ esac
 
 	;;
 
-	7) # ==================================================================================================================
+	8) # ==================================================================================================================
 
 if [[ -e /usr/local/bin/speedtest ]]; then
 	clear
@@ -494,7 +557,7 @@ fi
 
 	;;
 
-	8) # ==================================================================================================================
+	9) # ==================================================================================================================
 
 TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
 YESTERDAY=$(vnstat -i eth0 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
@@ -551,7 +614,7 @@ fi
 
 	;;
 
-	9) # ==================================================================================================================
+	10) # ==================================================================================================================
 
 clear
 echo ""
@@ -627,7 +690,7 @@ esac
 
 	;;
 
-	10) # ==================================================================================================================
+	11) # ==================================================================================================================
 
 clear
 echo ""
@@ -711,7 +774,7 @@ esac
 
 	;;
 
-	11) # ==================================================================================================================
+	12) # ==================================================================================================================
 
 clear
 echo ""
@@ -771,7 +834,7 @@ fi
 
 	;;
 
-	12) # ==================================================================================================================
+	13) # ==================================================================================================================
 
 clear
 echo ""
@@ -998,7 +1061,7 @@ esac
 
 	;;
 
-	13) # ==================================================================================================================
+	14) # ==================================================================================================================
 
 clear
 echo ""
