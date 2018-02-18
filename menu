@@ -23,7 +23,11 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "เมนูสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	echo -e "|${RED} 1${NC}| เพิ่มบัญชีผู้ใช้"
-	echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้"
+	if [[ -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้และรหัสผ่าน"
+	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้"
+	fi
 	echo -e "|${RED} 3${NC}| ลบบัญชีผู้ใช้"
 	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด"
 	echo -e "|${RED} 5${NC}| ตรวจสอบบัญชีที่กำลังเชื่อมต่อในขณะนี้"
@@ -205,10 +209,12 @@ exit
 	2) # ==================================================================================================================
 
 echo ""
+read -p "กำหนดให้ชื่อบัญชีผู้ใช้มีกี่ตัวอักษร : " -e CPNUM
+echo ""
 if [[ $CHECKSYSTEM ]]; then
-	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้และรหัสผ่านเป็นตัวอักษรจำนวน 4 หลักให้อัตโนมัติ"
+	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้และรหัสผ่านเป็นตัวอักษรจำนวน $CPNUM ตัวอักษรให้อัตโนมัติ"
 else
-	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้เป็นตัวอักษรจำนวน 4 หลักให้อัตโนมัติ"
+	echo -e "${RED}*${NC} ระบบจะสุ่มชื่อบัญชีผู้ใช้เป็นตัวอักษรจำนวน $CPNUM ตัวอักษรให้อัตโนมัติ"
 fi
 echo ""
 echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
@@ -216,8 +222,8 @@ read -p "กำหนดวันหมดอายุ : " -e TimeActive
 echo ""
 
 clear
-CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w 4 | head -n 1)
-PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w 4 | head -n 1)
+CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
+PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
 
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
