@@ -255,7 +255,7 @@ if [[ $CHECKSYSTEM ]]; then
 else
 	echo -e "$CLIENTRANDOM\n$CLIENTRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
 fi
-
+clear
 echo ""
 echo "ชื่อบัญชี : $CLIENTRANDOM"
 if [[ $CHECKSYSTEM ]]; then
