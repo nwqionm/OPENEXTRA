@@ -4,34 +4,12 @@ if [[ $USER != 'root' ]]; then
 	echo "Maaf, Anda harus menjalankan ini sebagai root"
 	exit
 fi
-MYIP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0' | head -n1`;
-#MYIP=$(wget -qO- ipv4.icanhazip.com)
-
-#vps="zvur";
-vps="aneka";
-
-
-	source="http://tepsus-slow-vpn.xyz"
-
 
 # go to root
 cd
 
-# check registered ip
-wget -q -O IP $source/debian7/IP.txt
-if ! grep -w -q $MYIP IP; then
-	echo "Only Listed IP In My Github Can Use This Script"
-	if [[ $vps = "zvur" ]]; then
-		echo "Hubungi: SYAHZ86"
-	else
-		echo "Hubungi: SYAHZ86"
-	fi
-	rm -f /root/IP
-	exit
-fi
-
-u="syahz86"
-p="syahz86"
+u="user1"
+p="pass1"
 
 # get the VPS IP
 #ip=`ifconfig venet0:0 | grep 'inet addr' | awk {'print $2'} | sed s/.*://`
