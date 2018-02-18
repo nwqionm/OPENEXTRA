@@ -227,6 +227,7 @@ elif [[ -e /etc/apt/sources.list.d/pritunl.list ]]; then
 
 else
 	clear
+	echo ""
 	read -p "IP Server : " -e -i $IP IP
 	read -p "Port Server : " -e -i 1194 PORT
 	read -p "Port Proxy : " -e -i 8080 PROXY
@@ -249,19 +250,17 @@ else
 	echo ""
 	read -p "DNS : " -e -i 1 DNS
 	echo ""
-	echo -e " |${RED}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น สามารถสร้างไฟล์เพิ่มได้"
-	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องสร้างบัญชีเพื่อใช้เชื่อมต่อ"
-	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดเครื่อง"
+	echo -e " |${RED}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น แต่สามารถสร้างไฟล์เพิ่มได้"
+	echo -e " |${RED}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องใช้ชื่อบัญชีและรหัสผ่านเพื่อใช้เชื่อมต่อ"
+	echo -e " |${RED}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดจำนวนเครื่อง"
 	echo ""
-	read -p "OpenVPN System : " -e OPENVPNSYSTEM
+	read -p "Server System : " -e OPENVPNSYSTEM
+	echo ""
 	read -p "Server Name: " -e CLIENT
+	echo ""
 	case $OPENVPNSYSTEM in
 		2)
 		read -p "Your Username : " -e Usernames
-		;;
-	esac
-	case $OPENVPNSYSTEM in
-		2)
 		read -p "Your Password : " -e Passwords
 		;;
 	esac
