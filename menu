@@ -344,10 +344,10 @@ do
 	ONLINE="$(cat /etc/openvpn/openvpn-status.log | grep -Eom 1 $ACCOUNT | grep -Eom 1 $ACCOUNT)"
 	if [[ $ID -ge 1000 ]]; then
 		if [[ -z $ONLINE ]]; then
-			printf "%-6s %-15s %-20s %-3s\n" "$C." "$ACCOUNT" "$CLIENTOFFLINE" "$EXP"
+			printf "%-6s %-15s %-20s %-3s\n" "$C" "$ACCOUNT" "$CLIENTOFFLINE" "$EXP"
 			OFF=$((OFF+1))
 		else
-			printf "%-6s %-15s %-20s %-3s\n" "$C." "$ACCOUNT" "$CLIENTONLINE" "$EXP"
+			printf "%-6s %-15s %-20s %-3s\n" "$C" "$ACCOUNT" "$CLIENTONLINE" "$EXP"
 			ON=$((ON+1))
 		fi
 			C=$((C+1))
