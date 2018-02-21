@@ -24,16 +24,16 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "เมนูสคริปท์ ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	echo -e "|${RED} 1${NC}| เพิ่มบัญชีผู้ใช้"
-	if [[ -e /usr/local/bin/Check-System ]]; then
+	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้และรหัสผ่าน"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+	else
 		echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้"
 	fi
 	echo -e "|${RED} 3${NC}| ลบบัญชีผู้ใช้"
 	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด และตรวจสอบบัญชีที่กำลังเชื่อมต่อ"
-	if [[ -e /usr/local/bin/Check-System ]]; then
+	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+	else
 		echo -e "|${RED} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
 	echo -e "|${RED} 6${NC}| เปลี่ยนวันหมดอายุบัญชีผู้ใช้"
@@ -41,9 +41,9 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
 	echo -e "|${RED} 9${NC}| ตรวจสอบแบนด์วิดท์"
 	echo -e "|${RED}10${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
-	if [[ -e /usr/local/bin/Check-System ]]; then
+	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED}11${NC}| แบนและปลดแบนบัญชีผู้ใช้"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+	else
 		echo -e "|${RED}11${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
 	echo -e "|${RED}12${NC}| ปรับความเร็วอินเตอร์เน็ต"
@@ -57,12 +57,16 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "MENU SCRIPT ${RED}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
 	echo ""
 	echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
-	echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME"
+	if [[ $CHECKSYSTEM ]]; then
+		echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME AND PASSWORD"
+	else
+		echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME"
+	fi
 	echo -e "|${RED} 3${NC}| REMOVE CLIENT"
 	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT AND CHECK ALL CLIENT ONLINE"
-	if [[ -e /usr/local/bin/Check-System ]]; then
+	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED} 5${NC}| CHANGE PASSWORD OF CLIENT"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+	else
 		echo -e "|${RED} 5${NC}| CHANGE PASSWORD OF CLIENT ${RED}Not available with current server.  ${NC}"
 	fi
 	echo -e "|${RED} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
@@ -70,9 +74,9 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 8${NC}| SPEEDTEST"
 	echo -e "|${RED} 9${NC}| CHECK ALL BANDWIDTH"
 	echo -e "|${RED}10${NC}| CHANGE SYSTEM SERVER"
-	if [[ -e /usr/local/bin/Check-System ]]; then
+	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED}11${NC}| BAN AND UNBAN CLIENT"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+	else
 		echo -e "|${RED}11${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
 	fi
 	echo -e "|${RED}12${NC}| UP-DOWN SPEED INTERNET"
@@ -245,22 +249,44 @@ fi
 
 	2) # ==================================================================================================================
 
-echo ""
-read -p "กำหนดชื่อบัญชีผู้ใช้ที่จะสร้างให้มีกี่ตัวอักษร : " -e -i 4 CPNUM
-echo ""
 if [[ $CHECKSYSTEM ]]; then
+	echo ""
+	read -p "กำหนดชื่อบัญชีผู้ใช้ที่จะสร้างให้มีกี่ตัวอักษร : " -e -i 4 CPNUM
+	echo ""
 	echo -e "     ระบบจะสุ่มชื่อบัญชีผู้ใช้และรหัสผ่านเป็นตัวอักษรจำนวน $CPNUM ตัวอักษรให้อัตโนมัติ"
-else
-	echo -e "     ระบบจะสุ่มชื่อบัญชีผู้ใช้เป็นตัวอักษรจำนวน $CPNUM ตัวอักษรให้อัตโนมัติ"
-fi
-echo ""
-echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
-read -p "กำหนดวันหมดอายุ : " -e TimeActive
-echo ""
+	echo ""
+	echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
+	read -p "กำหนดวันหมดอายุ : " -e TimeActive
 
-clear
-CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
-PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
+	SERVERNAME=$(grep '^remote ' /etc/openvpn/client-common.txt | cut -d " " -f 2 | head -n1)
+	CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
+	PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
+	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
+	EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
+	echo -e "$PASSWORDRANDOM\n$PASSWORDRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
+	clear
+	echo ""
+	echo "ชื่อบัญชี : $CLIENTRANDOM"
+	echo "รหัสผ่าน : $PASSWORDRANDOM"
+	echo "หมดอายุในวันที่ : $EXP"
+	echo ""
+	echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$SERVERNAME.ovpn"
+	echo ""
+	exit
+
+else
+
+	echo ""
+	read -p "กำหนดชื่อบัญชีผู้ใช้ที่จะสร้างให้มีกี่ตัวอักษร : " -e -i 4 CPNUM
+	echo ""
+	echo -e "     ระบบจะสุ่มชื่อบัญชีผู้ใช้เป็นตัวอักษรจำนวน $CPNUM ตัวอักษรให้อัตโนมัติ"
+	echo ""
+	echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
+	read -p "กำหนดวันหมดอายุ : " -e TimeActive
+	echo ""
+	clear
+	CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
+	PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
 
 newclient () {
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
@@ -278,31 +304,23 @@ newclient () {
 	echo "</tls-auth>" >> ~/$1.ovpn
 }
 
-cd /etc/openvpn/easy-rsa/
-./easyrsa build-client-full $CLIENTRANDOM nopass
-newclient "$CLIENTRANDOM"
-cp /root/$CLIENTRANDOM.ovpn /home/vps/public_html/
-rm -f /root/$CLIENTRANDOM.ovpn
-
-useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
-EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
-
-if [[ $CHECKSYSTEM ]]; then
-	echo -e "$PASSWORDRANDOM\n$PASSWORDRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
-else
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa build-client-full $CLIENTRANDOM nopass
+	newclient "$CLIENTRANDOM"
+	cp /root/$CLIENTRANDOM.ovpn /home/vps/public_html/
+	rm -f /root/$CLIENTRANDOM.ovpn
+	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
+	EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
 	echo -e "$CLIENTRANDOM\n$CLIENTRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
+	clear
+	echo ""
+	echo "ชื่อบัญชี : $CLIENTRANDOM"
+	echo "หมดอายุในวันที่ : $EXP"
+	echo ""
+	echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$CLIENTRANDOM.ovpn"
+	echo ""
+	exit
 fi
-clear
-echo ""
-echo "ชื่อบัญชี : $CLIENTRANDOM"
-if [[ $CHECKSYSTEM ]]; then
-	echo "รหัสผ่าน : $PASSWORDRANDOM"
-fi
-echo "หมดอายุในวันที่ : $EXP"
-echo ""
-echo "ดาวน์โหลดคอนฟิก : http://$IP:85/$CLIENTRANDOM.ovpn"
-echo ""
-exit
 
 	;;
 
@@ -401,13 +419,14 @@ exit
 
 	5) # ==================================================================================================================
 
-if [[ ! -e /usr/local/bin/Check-System ]]; then
+if [[ ! $CHECKSYSTEM ]]; then
 	echo ""
 	echo "ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน"
 	echo ""
 	exit
 
-elif [[ -e /usr/local/bin/Check-System ]]; then
+else
+
 	echo ""
 	read -p "ชื่อบัญชีที่ต้องการเปลี่ยนรหัสผ่าน : " CLIENTNAME
 	egrep "^$CLIENTNAME" /etc/passwd >/dev/null
@@ -453,7 +472,7 @@ fi
 echo ""
 read -p "ชื่อบัญชีที่ต้องการเปลี่ยนวันหมดอายุ : " -e CLIENT
 
-if [[ ! -e /home/vps/public_html/$CLIENT.ovpn ]]; then
+if [ $? -eq 0 ]; then
 	echo ""
 	echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
 	echo ""
@@ -716,9 +735,6 @@ sed -i '28d' /etc/openvpn/server.conf
 sed -i '28d' /etc/openvpn/server.conf
 sed -i '20d' /etc/openvpn/client-common.txt
 echo "client-to-client" >> /etc/openvpn/server.conf
-if [[ -e /usr/local/bin/Check-System ]]; then
-	rm -rf /usr/local/bin/Check-System
-fi
 echo ""
 echo "ปรับเปลี่ยนระบบของเซิฟเวอร์เป็นรูปแบบที่ 1 เรียบร้อย"
 echo ""
@@ -736,9 +752,6 @@ echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login
 client-cert-not-required
 username-as-common-name" >> /etc/openvpn/server.conf
 echo "auth-user-pass" >> /etc/openvpn/client-common.txt
-if [[ ! -e /usr/local/bin/Check-System ]]; then
-	echo "Check System" >> /usr/local/bin/Check-System
-fi
 echo ""
 echo "ปรับเปลี่ยนระบบของเซิฟเวอร์เป็นรูปแบบที่ 2 เรียบร้อย"
 echo ""
@@ -753,9 +766,6 @@ sed -i '28d' /etc/openvpn/server.conf
 sed -i '28d' /etc/openvpn/server.conf
 sed -i '20d' /etc/openvpn/client-common.txt
 echo "duplicate-cn" >> /etc/openvpn/server.conf
-if [[ -e /usr/local/bin/Check-System ]]; then
-	rm -rf /usr/local/bin/Check-System
-fi
 echo ""
 echo "ปรับเปลี่ยนระบบของเซิฟเวอร์เป็นรูปแบบที่ 3 เรียบร้อย"
 echo ""
@@ -769,7 +779,7 @@ esac
 
 	11) # ==================================================================================================================
 
-if [[ ! -e /usr/local/bin/Check-System ]]; then
+if [[ ! $CHECKSYSTEM ]]; then
 	echo ""
 	echo "ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน"
 	echo ""
