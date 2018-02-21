@@ -84,9 +84,9 @@ if [[ -e /etc/vnstat.conf ]]; then
 	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTAL${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${RED}$TOTALONLINE${NC} บัญชี"
+		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTAL${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${GREEN}$TOTALONLINE${NC} บัญชี"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "TOTAL BANDWIDTH ${RED}$TOTAL${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${RED}$TOTALONLINE${NC} CLIENT"
+		echo -e "TOTAL BANDWIDTH ${RED}$TOTAL${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$TOTALONLINE${NC} CLIENT"
 	fi
 fi
 echo ""
@@ -353,7 +353,7 @@ do
 done < /etc/passwd
 TOTAL="$(awk -F: '$3 >= '1000' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 echo ""
-echo -e "เชื่อมต่อ : ${GREEN}$ON${NC}       ไม่ได้เชื่อมต่อ : ${RED}$OFF${NC}       บัญชีทั้งหมด : $TOTAL"
+echo -e "เชื่อมต่อ : ${GREEN}$ON${NC} ไม่ได้เชื่อมต่อ : ${RED}$OFF${NC} บัญชีทั้งหมด : $TOTAL"
 echo ""
 exit
 
