@@ -328,23 +328,32 @@ echo "  (\_(\ "
 echo " (=’ :’) :* Script by Mnm Ami"
 echo "  (,(”)(”) °.¸¸.•"
 echo ""
-UIDN=1000
-echo ""
-echo -e "${RED}รายชื่อบัญชี          วันหมดอายุ ${NC} "
-echo ""
-while read CHECKCLIENT
+echo "ลำดับ ชื่อบัญชีผู้ใช้        สถานะ       วันหมดอายุ"
+N=1
+ON=0
+OFF=0
+while read ONOFF
 do
-	ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
-	ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+	OFFLINE=$(echo -e "${RED}OFFLINE${NC}")
+	ONLINE=$(echo -e "${GREEN}ONLINE${NC}")
+	ACCOUNT="$(echo $ONOFF | cut -d: -f1)"
+	ID="$(echo $ONOFF | grep -v nobody | cut -d: -f3)"
 	EXP="$(chage -l $ACCOUNT | grep "Account expires" | awk -F": " '{print $2}')"
-	if [[ $ID -ge $UIDN ]]; then
-		printf "%-17s %2s\n" "$ACCOUNT" "$EXP"
-	fi
+	ONLINE="$(cat /etc/openvpn/openvpn-status.log | grep -Eom 1 $ACCOUNT | grep -Eom 1 $ACCOUNT)"
+	if [[ $ID -ge 1000 ]]; then
+		ACCOUNT [[ -z $ONLINE ]]; then
+		printf "%-4s %-15s %-10s %-3s\n" "$N." "$ACCOUNT" "$OFFLINE" "$EXP"
+		OFF=$((OFF+1))
+	else
+		printf "%-4s %-15s %-10s %-3s\n" "$N." "$ACCOUNT" "$ONLINE" "$EXP"
+		ON=$((ON+1))
+        fi
+		N=$((C+1))
+        fi
 done < /etc/passwd
-
-TOTAL="$(awk -F: '$3 >= '$UIDN' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
+TOTAL="$(awk -F: '$3 >= '1000' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 echo ""
-echo -e "บัญชีทั้งหมด : ${RED}$TOTAL${NC} "
+echo -e "เชื่อมต่อ : ${GREEN}$ON${NC}       ไม่ได้เชื่อมต่อ : ${RED}$OFF${NC}       บัญชีทั้งหมด : $TOTAL"
 echo ""
 exit
 
