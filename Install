@@ -613,7 +613,11 @@ fi
 	echo "IP Proxy : $IP"
 	echo "Port Proxy : $PROXY"
 	echo ""
-	echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
+	if [[ -e /usr/local/bin/Check-System ]]; then
+		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
+	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+		echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
+	fi
 	echo ""
 	case $OPENVPNSYSTEM in
 		2)
