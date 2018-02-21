@@ -426,7 +426,6 @@ verb 3" > /etc/openvpn/client-common.txt
 	case $OPENVPNSYSTEM in
 		2)
 		echo "auth-user-pass" >> /etc/openvpn/client-common.txt
-		echo "Check System" >> /usr/local/bin/Check-System
 		;;
 	esac
 
@@ -613,22 +612,25 @@ fi
 	echo "IP Proxy : $IP"
 	echo "Port Proxy : $PROXY"
 	echo ""
-	if [[ -e /usr/local/bin/Check-System ]]; then
-		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
-	elif [[ ! -e /usr/local/bin/Check-System ]]; then
-		echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
-	fi
-	echo ""
 	case $OPENVPNSYSTEM in
+		1)
+		echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
+		;;
 		2)
+		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
+		echo ""
 		echo "Your Username : $Usernames"
 		echo "Your Password : $Passwords"
 		echo "Expire : Never"
 		;;
+		3)
+		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
+		;;
 	esac
 	echo ""
+	echo ""
 	echo "====================================================="
-	echo -e "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง ${RED}menu${NC} เพื่อไปยังขั้นตอนถัดไป"
+	echo -e "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง${RED} menu ${NC} เพื่อไปยังขั้นตอนถัดไป"
 	echo "====================================================="
 	echo ""
 	exit
