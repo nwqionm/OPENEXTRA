@@ -30,8 +30,8 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "|${RED} 2${NC}| เพิ่มบัญชีผู้ใช้ สุ่มชื่อผู้ใช้"
 	fi
 	echo -e "|${RED} 3${NC}| ลบบัญชีผู้ใช้"
-	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด"
-	echo -e "|${RED} 5${NC}| ตรวจสอบบัญชีที่กำลังเชื่อมต่อในขณะนี้"
+	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด และตรวจสอบบัญชีที่กำลังเชื่อมต่อ"
+	echo -e "|${RED} 5${NC}| - "
 	echo -e "|${RED} 6${NC}| เปลี่ยนวันหมดอายุของผู้ใช้"
 	echo -e "|${RED} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${RED} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
@@ -55,8 +55,8 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 1${NC}| ADD NEW CLIENT"
 	echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME"
 	echo -e "|${RED} 3${NC}| REMOVE CLIENT"
-	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT"
-	echo -e "|${RED} 5${NC}| CHECK ALL CLIENT ONLINE"
+	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT AND CHECK ALL CLIENT ONLINE"
+	echo -e "|${RED} 5${NC}| - "
 	echo -e "|${RED} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
 	echo -e "|${RED} 7${NC}| SET TIME AUTO REBOOT SERVER"
 	echo -e "|${RED} 8${NC}| SPEEDTEST"
@@ -361,28 +361,7 @@ exit
 
 	5) # ==================================================================================================================
 
-clear
-echo ""
-echo "  (\_(\ "
-echo " (=’ :’) :* Script by Mnm Ami"
-echo "  (,(”)(”) °.¸¸.•"
-echo ""
-if [ -f "/etc/openvpn/openvpn-status.log" ]; then
-	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
-	a=$((3+((line-8)/2)))
-	b=$(((line-8)/2))
 
-	echo -e "${RED}บัญชีที่กำลังเชื่อมต่ออยู่ในขณะนี้ ${NC} ";
-	echo ""
-	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
-	cat /usr/local/bin/Client-Login
-	echo ""
-fi
-TOTAL=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
-echo ""
-echo -e "เชื่อมต่อทั้งหมด : ${RED}$TOTAL${NC} "
-echo ""
-exit
 
 	;;
 
