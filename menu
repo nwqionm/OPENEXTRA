@@ -288,21 +288,22 @@ else
 	CLIENTRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
 	PASSWORDRANDOM=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w $CPNUM | head -n 1)
 
-newclient () {
-	cp /etc/openvpn/client-common.txt ~/$1.ovpn
-	echo "<ca>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
-	echo "</ca>" >> ~/$1.ovpn
-	echo "<cert>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
-	echo "</cert>" >> ~/$1.ovpn
-	echo "<key>" >> ~/$1.ovpn
-	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
-	echo "</key>" >> ~/$1.ovpn
-	echo "<tls-auth>" >> ~/$1.ovpn
-	cat /etc/openvpn/ta.key >> ~/$1.ovpn
-	echo "</tls-auth>" >> ~/$1.ovpn
-}
+
+	newclient () {
+		cp /etc/openvpn/client-common.txt ~/$1.ovpn
+		echo "<ca>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+		echo "</ca>" >> ~/$1.ovpn
+		echo "<cert>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+		echo "</cert>" >> ~/$1.ovpn
+		echo "<key>" >> ~/$1.ovpn
+		cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+		echo "</key>" >> ~/$1.ovpn
+		echo "<tls-auth>" >> ~/$1.ovpn
+		cat /etc/openvpn/ta.key >> ~/$1.ovpn
+		echo "</tls-auth>" >> ~/$1.ovpn
+	}
 
 	cd /etc/openvpn/easy-rsa/
 	./easyrsa build-client-full $CLIENTRANDOM nopass
@@ -451,10 +452,11 @@ else
 			exit
 		fi
 	else
-        echo ""
-        echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
-	echo ""
-	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
+
+		echo ""
+		echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
+		echo ""
+		read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
 		
 		if [[ "$TOMENU" = 'Y' ]]; then
 			menu
@@ -473,6 +475,23 @@ echo ""
 read -p "ชื่อบัญชีที่ต้องการเปลี่ยนวันหมดอายุ : " -e CLIENT
 
 if [ $? -eq 0 ]; then
+	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+	echo ""
+	echo -e "ชื่อบัญชีนี้หมดอายุในวันที่ ${RED}$EXP${NC}"
+	echo ""
+	read -p "เปลี่ยนวันหมดอายุ : " -e TimeActive
+	userdel $CLIENT
+	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
+	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
+	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+	echo ""
+	echo "ชื่อบัญชี : $CLIENT"
+	echo "หมดวันหมดในวันที่ : $EXP"
+	echo ""
+	exit
+
+else
+
 	echo ""
 	echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
 	echo ""
@@ -485,22 +504,6 @@ if [ $? -eq 0 ]; then
 		exit
 	fi
 fi
-
-EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-echo ""
-echo -e "ชื่อบัญชีนี้หมดอายุในวันที่ ${RED}$EXP${NC}"
-echo ""
-read -p "เปลี่ยนวันหมดอายุ : " -e TimeActive
-
-userdel $CLIENT
-useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
-EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
-echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
-echo ""
-echo "ชื่อบัญชี : $CLIENT"
-echo "หมดวันหมดในวันที่ : $EXP"
-echo ""
-exit
 
 	;;
 
