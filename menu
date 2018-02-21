@@ -31,8 +31,12 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	fi
 	echo -e "|${RED} 3${NC}| ลบบัญชีผู้ใช้"
 	echo -e "|${RED} 4${NC}| ตรวจสอบบัญชีผู้ใช้ทั้งหมด และตรวจสอบบัญชีที่กำลังเชื่อมต่อ"
-	echo -e "|${RED} 5${NC}| - "
-	echo -e "|${RED} 6${NC}| เปลี่ยนวันหมดอายุของผู้ใช้"
+	if [[ -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้"
+	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+	fi
+	echo -e "|${RED} 6${NC}| เปลี่ยนวันหมดอายุบัญชีผู้ใช้"
 	echo -e "|${RED} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${RED} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
 	echo -e "|${RED} 9${NC}| ตรวจสอบแบนด์วิดท์"
@@ -56,7 +60,11 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 2${NC}| ADD NEW CLIENT RANDOM CLIENT NAME"
 	echo -e "|${RED} 3${NC}| REMOVE CLIENT"
 	echo -e "|${RED} 4${NC}| CHECK ALL CLIENT AND CHECK ALL CLIENT ONLINE"
-	echo -e "|${RED} 5${NC}| - "
+	if [[ -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 5${NC}| CHANGE PASSWORD OF CLIENT"
+	elif [[ ! -e /usr/local/bin/Check-System ]]; then
+		echo -e "|${RED} 5${NC}| CHANGE PASSWORD OF CLIENT ${RED}Not available with current server.  ${NC}"
+	fi
 	echo -e "|${RED} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
 	echo -e "|${RED} 7${NC}| SET TIME AUTO REBOOT SERVER"
 	echo -e "|${RED} 8${NC}| SPEEDTEST"
@@ -364,13 +372,55 @@ exit
 
 	5) # ==================================================================================================================
 
+if [[ ! -e /usr/local/bin/Check-System ]]; then
+	echo ""
+	echo "ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน"
+	echo ""
+	exit
 
+elif [[ -e /usr/local/bin/Check-System ]]; then
+	echo ""
+	read -p "ชื่อบัญชีที่ต้องการเปลี่ยนรหัสผ่าน : " CLIENTNAME
+	egrep "^$CLIENTNAME" /etc/passwd >/dev/null
+
+	if [ $? -eq 0 ]; then
+		echo ""
+		read -p "รหัสผ่านที่ต้องการปลี่ยน : " NEWPASSWORD
+		read -p "ยืนยันรหัสผ่านอีกครั้ง : " RETYPEPASSWORD
+		
+		if [[ $NEWPASSWORD = $RETYPEPASSWORD ]]; then
+			echo ""
+			echo "ระบบได้ทำการเปลี่ยนรหัสผ่านเรียบร้อยแล้ว"
+			echo ""
+			echo "ชื่อบัญชีผู้ใข้ : $CLIENTNAME"
+			echo "รหัสผ่านใหม่ : $NEWPASSWORD"
+			echo ""
+			exit
+		else
+			echo ""
+			echo "เปลี่ยนรหัสผ่านไม่สำเร็จ การยืนยันรหัสผ่านไม่สอดคล้อง"
+			echo ""
+			exit
+		fi
+	else
+        echo ""
+        echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
+	echo ""
+	read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
+		
+		if [[ "$TOMENU" = 'Y' ]]; then
+			menu
+			exit
+		elif [[ "$TOMENU" = 'N' ]]; then
+			exit
+		fi
+	fi
+fi
 
 	;;
 
 	6) # ==================================================================================================================
 
-clear
 echo ""
 read -p "ชื่อบัญชีที่ต้องการเปลี่ยนวันหมดอายุ : " -e CLIENT
 
@@ -688,6 +738,13 @@ esac
 	;;
 
 	11) # ==================================================================================================================
+
+if [[ ! -e /usr/local/bin/Check-System ]]; then
+	echo ""
+	echo "ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน"
+	echo ""
+	exit
+fi
 
 clear
 echo ""
