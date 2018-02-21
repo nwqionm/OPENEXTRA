@@ -85,16 +85,17 @@ fi
 
 echo ""
 if [[ -e /etc/vnstat.conf ]]; then
+	INTERFACE=`ifconfig | grep -B1 "inet addr:$IP" | head -n1 | awk '{print $1}'`
+	TOTALBW=$(vnstat -i $INTERFACE --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
 	a=$((3+((line-8)/2)))
 	b=$(((line-8)/2))
 	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
-	TOTAL=$(vnstat -i eth0 --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTAL${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${GREEN}$TOTALONLINE${NC} บัญชี"
+		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTALBW${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${GREEN}$TOTALONLINE${NC} บัญชี"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-		echo -e "TOTAL BANDWIDTH ${RED}$TOTAL${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$TOTALONLINE${NC} CLIENT"
+		echo -e "TOTAL BANDWIDTH ${RED}$TOTALBW${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$TOTALONLINE${NC} CLIENT"
 	fi
 fi
 echo ""
@@ -606,17 +607,18 @@ fi
 
 	9) # ==================================================================================================================
 
-TODAY=$(vnstat -i eth0 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
-YESTERDAY=$(vnstat -i eth0 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
-WEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
-RXWEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $3" "substr ($10, 1, 1)}')
-TXWEEK=$(vnstat -i eth0 -w | grep "current week" | awk '{print $6" "substr ($10, 1, 1)}')
-MOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
-RXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $3" "substr ($10, 1, 1)}')
-TXMOUNT=$(vnstat -i eth0 | grep "`date +"%b '%y"`" | awk '{print $6" "substr ($10, 1, 1)}')
-TOTAL=$(vnstat -i eth0 | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
-RXTOTAL=$(vnstat -i eth0 | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
-TXTOTAL=$(vnstat -i eth0 | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
+INTERFACE=`ifconfig | grep -B1 "inet addr:$IP" | head -n1 | awk '{print $1}'`
+TODAY=$(vnstat -i $INTERFACE | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
+YESTERDAY=$(vnstat -i $INTERFACE | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
+WEEK=$(vnstat -i $INTERFACE -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}')
+RXWEEK=$(vnstat -i $INTERFACE -w | grep "current week" | awk '{print $3" "substr ($10, 1, 1)}')
+TXWEEK=$(vnstat -i $INTERFACE -w | grep "current week" | awk '{print $6" "substr ($10, 1, 1)}')
+MOUNT=$(vnstat -i $INTERFACE | grep "`date +"%b '%y"`" | awk '{print $9" "substr ($10, 1, 1)}')
+RXMOUNT=$(vnstat -i $INTERFACE | grep "`date +"%b '%y"`" | awk '{print $3" "substr ($10, 1, 1)}')
+TXMOUNT=$(vnstat -i $INTERFACE | grep "`date +"%b '%y"`" | awk '{print $6" "substr ($10, 1, 1)}')
+TOTAL=$(vnstat -i $INTERFACE | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
+RXTOTAL=$(vnstat -i $INTERFACE | grep "rx:" | awk '{print $2" "substr ($9, 1, 1)}')
+TXTOTAL=$(vnstat -i $INTERFACE | grep "tx:" | awk '{print $5" "substr ($9, 1, 1)}')
 
 clear
 echo ""
