@@ -1,26 +1,32 @@
-echo "---------------------------------------------"
-echo "BIL  USERNAME        STATUS       EXP DATE   "
-echo "---------------------------------------------"
-C=1
-ON=0
-OFF=0
-while read mumetndase
-do
-        AKUN="$(echo $mumetndase | cut -d: -f1)"
-        ID="$(echo $mumetndase | grep -v nobody | cut -d: -f3)"
-        exp="$(chage -l $AKUN | grep "Account expires" | awk -F": " '{print $2}')"
-        online="$(cat /etc/openvpn/openvpn-status.log | grep -Eom 1 $AKUN | grep -Eom 1 $AKUN)"
-        if [[ $ID -ge 500 ]]; then
-        if [[ -z $online ]]; then
-        printf "%-4s %-15s %-10s %-3s\n" "$C." "$AKUN" "OFFLINE" "$exp"
-        OFF=$((OFF+1))
-        else
-        printf "%-4s %-15s %-10s %-3s\n" "$C." "$AKUN" "ONLINE" "$exp"
-        ON=$((ON+1))
-        fi
-        C=$((C+1))
-        fi
-done < /etc/passwd
-echo "---------------------------------------------"
-echo "   ONLINE : $ON       OFFLINE : $OFF     "
-echo "---------------------------------------------"
+#!/bin/bash
+
+read -p "    กรุณาระบุชื่อผู้ใช้ที่ต้องการเปลี่ยนอายุวันใช้งาน  : " username
+egrep "^$username" /etc/passwd >/dev/null
+if [ $? -eq 0 ]; then
+read -p "    กรุณาระบุจำนวนวันที่ต้องการเปลี่ยนวันใช้งาน  : " active_time
+
+today=`date +%s`
+active_time_2=$(( $active_time * 86400 ))
+time_expired=$(($today + $active_time_2))
+date_expired=$(date -u --date="1970-01-01 $time_expired sec GMT" +%Y/%m/%d)
+date_expired_display=$(date -u --date="1970-01-01 $time_expired sec GMT" '+%d %B %Y')
+
+passwd -u $username
+usermod -e  $date_expired $username
+  egrep "^$username" /etc/passwd >/dev/null
+  echo -e "$password\n$password" | passwd $username
+  clear
+  echo ""
+  echo "---------------------------------------"
+echo ""
+  echo "    ชื่อผู้ใช้ $username เปลี่ยนวันหมดอายุเป็นวันที่ $date_expired_display อายุวันใช้งานรวม $active_time วัน"
+echo ""
+  echo "--------------------------------------"
+  echo " "
+
+else
+echo ""
+echo -e "    ขออภัย ไม่พบชื่อผู้ใช้ $username อยู่ในระบบ"
+echo ""
+exit 0
+fi
