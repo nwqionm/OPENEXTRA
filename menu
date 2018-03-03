@@ -40,6 +40,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${RED} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
 	echo -e "|${RED} 9${NC}| ตรวจสอบแบนด์วิดท์"
+	echo -e "|${RED}10${NC}| ตรวจสอบแบนด์วิดท์แบบรายชั่วโมง"
 	echo -e "|${RED}11${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED}12${NC}| แบนและปลดแบนบัญชีผู้ใช้"
@@ -73,6 +74,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${RED} 7${NC}| SET TIME AUTO REBOOT SERVER"
 	echo -e "|${RED} 8${NC}| SPEEDTEST"
 	echo -e "|${RED} 9${NC}| CHECK ALL BANDWIDTH"
+	echo -e "|${RED}10${NC}| CHECK BANDWIDTH OF HOUR"
 	echo -e "|${RED}11${NC}| CHANGE SYSTEM SERVER"
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${RED}12${NC}| BAN AND UNBAN CLIENT"
