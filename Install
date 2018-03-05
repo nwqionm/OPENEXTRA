@@ -338,9 +338,15 @@ crl-verify crl.pem" >> /etc/openvpn/server.conf
 		echo "client-to-client" >> /etc/openvpn/server.conf
 		;;
 		2)
-		echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
-		echo "client-cert-not-required" >> /etc/openvpn/server.conf
-		echo "username-as-common-name" >> /etc/openvpn/server.conf
+		if [[ "$VERSION_ID" = 'VERSION_ID="7"' ]]; then
+			echo "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		else
+			echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		fi
 		;;
 		3)
 		echo "duplicate-cn" >> /etc/openvpn/server.conf
