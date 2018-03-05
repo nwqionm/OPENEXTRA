@@ -212,6 +212,7 @@ else
 	echo -e "     ${RED}ระบุตัวเลข 30 จะทำให้บัญชีที่สร้างใช้งานไม่ได้ในอีก 30 วัน${NC}"
 	read -p "กำหนดวันหมดอายุ : " -e TimeActive
 	RANDOMFOLDER=$(cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w 4 | head -n 1)
+	mkdir /home/vps/public_html/$RANDOMFOLDER
 
 	newclient () {
 		cp /etc/openvpn/client-common.txt ~/$1.ovpn
@@ -233,7 +234,7 @@ else
 	cd /etc/openvpn/easy-rsa/
 	./easyrsa build-client-full $CLIENT nopass
 	newclient "$CLIENT"
-	cp /root/$CLIENT.ovpn /home/vps/public_html/$RANDOMFOLDER/
+	cp /root/$CLIENT.ovpn /home/vps/public_html/$RANDOMFOLDER/$CLIENT.ovpn
 	rm -f /root/$CLIENT.ovpn
 	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
