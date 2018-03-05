@@ -135,7 +135,8 @@ echo ""
 			rm -rf /etc/openvpn/crl.pem
 			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 			chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-			rm -f /home/vps/public_html/$CLIENT.ovpn
+			CHECKFOLDER=$(grep '^$CLIENT ' /usr/local/bin/Check-Folder | cut -d " " -f 2)
+			rm -f /home/vps/public_html/$CHECKFOLDER/$CLIENT.ovpn
 			userdel $CLIENT
 			menu
 			exit
@@ -238,6 +239,7 @@ else
 	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENT
 	EXP="$(chage -l $CLIENT | grep "Account expires" | awk -F": " '{print $2}')"
 	echo -e "$CLIENT\n$CLIENT\n"|passwd $CLIENT &> /dev/null
+	echo "$CLIENT $RANDOMFOLDER" >> /usr/local/bin/Check-Folder
 	clear
 	echo ""
 	echo "ชื่อบัญชี : $CLIENT"
@@ -317,6 +319,7 @@ else
 	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
 	EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
 	echo -e "$CLIENTRANDOM\n$CLIENTRANDOM\n"|passwd $CLIENTRANDOM &> /dev/null
+	echo "$CLIENT $RANDOMFOLDER" >> /usr/local/bin/Check-Folder
 	clear
 	echo ""
 	echo "ชื่อบัญชี : $CLIENTRANDOM"
