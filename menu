@@ -936,9 +936,15 @@ sed -i '28d' /etc/openvpn/server.conf
 sed -i '28d' /etc/openvpn/server.conf
 sed -i '28d' /etc/openvpn/server.conf
 sed -i '20d' /etc/openvpn/client-common.txt
-echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login
-client-cert-not-required
-username-as-common-name" >> /etc/openvpn/server.conf
+if [[ "$VERSION_ID" = 'VERSION_ID="7"' ]]; then
+	echo "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+	echo "client-cert-not-required" >> /etc/openvpn/server.conf
+	echo "username-as-common-name" >> /etc/openvpn/server.conf
+else
+	echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+	echo "client-cert-not-required" >> /etc/openvpn/server.conf
+	echo "username-as-common-name" >> /etc/openvpn/server.conf
+fi
 echo "auth-user-pass" >> /etc/openvpn/client-common.txt
 echo ""
 echo "ปรับเปลี่ยนระบบของเซิฟเวอร์เป็นรูปแบบที่ 2 เรียบร้อย"
