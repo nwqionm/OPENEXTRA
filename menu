@@ -374,7 +374,8 @@ rm -rf pki/issued/$CLIENT.crt
 rm -rf /etc/openvpn/crl.pem
 cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
 chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-rm -f /home/vps/public_html/$CLIENT.ovpn
+CHECKFOLDER=$(grep '^$CLIENT ' /usr/local/bin/Check-Folder | cut -d " " -f 2)
+rm -f /home/vps/public_html/$CHECKFOLDER/$CLIENT.ovpn
 userdel $CLIENT
 echo ""
 echo -e "ชื่อบัญชี ${RED}$CLIENT${NC} ถูกลบออกจากระบบเรียบร้อยแล้ว"
