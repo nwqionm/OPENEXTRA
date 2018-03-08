@@ -336,6 +336,15 @@ egrep "^$CLIENT" /etc/passwd >/dev/null
 
 if [ $? -eq 0 ]; then
 	userdel -f $CLIENT
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa --batch revoke $CLIENT
+	EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+	rm -rf pki/reqs/$CLIENT.req
+	rm -rf pki/private/$CLIENT.key
+	rm -rf pki/issued/$CLIENT.crt
+	rm -rf /etc/openvpn/crl.pem
+	cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+	chown nobody:$GROUPNAME /etc/openvpn/crl.pem
 	echo ""
 	echo -e "ชื่อบัญชี ${RED}$CLIENT${NC} ถูกลบออกจากระบบเรียบร้อยแล้ว"
 	echo ""
