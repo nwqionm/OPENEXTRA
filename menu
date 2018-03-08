@@ -95,7 +95,6 @@ if [[ -e /etc/vnstat.conf ]]; then
 	TOTALBW=$(vnstat -i $INTERFACE --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 fi
 
-TOTAL="$(awk -F: '$3 >= '1000' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 ON=0
 OFF=0
 while read ONOFF
