@@ -113,9 +113,9 @@ do
 done < /etc/passwd
 
 if [[ -e /usr/local/bin/Check-Thai ]]; then
-	echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTALBW${NC}${RED}B${NC}  |  กำลังเชื่อมต่อ ${GREEN}$ON${NC}  |  ไม่ได้เชื่อมต่อ ${RED}$OFF${NC}  |  บัญชีทั้งหมด $TOTAL"
+	echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTALBW${NC}${RED}B${NC}  |  กำลังเชื่อมต่อ ${GREEN}$ON${NC} บัญชี"
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-	echo -e "TOTAL BANDWIDTH ${RED}$TOTALBW${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$TOTALONLINE${NC} CLIENT"
+	echo -e "TOTAL BANDWIDTH ${RED}$TOTALBW${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$ON${NC} CLIENT"
 fi
 
 echo ""
