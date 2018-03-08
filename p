@@ -7,6 +7,7 @@ do
 	ACCOUNT="$(echo $ONOFF | cut -d: -f1)"
 	ID="$(echo $ONOFF | grep -v nobody | cut -d: -f3)"
 	ONLINE="$(cat /etc/openvpn/openvpn-status.log | grep -Eom 1 $ACCOUNT | grep -Eom 1 $ACCOUNT)"
+	ON=$((ON+1))
 done < /etc/passwd
 
-echo "$CLIENTONLINE"
+echo "$ON"
