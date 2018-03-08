@@ -93,11 +93,12 @@ echo ""
 if [[ -e /etc/vnstat.conf ]]; then
 	INTERFACE=`ifconfig | grep -B1 "inet addr:$IP" | head -n1 | awk '{print $1}'`
 	TOTALBW=$(vnstat -i $INTERFACE --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
-	line=`cat /etc/openvpn/openvpn-status.log | wc -l`
-	a=$((3+((line-8)/2)))
-	b=$(((line-8)/2))
-	cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
-	TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
+# line=`cat /etc/openvpn/openvpn-status.log | wc -l`
+# a=$((3+((line-8)/2)))
+# b=$(((line-8)/2))
+# cat /etc/openvpn/openvpn-status.log | head -n $a | tail -n $b | cut -d "," -f 1 | sed -e 's/,/   /g' > /usr/local/bin/Client-Login
+# TOTALONLINE=$(awk '{ total = total + NF }; END {print total}' /usr/local/bin/Client-Login)
+	TOTALONLINE="$(awk -F: '$3 >= '1000' && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 	if [[ -e /usr/local/bin/Check-Thai ]]; then
 		echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${RED}$TOTALBW${NC}${RED}B${NC}  |  ขณะนี้มีบัญชีที่กำลังเชื่อมต่อ ${GREEN}$TOTALONLINE${NC} บัญชี"
 	elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
