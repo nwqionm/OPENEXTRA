@@ -110,7 +110,6 @@ do
 			ON=$((ON+1))
 		fi
 		fi
-fi
 done < /etc/passwd
 
 if [[ -e /usr/local/bin/Check-Thai ]]; then
