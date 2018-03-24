@@ -158,7 +158,7 @@ echo ""
 				userdel $CLIENT
 				menu
 				exit
-				fi
+			fi
 		fi
 	done
 echo ""
