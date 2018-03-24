@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RED='\033[0;31m'
+GRAY='\033[1;33m'
 NC='\033[0m'
 
 cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
