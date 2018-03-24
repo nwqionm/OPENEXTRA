@@ -119,9 +119,9 @@ do
 done < /etc/passwd
 
 if [[ -e /usr/local/bin/Check-Thai ]]; then
-	echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${GRAY}$TOTALBW${NC}${GRAY}B${NC}  |  กำลังเชื่อมต่อ ${GREEN}$ON${NC} บัญชี"
+	echo -e "แบนด์วิดท์ที่ใช้ไปทั้งหมด ${GRAY}$TOTALBW${NC}${GRAY}B${NC}  |  กำลังเชื่อมต่อ ${GRAY}$ON${NC} บัญชี"
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-	echo -e "TOTAL BANDWIDTH ${GRAY}$TOTALBW${NC}${GRAY}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$ON${NC} CLIENT"
+	echo -e "TOTAL BANDWIDTH ${GRAY}$TOTALBW${NC}${GRAY}B${NC}  |  CLIENT ONLINE NOW ${GRAY}$ON${NC} CLIENT"
 fi
 echo ""
 bash /usr/local/bin/Auto-Delete-Client
