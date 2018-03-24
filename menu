@@ -125,16 +125,16 @@ echo ""
 		TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
 		CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
 		CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
-		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
+		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 172800 ))
 		TODAYSTIME=`date +%s`
 
 		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
-			TIMETO1DAYS=$(( $TODAYSTIME + 86400 ))
+			TIMETO1DAYS=$(( $TODAYSTIME + 172800 ))
 				if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
 					if [[ -e /usr/local/bin/Check-Thai ]]; then
-						echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 24 ชั่วโมง"
+						echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 48 ชั่วโมง"
 					elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-						echo -e "     ${RED}$CLIENT${NC} Will expire less more in 24 Hr."
+						echo -e "     ${RED}$CLIENT${NC} Will expire less more in 48 Hr."
 					fi
 				fi
 		else
