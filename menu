@@ -140,19 +140,25 @@ echo ""
 					fi
 				fi
 		else
-			$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
-			cd /etc/openvpn/easy-rsa/
-			./easyrsa --batch revoke $CLIENT
-			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-			rm -rf pki/reqs/$CLIENT.req
-			rm -rf pki/private/$CLIENT.key
-			rm -rf pki/issued/$CLIENT.crt
-			rm -rf /etc/openvpn/crl.pem
-			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-			chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-			userdel $CLIENT
-			menu
-			exit
+			if [[ $CHECKSYSTEM ]]; then
+				userdel $CLIENT
+				menu
+				exit
+			else
+				$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
+				cd /etc/openvpn/easy-rsa/
+				./easyrsa --batch revoke $CLIENT
+				EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+				rm -rf pki/reqs/$CLIENT.req
+				rm -rf pki/private/$CLIENT.key
+				rm -rf pki/issued/$CLIENT.crt
+				rm -rf /etc/openvpn/crl.pem
+				cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+				chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+				userdel $CLIENT
+				menu
+				exit
+				fi
 		fi
 	done
 echo ""
