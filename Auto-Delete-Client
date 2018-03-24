@@ -45,7 +45,9 @@ for((i=1; i<=$TOTALACCOUNTS; i++ ))
 	fi
 done
 if [[ -e /usr/local/bin/Check-Thai ]]; then
+	echo ""
 	echo "$ECHOTHAI"
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+	echo ""
 	echo "$ECHOENG"
 fi
