@@ -5,14 +5,21 @@ GROUPNAME=nogroup
 VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 CHECKSYSTEM=$(tail -n +2 /etc/openvpn/server.conf | grep "^username-as-common-name")
 # IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
-# if [[ "$IP" = "" ]]; then
+# if [[ "$IP" = "" ]]; thenN
 IP=$(wget -4qO- "http://whatismyip.akamai.com/")
-# fi
+#
 
 # Color
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
+
+
+if [ ! -e /usr/local/bin/Auto-Delete-Client ]; then
+	echo "0 * * * * root /usr/local/bin/Auto-Delete-Client" > /etc/cron.d/Auto-Delete-Client
+	wget -O /usr/local/bin/Auto-Delete-Client "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Auto-Delete-Client"
+	chmod +x /usr/local/bin/Auto-Delete-Client
+fi
 
 # Menu
 echo ""
@@ -117,48 +124,6 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "TOTAL BANDWIDTH ${RED}$TOTALBW${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$ON${NC} CLIENT"
 fi
 
-echo ""
-	cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
-	TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
-	for((i=1; i<=$TOTALACCOUNTS; i++ ))
-		do
-		TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
-		CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
-		CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
-		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
-		TODAYSTIME=`date +%s`
-
-		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
-			TIMETO1DAYS=$(( $TODAYSTIME + 172800 ))
-				if [ $CLIENTEXPIREINSECONDS -le $TIMETO1DAYS ]; then
-					if [[ -e /usr/local/bin/Check-Thai ]]; then
-						echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 48 ชั่วโมง"
-					elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
-						echo -e "     ${RED}$CLIENT${NC} Will expire less more in 48 Hr."
-					fi
-				fi
-		else
-			if [[ $CHECKSYSTEM ]]; then
-				userdel $CLIENT
-				menu
-				exit
-			else
-				$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
-				cd /etc/openvpn/easy-rsa/
-				./easyrsa --batch revoke $CLIENT
-				EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
-				rm -rf pki/reqs/$CLIENT.req
-				rm -rf pki/private/$CLIENT.key
-				rm -rf pki/issued/$CLIENT.crt
-				rm -rf /etc/openvpn/crl.pem
-				cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-				chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-				userdel $CLIENT
-				menu
-				exit
-			fi
-		fi
-	done
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	read -p "เลือกหัวข้อเมนูที่ต้องการใช้งาน : " MENU
