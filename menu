@@ -125,7 +125,7 @@ echo ""
 		TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
 		CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
 		CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
-		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 172800 ))
+		CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
 		TODAYSTIME=`date +%s`
 
 		if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
