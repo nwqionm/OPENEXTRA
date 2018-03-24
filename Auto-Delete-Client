@@ -1,5 +1,8 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+NC='\033[0m'
+
 cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
 TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
 for((i=1; i<=$TOTALACCOUNTS; i++ ))
