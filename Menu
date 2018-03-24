@@ -123,7 +123,8 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "TOTAL BANDWIDTH ${RED}$TOTALBW${NC}${RED}B${NC}  |  CLIENT ONLINE NOW ${GREEN}$ON${NC} CLIENT"
 fi
-
+echo ""
+bash /usr/local/bin/Auto-Delete-Client
 echo ""
 if [[ -e /usr/local/bin/Check-Thai ]]; then
 	read -p "เลือกหัวข้อเมนูที่ต้องการใช้งาน : " MENU
