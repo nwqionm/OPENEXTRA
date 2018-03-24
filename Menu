@@ -1371,7 +1371,7 @@ esac
 	0) # ==================================================================================================================
 
 rm -f /usr/local/bin/menu
-wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/menu"
+wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Menu"
 chmod +x /usr/local/bin/menu
 menu
 
