@@ -530,9 +530,6 @@ fi
 	echo 'echo "รีบูทเมื่อวันที่ $DATE เวลา $TIME" >> /usr/local/bin/Reboot-Log' >> /usr/local/bin/Reboot-Server
 	echo '/sbin/shutdown -r now' >> /usr/local/bin/Reboot-Server
 	chmod +x /usr/local/bin/Reboot-Server
-	if [ -e /usr/local/bin/upload ]; then
-		upload upload /usr/local/bin/upload
-	fi
 fi
 
 clear
