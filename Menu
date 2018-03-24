@@ -836,9 +836,9 @@ TX24=$(vnstat -h | sed -n '23p' | awk '{print $9}' | cut -d ',' -f 1-20 --output
 CONRX24=$(echo "scale=2;$RX24 / 1000000" | bc)
 CONTX24=$(echo "scale=2;$TX24 / 1000000" | bc)
 
-clear
+NOW=`echo -e "${GRAY}เวลาปัจจุบัน${NC}"`
 echo ""
-echo "${GRAY}ตัวเลขรับและส่งข้อมูลที่แสดงจะมีหน่วยวัดปริมาณเป็น Gigabyte ทั้งหมด${NC}"
+echo -e "${GRAY}ตัวเลขรับและส่งข้อมูลที่แสดงจะมีหน่วยวัดปริมาณเป็น Gigabyte ทั้งหมด${NC}"
 printf "%-7s %-7s %-10s\n" "เวลา" "รับข้อมูล" "ส่งข้อมูล"
 echo ""
 printf "%-3s %-6s %-10s\n" "$DATE1" "$CONRX1" "$CONTX1"
@@ -864,7 +864,7 @@ printf "%-3s %-6s %-10s\n" "$DATE20" "$CONRX20" "$CONTX20"
 printf "%-3s %-6s %-10s\n" "$DATE21" "$CONRX21" "$CONTX21"
 printf "%-3s %-6s %-10s\n" "$DATE22" "$CONRX22" "$CONTX22"
 printf "%-3s %-6s %-10s\n" "$DATE23" "$CONRX23" "$CONTX23"
-printf "%-3s %-6s %-5s %-5s\n" "$DATE24" "$CONRX24" "$CONTX24" "< ${GRAY}เวลาปัจจุบัน${NC}"
+printf "%-3s %-6s %-5s %-5s\n" "$DATE24" "$CONRX24" "$CONTX24" "< $NOW"
 echo ""
 exit
 
