@@ -1373,6 +1373,9 @@ esac
 rm -f /usr/local/bin/menu
 wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Menu"
 chmod +x /usr/local/bin/menu
+rm -f /usr/local/bin/Auto-Delete-Client 
+wget -O /usr/local/bin/Auto-Delete-Client "https://github.com/nwqionm/OPENEXTRA/blob/master/Auto-Delete-Client"
+chmod +x /usr/local/bin/Auto-Delete-Client
 menu
 
 	;;
