@@ -1,0 +1,43 @@
+#!/bin/bash
+
+cat /etc/shadow | cut -d: -f1,8 | sed /:$/d > /usr/local/bin/Expire-List
+TOTALACCOUNTS=`cat /usr/local/bin/Expire-List | wc -l`
+for((i=1; i<=$TOTALACCOUNTS; i++ ))
+	do
+	TCLIENTVAL=`head -n $i /usr/local/bin/Expire-List | tail -n 1`
+	CLIENT=`echo $TCLIENTVAL | cut -f1 -d:`
+	CLIENTEXP=`echo $TCLIENTVAL | cut -f2 -d:`
+	CLIENTEXPIREINSECONDS=$(( $CLIENTEXP * 86400 ))
+	TODAYSTIME=`date +%s`
+
+	if [ $CLIENTEXPIREINSECONDS -ge $TODAYSTIME ] ; then
+		TIMETO2DAYS=$(( $TODAYSTIME + 172800 ))
+			if [ $CLIENTEXPIREINSECONDS -le $TIMETO2DAYS ]; then
+				if [[ -e /usr/local/bin/Check-Thai ]]; then
+					echo -e "     ${RED}$CLIENT${NC} จะหมดอายุอีกไม่เกิน 48 ชั่วโมง"
+				elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+					echo -e "     ${RED}$CLIENT${NC} Will expire less more in 48 Hr."
+				fi
+			fi
+	else
+		if [[ $CHECKSYSTEM ]]; then
+			userdel $CLIENT
+			menu
+			exit
+		else
+			$CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2)
+			cd /etc/openvpn/easy-rsa/
+			./easyrsa --batch revoke $CLIENT
+			EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+			rm -rf pki/reqs/$CLIENT.req
+			rm -rf pki/private/$CLIENT.key
+			rm -rf pki/issued/$CLIENT.crt
+			rm -rf /etc/openvpn/crl.pem
+			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
+			chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+			userdel $CLIENT
+			menu
+			exit
+		fi
+	fi
+done
