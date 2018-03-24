@@ -41,7 +41,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${GRAY} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้"
 	else
-		echo -e "|${GRAY} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+		echo -e "|${GRAY} 5${NC}| เปลี่ยนรหัสผ่านบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
 	echo -e "|${GRAY} 6${NC}| เปลี่ยนวันหมดอายุบัญชีผู้ใช้"
 	echo -e "|${GRAY} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
@@ -52,7 +52,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${GRAY}12${NC}| แบนและปลดแบนบัญชีผู้ใช้"
 	else
-		echo -e "|${GRAY}12${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${RED}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+		echo -e "|${GRAY}12${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
 	echo -e "|${GRAY}13${NC}| ปรับความเร็วอินเตอร์เน็ต"
 	echo -e "|${GRAY}14${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
@@ -75,7 +75,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${GRAY} 5${NC}| CHANGE PASSWORD OF CLIENT"
 	else
-		echo -e "|${GRAY} 5${NC}| CHANGE PASSWORD OF CLIENT ${RED}Not available with current server.  ${NC}"
+		echo -e "|${GRAY} 5${NC}| CHANGE PASSWORD OF CLIENT ${GRAY}Not available with current server.  ${NC}"
 	fi
 	echo -e "|${GRAY} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
 	echo -e "|${GRAY} 7${NC}| SET TIME AUTO REBOOT SERVER"
@@ -86,7 +86,7 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	if [[ $CHECKSYSTEM ]]; then
 		echo -e "|${GRAY}12${NC}| BAN AND UNBAN CLIENT"
 	else
-		echo -e "|${GRAY}12${NC}| BAN AND UNBAN CLIENT ${RED}Not available with current server.  ${NC}"
+		echo -e "|${GRAY}12${NC}| BAN AND UNBAN CLIENT ${GRAY}Not available with current server.  ${NC}"
 	fi
 	echo -e "|${GRAY}13${NC}| UP-DOWN SPEED INTERNET"
 	echo -e "|${GRAY}14${NC}| START-STOP-RESTART OPERATION SYSTEM"
