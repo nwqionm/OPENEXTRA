@@ -296,7 +296,7 @@ else
 	cd /etc/openvpn/easy-rsa/
 	./easyrsa build-client-full $CLIENTRANDOM nopass
 	newclient "$CLIENTRANDOM"
-	cp /root/$CLIENTRANDOM.ovpn /home/vps/public_html/$RANDOMFOLDER/$CLIENT.ovpn
+	cp /root/$CLIENTRANDOM.ovpn /home/vps/public_html/$RANDOMFOLDER/$CLIENTRANDOM.ovpn
 	rm -f /root/$CLIENTRANDOM.ovpn
 	useradd -e `date -d "$TimeActive days" +"%Y-%m-%d"` -s /bin/false -M $CLIENTRANDOM
 	EXP="$(chage -l $CLIENTRANDOM | grep "Account expires" | awk -F": " '{print $2}')"
