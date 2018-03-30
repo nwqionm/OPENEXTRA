@@ -48,15 +48,16 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
 	echo -e "|${GRAY} 9${NC}| ตรวจสอบแบนด์วิดท์"
 	echo -e "|${GRAY}10${NC}| ตรวจสอบแบนด์วิดท์แบบรายชั่วโมง"
-	echo -e "|${GRAY}11${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
+	echo -e "|${GRAY}11${NC}| ตรวจสอบแบนด์วิดท์ต่อบัญชี"
+	echo -e "|${GRAY}12${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
 	if [[ $CHECKSYSTEM ]]; then
-		echo -e "|${GRAY}12${NC}| แบนและปลดแบนบัญชีผู้ใช้"
+		echo -e "|${GRAY}13${NC}| แบนและปลดแบนบัญชีผู้ใช้"
 	else
-		echo -e "|${GRAY}12${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+		echo -e "|${GRAY}13${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
-	echo -e "|${GRAY}13${NC}| ปรับความเร็วอินเตอร์เน็ต"
-	echo -e "|${GRAY}14${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
-	echo -e "|${GRAY}15${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
+	echo -e "|${GRAY}14${NC}| ปรับความเร็วอินเตอร์เน็ต"
+	echo -e "|${GRAY}15${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
+	echo -e "|${GRAY}16${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
 	echo -e "|${GRAY} 0${NC}| อัพเดตเมนูสคริปท์"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
@@ -81,16 +82,17 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY} 7${NC}| SET TIME AUTO REBOOT SERVER"
 	echo -e "|${GRAY} 8${NC}| SPEEDTEST"
 	echo -e "|${GRAY} 9${NC}| CHECK ALL BANDWIDTH"
-	echo -e "|${GRAY}10${NC}| CHECK BANDWIDTH OF HOUR"
-	echo -e "|${GRAY}11${NC}| CHANGE SYSTEM SERVER"
+	echo -e "|${GRAY}10${NC}| CHECK BANDWIDTH PER HOUR"
+	echo -e "|${GRAY}11${NC}| CHECK BANDWIDTH PER USER"
+	echo -e "|${GRAY}12${NC}| CHANGE SYSTEM SERVER"
 	if [[ $CHECKSYSTEM ]]; then
-		echo -e "|${GRAY}12${NC}| BAN AND UNBAN CLIENT"
+		echo -e "|${GRAY}13${NC}| BAN AND UNBAN CLIENT"
 	else
-		echo -e "|${GRAY}12${NC}| BAN AND UNBAN CLIENT ${GRAY}Not available with current server.  ${NC}"
+		echo -e "|${GRAY}13${NC}| BAN AND UNBAN CLIENT ${GRAY}Not available with current server.  ${NC}"
 	fi
-	echo -e "|${GRAY}13${NC}| UP-DOWN SPEED INTERNET"
-	echo -e "|${GRAY}14${NC}| START-STOP-RESTART OPERATION SYSTEM"
-	echo -e "|${GRAY}15${NC}| EDIT CONFIG"
+	echo -e "|${GRAY}14${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${GRAY}15${NC}| START-STOP-RESTART OPERATION SYSTEM"
+	echo -e "|${GRAY}16${NC}| EDIT CONFIG"
 	echo ""
 	echo -e "|${GRAY} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาไทย"
@@ -871,7 +873,51 @@ exit
 
 	;;
 
-	11) # ==================================================================================================================
+11) # ==================================================================================================================
+
+STATUS = "/etc/openvpn/openvpn-status.log"
+status_file = open(STATUS, 'r')  
+stats = status_file.readlines()  
+status_file.close()
+hosts = []
+headers = {  
+    'cn':    'CLIENT', 
+    'virt':  'CLIENT IP',
+    'sent':  'DOWNLOAD', 
+    'recv':  'UPLOAD',
+}
+sizes = [  
+    (1<<50L, 'PB'),
+    (1<<40L, 'TB'),
+    (1<<30L, 'GB'),
+    (1<<20L, 'MB'),
+    (1<<10L, 'KB'),
+    (1,       'B')
+]
+def byte2str(size):  
+    for f, suf in sizes:
+        if size >= f:
+            break
+    return "%.2f %s" % (size / float(f), suf)
+for line in stats:  
+    cols = line.split(',')
+    if len(cols) == 5 and not line.startswith('Common Name'):
+        host  = {}
+        host['cn']    = cols[0]
+        host['recv']  = byte2str(int(cols[2]))
+        host['sent']  = byte2str(int(cols[3]))
+        hosts.append(host)
+    if len(cols) == 4 and not line.startswith('Virtual Address'):
+        for h in hosts:
+            if h['cn'] == cols[1]:
+                h['virt'] = cols[0]
+fmt = "   %(cn)-16s %(virt)-16s %(sent)14s %(recv)15s "
+print fmt % headers  
+print "\n".join([fmt % h for h in hosts])
+
+	;;
+
+	12) # ==================================================================================================================
 
 clear
 echo ""
@@ -944,7 +990,7 @@ esac
 
 	;;
 
-	12) # ==================================================================================================================
+	13) # ==================================================================================================================
 
 if [[ ! $CHECKSYSTEM ]]; then
 	echo ""
@@ -1035,7 +1081,7 @@ esac
 
 	;;
 
-	13) # ==================================================================================================================
+	14) # ==================================================================================================================
 
 clear
 echo ""
@@ -1095,7 +1141,7 @@ fi
 
 	;;
 
-	14) # ==================================================================================================================
+	15) # ==================================================================================================================
 
 clear
 echo ""
@@ -1322,7 +1368,7 @@ esac
 
 	;;
 
-	15) # ==================================================================================================================
+	16) # ==================================================================================================================
 
 clear
 echo ""
