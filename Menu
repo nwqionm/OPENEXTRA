@@ -879,11 +879,15 @@ if [[ ! -e /usr/local/bin/Banwidth-Per-Client ]]; then
 	wget -O /usr/local/bin/Banwidth-Per-Client "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Banwidth-Per-Client"
 	chmod +x /usr/local/bin/Banwidth-Per-Client
 	clear
+	echo ""
 	Banwidth-Per-Client
+	echo ""
 else
 	clear
+	echo ""
 	Banwidth-Per-Client
-if
+	echo ""
+fi
 
 	;;
 
