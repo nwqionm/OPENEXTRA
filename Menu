@@ -881,16 +881,16 @@ if [[ ! -e /usr/local/bin/Banwidth-Per-Client ]]; then
 	chmod +x /usr/local/bin/Banwidth-Per-Client
 	clear
 	echo ""
-	echo "Script by ${GRAY}Weerawat Khlaolamom (P'Beer)${NC}"
-	echo "FB Group : https://www.facebook.com/groups/143457819538014/"
+	echo -e "Script by ${GRAY}Weerawat Khlaolamom (P'Beer) ${NC}"
+	echo -e "FB Group : ${GRAY}https://www.facebook.com/groups/143457819538014/ ${NC}"
 	echo ""
 	Banwidth-Per-Client
 	echo ""
 else
 	clear
 	echo ""
-	echo "Script by ${GRAY}Weerawat Khlaolamom (P'Beer)${NC}"
-	echo "FB Group : https://www.facebook.com/groups/143457819538014/"
+	echo -e "Script by ${GRAY}Weerawat Khlaolamom (P'Beer) ${NC}"
+	echo -e "FB Group : ${GRAY}https://www.facebook.com/groups/143457819538014/ ${NC}"
 	echo ""
 	Banwidth-Per-Client
 	echo ""
