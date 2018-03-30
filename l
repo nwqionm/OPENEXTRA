@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-STATUS = "/etc/openvpn/server-vpn.log"
+
+clear
+STATUS = "/etc/openvpn/openvpn-status.log"
 status_file = open(STATUS, 'r')  
 stats = status_file.readlines()  
 status_file.close()
 hosts = []
 headers = {  
-    'cn':    'USERNAME', 
+    'cn':    '${GRAY}CLIENT${NC}', 
     'virt':  'CLIENT IP',
     'sent':  'DOWNLOAD', 
     'recv':  'UPLOAD',
