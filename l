@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+GRAY='\033[1;33m'
+NC='\033[0m'
+
 clear
 STATUS = "/etc/openvpn/openvpn-status.log"
 status_file = open(STATUS, 'r')  
