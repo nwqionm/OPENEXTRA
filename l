@@ -380,4 +380,4 @@ service ssh restart
 service dropbear restart
 service squid3 restart
 
-echo "http://$MYIP:81/client.ovpn"
+echo "http://$MYIP/client.ovpn"
