@@ -253,7 +253,6 @@ service nginx start
 service openvpn restart
 service ssh restart
 service dropbear restart
-service webmin restart
 service squid3 restart
 
 clear
