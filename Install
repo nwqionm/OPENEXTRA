@@ -664,9 +664,9 @@ if [[ "$VERSION_ID" = 'VERSION_ID="8"' ]]; then
 	systemctl start mongod pritunl
 	systemctl enable mongod pritunl
 
-		while [[ $Squid3 != "Y" && $Squid3 != "N" ]]; do
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
 			echo ""
-			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid3
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
 		done
 
 # Debian 9
@@ -679,7 +679,7 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="9"' ]]; then
 	systemctl start mongodb pritunl
 	systemctl enable mongodb pritunl
 
-		while [[ $Squid != "Y" && $Squid != "N" ]]; do
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
 			echo ""
 			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
 		done
@@ -694,7 +694,7 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 	apt-get --assume-yes install pritunl mongodb-org
 	service pritunl start
 
-		while [[ $Squid3 != "Y" && $Squid3 != "N" ]]; do
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
 			echo ""
 			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
 		done
@@ -710,7 +710,7 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="16.04"' ]]; then
 	systemctl start pritunl mongod
 	systemctl enable pritunl mongod
 
-		while [[ $Squid != "Y" && $Squid != "N" ]]; do
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
 			echo ""
 			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
 		done
@@ -724,14 +724,14 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 	systemctl start pritunl mongodb
 	systemctl enable pritunl mongodb
 
-		while [[ $Squid != "Y" && $Squid != "N" ]]; do
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
 			echo ""
 			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
 		done
 
 fi
 
-if [[ "$Squid3" = "N" || "$Squid" = "N" ]]; then
+if [[ "$NoSquid" = "N" ]]; then
 	clear
 	echo ""
 	echo "  (\_(\ "
@@ -751,7 +751,13 @@ if [[ "$Squid3" = "N" || "$Squid" = "N" ]]; then
 
 fi
 
-if [[ "$Squid3" = "Y" ]]; then
+if [[ "$Squid" = "Y" ]]; then
+
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		fi
+
 	echo ""
 	read -p "Port proxy : " -e -i 8080 PROXY
 
@@ -787,30 +793,17 @@ refresh_pattern .               0       20%     4320
 END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid3/squid.conf;
-	if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
-		service squid3 restart
-	else
-		/etc/init.d/squid3 restart
-	fi
-	clear
-	echo ""
-	echo "  (\_(\ "
-	echo " (=’ :’) :* Script by Mnm Ami"
-	echo "  (,(”)(”) °.¸¸.•"
-	echo ""
-	echo "Donate via TrueMoney Wallet : 082-038-2600"
-	echo ""
-	echo "Pritunl, Squid Proxy .....Install Finish."
-	echo "IP Proxy : $IP"
-	echo "Port Proxy : $PROXY"
-	echo ""
-	echo "Pritunl : http://$IP"
-	echo ""
-	pritunl setup-key
-	echo ""
-	exit
+		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			service squid3 restart
+		else
+			/etc/init.d/squid3 restart
+		fi
 
-elif [[ "$Squid" = "Y" ]]; then
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
+
 	echo ""
 	read -p "Port proxy : " -e -i 8080 PROXY
 
@@ -847,25 +840,28 @@ END
 	IP2="s/xxxxxxxxx/$IP/g";
 	sed -i $IP2 /etc/squid/squid.conf;
 	/etc/init.d/squid restart
-	clear
-	echo ""
-	echo "  (\_(\ "
-	echo " (=’ :’) :* Script by Mnm Ami"
-	echo "  (,(”)(”) °.¸¸.•"
-	echo ""
-	echo "Donate via TrueMoney Wallet : 082-038-2600"
-	echo ""
-	echo "Pritunl, Squid Proxy .....Install Finish."
-	echo "IP Proxy : $IP"
-	echo "Port Proxy : $PROXY"
-	echo ""
-	echo "Pritunl : http://$IP"
-	echo ""
-	pritunl setup-key
-	echo ""
-	exit
+
+	fi
 
 fi
+
+clear
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
+echo "Donate via TrueMoney Wallet : 082-038-2600"
+echo ""
+echo "Pritunl, Squid Proxy .....Install Finish."
+echo "IP Proxy : $IP"
+echo "Port Proxy : $PROXY"
+echo ""
+echo "Pritunl : http://$IP"
+echo ""
+pritunl setup-key
+echo ""
+exit
 
 	;;
 
