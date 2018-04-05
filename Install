@@ -731,7 +731,7 @@ elif [[ "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
 
 fi
 
-if [[ "$NoSquid" = "N" ]]; then
+if [[ "$NoSquid" = 'N' ]]; then
 	clear
 	echo ""
 	echo "  (\_(\ "
@@ -749,9 +749,7 @@ if [[ "$NoSquid" = "N" ]]; then
 	echo ""
 	exit
 
-fi
-
-if [[ "$Squid" = "Y" ]]; then
+elif [[ "$Squid" = 'Y' ]]; then
 
 	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
 		if [[ -e /etc/squid3/squid.conf ]]; then
