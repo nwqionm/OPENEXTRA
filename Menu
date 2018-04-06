@@ -1085,7 +1085,7 @@ echo ""
 echo -e "|${GRAY}1${NC}| Megabyte (Mbps)"
 echo -e "|${GRAY}2${NC}| Kilobyte (Kbps)"
 echo ""
-read -p "กรุณาเลือกหน่วยวัดความเร็วอินเทอร์เน็ต" -e PERSECOND
+read -p "กรุณาเลือกหน่วยวัดความเร็วอินเทอร์เน็ต : " -e PERSECOND
 case $PERSECOND in
 	1)
 	PERSECOND=mbit
@@ -1123,6 +1123,7 @@ U32="$TC filter add dev $IF protocol ip parent 1: prio 1 u32"
     echo -e "ความเร็วอัพโหลด ${GRAY}$CHUL$PERSECOND ${NC}"
     echo ""
     echo "เปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
+    echo ""
     exit
 
 	;;
