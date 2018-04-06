@@ -107,6 +107,6 @@ chmod -R g+rw /home/web/public_html
 
 # mysql
 mysql -u root -p
-CREATE DATABASE IF NOT EXISTS DEMO2;EXIT;
+CREATE DATABASE IF NOT EXISTS WebPanel;EXIT;
 chmod 777 /home/web/public_html/application/config/database.php
 apt-get install php5-mysqlnd
