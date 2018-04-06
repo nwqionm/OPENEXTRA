@@ -1,112 +1,116 @@
-#!/bin/sh
+#!/bin/bash
+DNLD=10mbit          # DOWNLOAD Limit
+UPLD=10mbit          # UPLOAD Limit
 
-#Requirement
-if [ ! -e /usr/bin/curl ]; then
-    apt-get -y update && apt-get -y upgrade
-        apt-get -y install curl
-fi
+#  mbit: Megabits 
+#  kbit: 
 
-# initialisasi var
-export DEBIAN_FRONTEND=noninteractive
-OS=`uname -m`;
-MYIP=$(curl -4 icanhazip.com)
-if [ $MYIP = "" ]; then
-   MYIP=`ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}' | head -1`;
-fi
-MYIP2="s/xxxxxxxxx/$MYIP/g";
+# Name of the traffic control command.
+TC=/sbin/tc
 
+# The network interface of the default route
+IF="$(ip ro | awk '$1 == "default" { print $5 }')"
+# IP address of the default route
+IP="$(ip -o ro get $(ip ro | awk '$1 == "default" { print $3 }') | awk '{print $5}')/32"     # Host IP
 
+# Filter options for limiting the intended interface.
+U32="$TC filter add dev $IF protocol ip parent 1: prio 1 u32"
 
-# go to root
-cd
+start() {
 
-# update
-apt-get update -y
-apt-get install build-essential expect -y
-apt-get install -y mysql-server
-mysql_secure_installation
-chown -R mysql:mysql /var/lib/mysql/
-chmod -R 755 /var/lib/mysql/
+# We'll use Hierarchical Token Bucket (HTB) to shape bandwidth.
+# For detailed configuration options, please consult Linux man
+# page.
 
-# install nginx
-apt-get install -y nginx php5 php5-fpm php5-cli php5-mysql php5-mcrypt
-rm /etc/nginx/sites-enabled/default
-rm /etc/nginx/sites-available/default
-mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old
+    $TC qdisc add dev $IF root handle 1: htb default 30
+    $TC class add dev $IF parent 1: classid 1:1 htb rate $DNLD
+    $TC class add dev $IF parent 1: classid 1:2 htb rate $UPLD
+    $U32 match ip dst $IP flowid 1:1
+    $U32 match ip src $IP flowid 1:2
+	
 
-cat > /etc/nginx/nginx.conf <<END
-user www-data;
-worker_processes 2;
-pid /var/run/nginx.pid;
-events {
-	multi_accept on;
-        worker_connections 1024;
+# The first line creates the root qdisc, and the next two lines
+# create two child qdisc that are to be used to shape download
+# and upload bandwidth.
+#
+# The 4th and 5th line creates the filter to match the interface.
+# The 'dst' IP address is used to limit download speed, and the
+# 'src' IP address is used to limit upload speed.
+
 }
-http {
-	autoindex on;
-        sendfile on;
-        tcp_nopush on;
-        tcp_nodelay on;
-        keepalive_timeout 65;
-        types_hash_max_size 2048;
-        server_tokens off;
-        include /etc/nginx/mime.types;
-        default_type application/octet-stream;
-        access_log /var/log/nginx/access.log;
-        error_log /var/log/nginx/error.log;
-        client_max_body_size 32M;
-	client_header_buffer_size 8m;
-	large_client_header_buffers 8 8m;
-	fastcgi_buffer_size 8m;
-	fastcgi_buffers 8 8m;
-	fastcgi_read_timeout 600;
-        include /etc/nginx/conf.d/*.conf;
+
+stop() {
+
+# Stop the bandwidth shaping.
+    $TC qdisc del dev $IF root
+
 }
-END
 
-cat > /etc/nginx/conf.d/vps.conf <<END
-server {
-    listen       85;
-    server_name  127.0.0.1 localhost;
-    access_log /var/log/nginx/vps-access.log;
-    error_log /var/log/nginx/vps-error.log error;
-    root   /home/vps/public_html;
-    location / {
-        index  index.html index.htm index.php;
-	try_files $uri $uri/ /index.php?$args;
-    }
-    location ~ \.php$ {
-        include /etc/nginx/fastcgi_params;
-        fastcgi_pass  127.0.0.1:9000;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
+restart() {
+
+# Self-explanatory.
+    stop
+    sleep 1
+    start
+
 }
-END
 
-sed -i 's/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/fpm/php.ini
-sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
+show() {
 
-# useradd
-useradd -m web
-mkdir -p /home/web/public_html
-echo "<?php phpinfo() ?>" > /home/web/public_html/info.php
-chown -R www-data:www-data /home/web/public_html
-chmod -R g+rw /home/web/public_html
-service php5-fpm restart
-service nginx restart
+# Display status of traffic control status.
+    $TC -s qdisc ls dev $IF
 
-# apt unzip
-apt-get -y install zip unzip
-cd /home/web/public_html
-wget https://github.com/nwqionm/OPENEXTRA/raw/master/WebPanel.zip
-unzip WebPanel.zip
-rm -f WebPanel.zip
-chown -R www-data:www-data /home/web/public_html
-chmod -R g+rw /home/web/public_html
+}
 
-# mysql
-mysql -u root -p
-CREATE DATABASE IF NOT EXISTS WebPanel;EXIT;
-chmod 777 /home/web/public_html/application/config/database.php
-apt-get install php5-mysqlnd
+setting() {
+
+sudo nano bandwidth.sh
+
+}
+
+case "$1" in
+
+  start)
+
+    echo -n "Starting bandwidth shaping: "
+    start
+    echo "done"
+    ;;
+
+  stop)
+
+    echo -n "Stopping bandwidth shaping: "
+    stop
+    echo "done"
+    ;;
+
+  restart)
+
+    echo -n "Restarting bandwidth shaping: "
+    restart
+    echo "done"
+    ;;
+
+  show)
+
+    echo "Bandwidth shaping status for $IF:"
+    show
+    echo ""
+    ;;
+  
+  setting)
+
+    echo "Bandwidth setting"
+    setting
+    echo "Success!!"
+    ;;
+  *)
+
+    pwd=$(pwd)
+    echo "Usage: bandwidth.sh {start|stop|restart|show|setting}"
+	echo "FB:Apiwat Panyoi"
+    ;;
+
+esac
+
+exit 0
