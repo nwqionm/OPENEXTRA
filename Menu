@@ -1113,7 +1113,6 @@ IP="$(ip -o ro get $(ip ro | awk '$1 == "default" { print $3 }') | awk '{print $
 
 U32="$TC filter add dev $IF protocol ip parent 1: prio 1 u32"
 
-    $TC qdisc del dev $IF root
     $TC qdisc add dev $IF root handle 1: htb default 30
     $TC class add dev $IF parent 1: classid 1:1 htb rate $DNLD
     $TC class add dev $IF parent 1: classid 1:2 htb rate $UPLD
