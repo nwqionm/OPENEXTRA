@@ -1113,14 +1113,15 @@ IP="$(ip -o ro get $(ip ro | awk '$1 == "default" { print $3 }') | awk '{print $
 
 U32="$TC filter add dev $IF protocol ip parent 1: prio 1 u32"
 
+    $TC qdisc del dev $IF root
     $TC qdisc add dev $IF root handle 1: htb default 30
     $TC class add dev $IF parent 1: classid 1:1 htb rate $DNLD
     $TC class add dev $IF parent 1: classid 1:2 htb rate $UPLD
     $U32 match ip dst $IP flowid 1:1
     $U32 match ip src $IP flowid 1:2
     echo ""
-    echo -e "ความเร็วดาวน์โหลด ${GRAY}$CHDL$PERSECOND ${NC}"
-    echo -e "ความเร็วอัพโหลด ${GRAY}$CHUL$PERSECOND ${NC}"
+    echo -e "ความเร็วดาวน์โหลด ${GRAY}$CHDL $PERSECOND${NC}"
+    echo -e "ความเร็วอัพโหลด ${GRAY}$CHUL $PERSECOND${NC}"
     echo ""
     echo "เปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
     echo ""
