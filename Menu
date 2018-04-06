@@ -1067,58 +1067,80 @@ esac
 clear
 echo ""
 echo "  (\_(\ "
-echo " (=’ :’) :* Script by Mnm Ami"
-echo "  (,(”)(”) °.¸¸.•"
+echo " (=’ :’) :* Script by Apiwat Panyoi"
+echo "  (,(”)(”) °.¸¸.• Edit the Script by Mnm Ami"
 echo ""
-if [[ ! -e /etc/trickled.conf ]]; then
-	apt-get install trickle
-	echo -e "${GRAY}โปรดอ่าน${NC} : หน่วยวัดขนาดความเร็วต้องระบุเป็น Kilobyte (Kb)"
-	echo "          วิธีการคำนวนเพื่อให้ได้หน่วยวัด Kilobyte ( 1024 x Mb = Kb )"
-	echo "          นำเลข 1024 คูณด้วยจำนวน Mb ที่ต้องการ ผลลัพธ์ที่ออกจะได้เป็น Kb"
-	echo -e "             5 Mb =    ${GRAY}5120${NC} Kb"
-	echo -e "            10 Mb =   ${GRAY}10240${NC} Kb"
-	echo -e "            20 Mb =   ${GRAY}20480${NC} Kb"
-	echo -e "            50 Mb =   ${GRAY}51200${NC} Kb"
-	echo -e "           100 Mb =  ${GRAY}102400${NC} Kb"
-	echo -e "           500 Mb =  ${GRAY}512000${NC} Kb"
-	echo -e "          1000 Mb = ${GRAY}1024000${NC} Kb"
-	echo -e "          2000 Mb = ${GRAY}2048000${NC} Kb"
-	echo ""
-	echo -e "หากต้องการยกเลิกให้กด CTRL+C"
-	echo ""
-	read -p "ปรับความเร็วอินเตอร์เน็ต (ดาวน์โหลด) : " -e DOWNLOAD
-	read -p "ปรับความเร็วอินเตอร์เน็ต (อัพโหลด) : " -e UPLOAD
+echo -e "${GRAY}ปรับความเร็วอินเตอร์เน็ต ${NC} "
+echo ""
+echo -e "|${GRAY}1${NC}| เปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
+echo -e "|${GRAY}2${NC}| ปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
+echo ""
+read -p "เลือกหัวข้อที่ต้องการใช้งาน : " LIMITINTERNET
 
-	echo ""
-	echo -e "Success : Download ${GRAY}$DOWNLOAD${NC} Kbps | Upload ${GRAY}$UPLOAD${NC} Kbps"
-	echo ""
-	trickle -d $DOWNLOAD -u $UPLOAD bash
-	exit
+case $LIMITINTERNET in
 
-elif [[ -e /etc/trickled.conf ]]; then
-	echo -e "${GRAY}โปรดอ่าน${NC} : หน่วยวัดขนาดความเร็วต้องระบุเป็น Kilobyte (Kb)"
-	echo "          วิธีการคำนวนเพื่อให้ได้หน่วยวัด Kilobyte ( 1024 x Mb = Kb )"
-	echo "          นำเลข 1024 คูณด้วยจำนวน Mb ที่ต้องการ ผลลัพธ์ที่ออกจะได้เป็น Kb"
-	echo -e "             5 Mb =    ${GRAY}5120${NC} Kb"
-	echo -e "            10 Mb =   ${GRAY}10240${NC} Kb"
-	echo -e "            20 Mb =   ${GRAY}20480${NC} Kb"
-	echo -e "            50 Mb =   ${GRAY}51200${NC} Kb"
-	echo -e "           100 Mb =  ${GRAY}102400${NC} Kb"
-	echo -e "           500 Mb =  ${GRAY}512000${NC} Kb"
-	echo -e "          1000 Mb = ${GRAY}1024000${NC} Kb"
-	echo -e "          2000 Mb = ${GRAY}2048000${NC} Kb"
-	echo ""
-	echo -e "หากต้องการยกเลิกให้กด CTRL+C"
-	echo ""
-	read -p "ปรับความเร็วอินเตอร์เน็ต (ดาวน์โหลด) : " -e DOWNLOAD
-	read -p "ปรับความเร็วอินเตอร์เน็ต (อัพโหลด) : " -e UPLOAD
+	1)
 
-	echo ""
-	echo -e "Success : Download ${GRAY}$DOWNLOAD${NC} Kbps | Upload ${GRAY}$UPLOAD${NC} Kbps"
-	echo ""
-	trickle -d $DOWNLOAD -u $UPLOAD bash
-	exit
-fi
+echo ""
+echo -e "|${GRAY}1${NC}| Megabyte (Mbps)"
+echo -e "|${GRAY}2${NC}| Kilobyte (Kbps)"
+echo ""
+read -p "กรุณาเลือกหน่วยวัดความเร็วอินเทอร์เน็ต" -e PERSECOND
+case $PERSECOND in
+	1)
+	PERSECOND=mbit
+	;;
+	2)
+	PERSECOND=kbit
+	;;
+esac
+
+echo ""
+echo ""
+echo -e "วิธีการใส่ : เช่นต้องการให้มีความเร็ว 10Mbps ให้ใส่เลข ${GRAY}10${NC}"
+echo -e "         หากต้องการให้มีความเร็ว 512Kbps ให้ใส่เลข ${GRAY}512${NC}"
+echo ""
+read -p "ใส่จำนวนความเร็วการดาวน์โหลด : " -e CHDL
+read -p "ใส่จำนวนความเร็วการอัพโหลด : " -e CHUL
+
+DNLD=$CHDL$PERSECOND
+UPLD=$CHUL$PERSECOND
+
+TC=/sbin/tc
+
+IF="$(ip ro | awk '$1 == "default" { print $5 }')"
+IP="$(ip -o ro get $(ip ro | awk '$1 == "default" { print $3 }') | awk '{print $5}')/32"     # Host IP
+
+U32="$TC filter add dev $IF protocol ip parent 1: prio 1 u32"
+
+    $TC qdisc add dev $IF root handle 1: htb default 30
+    $TC class add dev $IF parent 1: classid 1:1 htb rate $DNLD
+    $TC class add dev $IF parent 1: classid 1:2 htb rate $UPLD
+    $U32 match ip dst $IP flowid 1:1
+    $U32 match ip src $IP flowid 1:2
+    echo ""
+    echo -e "ความเร็วดาวน์โหลด ${GRAY}$CHDL$PERSECOND ${NC}"
+    echo -e "ความเร็วอัพโหลด ${GRAY}$CHUL$PERSECOND ${NC}"
+    echo ""
+    echo "เปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
+    exit
+
+	;;
+
+	2)
+
+TC=/sbin/tc
+IF="$(ip ro | awk '$1 == "default" { print $5 }')"
+
+    $TC qdisc del dev $IF root
+    echo ""
+    echo "ปิดใช้งานการปรับแต่งความเร็วอินเทอร์เน็ต"
+    echo ""
+    exit
+
+	;;
+
+esac
 
 	;;
 
