@@ -168,7 +168,7 @@ if [[ $CHECKSYSTEM ]]; then
 		echo "ชื่อบัญชีที่ระบุอยู่ในระบบแล้ว"
 		echo ""
 		read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
-		
+
 		if [[ "$TOMENU" = 'Y' ]]; then
 			menu
 			exit
@@ -187,7 +187,7 @@ else
 		echo "ชื่อบัญชีที่ระบุอยู่ในระบบแล้ว"
 		echo ""
 		read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
-		
+
 		if [[ "$TOMENU" = 'Y' ]]; then
 			menu
 			exit
@@ -417,7 +417,7 @@ else
 		echo ""
 		read -p "รหัสผ่านที่ต้องการปลี่ยน : " NEWPASSWORD
 		read -p "ยืนยันรหัสผ่านอีกครั้ง : " RETYPEPASSWORD
-		
+
 		if [[ $NEWPASSWORD = $RETYPEPASSWORD ]]; then
 			echo ""
 			echo "ระบบได้ทำการเปลี่ยนรหัสผ่านเรียบร้อยแล้ว"
@@ -438,7 +438,7 @@ else
 		echo "ไม่มีชื่อบัญชีที่ระบุอยู่ในระบบ"
 		echo ""
 		read -p "กลับไปที่เมนู (Y or N) : " -e -i Y TOMENU
-		
+
 		if [[ "$TOMENU" = 'Y' ]]; then
 			menu
 			exit
@@ -677,7 +677,7 @@ case $SETTINGHOSTNAME in
 
 	1)
 
-if [[ ! -e /etc/no-ip/no-ip.conf ]]; then
+if [[ -e /etc/no-ip/no-ip.conf ]]; then
 
 	echo ""
 	echo "ไอพีนี้ได้ตั้งค่า Hostname ไปก่อนหน้านี้แล้ว"
@@ -728,6 +728,14 @@ exit
 
 	2)
 
+if [[ ! -e /etc/no-ip/no-ip.conf ]]; then
+
+	echo ""
+	echo "กรุณาติดตั้งก่อน จึงจะสามารถเรียกใช้หัวข้อนี้ได้"
+	echo ""
+	exit
+fi
+
 echo ""
 echo "จะต้องเปลี่ยนหรือเพิ่ม Hostname ใน no-ip.com"
 echo "ที่ลิ้งค์ไว้กับไอพีนี้ ( $IP )"
@@ -756,6 +764,14 @@ exit
 	;;
 
 	3)
+
+if [[ ! -e /etc/no-ip/no-ip.conf ]]; then
+
+	echo ""
+	echo "กรุณาติดตั้งก่อน จึงจะสามารถเรียกใช้หัวข้อนี้ได้"
+	echo ""
+	exit
+fi
 
 SETHOSTNAME=$(grep '^hostname' /etc/no-ip/no-ip.conf | cut -d "=" -f 2)
 echo ""
