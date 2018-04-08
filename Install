@@ -282,10 +282,10 @@ else
 	rm -rf ~/EasyRSA-3.0.4.tgz
 	cd /etc/openvpn/easy-rsa/
 	./easyrsa init-pki
-	./easyrsa --batch build-ca nopass
+	./easyrsa --batch build-ca 764333566
 	./easyrsa gen-dh
-	./easyrsa build-server-full server nopass
-	./easyrsa build-client-full $CLIENT nopass
+	./easyrsa build-server-full server 764333566
+	./easyrsa build-client-full $CLIENT 764333566
 	EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
 	cp pki/ca.crt pki/private/ca.key pki/dh.pem pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn
 	chown nobody:$GROUPNAME /etc/openvpn/crl.pem
