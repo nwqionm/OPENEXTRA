@@ -46,18 +46,19 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY} 6${NC}| เปลี่ยนวันหมดอายุบัญชีผู้ใช้"
 	echo -e "|${GRAY} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${GRAY} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
-	echo -e "|${GRAY} 9${NC}| ตรวจสอบแบนด์วิดท์"
-	echo -e "|${GRAY}10${NC}| ตรวจสอบแบนด์วิดท์แบบรายชั่วโมง"
-	echo -e "|${GRAY}11${NC}| ตรวจสอบแบนด์วิดท์ต่อบัญชี"
-	echo -e "|${GRAY}12${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
+	echo -e "|${GRAY} 9${NC}| ติดตั้งและตั้งค่าโฮสเนม (no-ip.com)"
+	echo -e "|${GRAY}10${NC}| ตรวจสอบแบนด์วิดท์"
+	echo -e "|${GRAY}11${NC}| ตรวจสอบแบนด์วิดท์แบบรายชั่วโมง"
+	echo -e "|${GRAY}12${NC}| ตรวจสอบแบนด์วิดท์ต่อบัญชี"
+	echo -e "|${GRAY}13${NC}| ปรับเปลี่ยนระบบของเซิฟเวอร์"
 	if [[ $CHECKSYSTEM ]]; then
-		echo -e "|${GRAY}13${NC}| แบนและปลดแบนบัญชีผู้ใช้"
+		echo -e "|${GRAY}14${NC}| แบนและปลดแบนบัญชีผู้ใช้"
 	else
-		echo -e "|${GRAY}13${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
+		echo -e "|${GRAY}14${NC}| แบนและปลดแบนบัญชีผู้ใช้ ${GRAY}ใช้งานไม่ได้กับเซิฟเวอร์ระบบปัจจุบัน  ${NC}"
 	fi
-	echo -e "|${GRAY}14${NC}| ปรับความเร็วอินเตอร์เน็ต"
-	echo -e "|${GRAY}15${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
-	echo -e "|${GRAY}16${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
+	echo -e "|${GRAY}15${NC}| ปรับความเร็วอินเตอร์เน็ต"
+	echo -e "|${GRAY}16${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
+	echo -e "|${GRAY}17${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
 	echo -e "|${GRAY} 0${NC}| อัพเดตเมนูสคริปท์"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
@@ -81,18 +82,19 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY} 6${NC}| RENEW EXPIRE DATE OF CLIENT"
 	echo -e "|${GRAY} 7${NC}| SET TIME AUTO REBOOT SERVER"
 	echo -e "|${GRAY} 8${NC}| SPEEDTEST"
-	echo -e "|${GRAY} 9${NC}| CHECK ALL BANDWIDTH"
-	echo -e "|${GRAY}10${NC}| CHECK BANDWIDTH PER HOUR"
-	echo -e "|${GRAY}11${NC}| CHECK BANDWIDTH PER USER"
-	echo -e "|${GRAY}12${NC}| CHANGE SYSTEM SERVER"
+	echo -e "|${GRAY} 9${NC}| SETUP AND SETTING HOSTNAME (NO-IP.COM)"
+	echo -e "|${GRAY}10${NC}| CHECK ALL BANDWIDTH"
+	echo -e "|${GRAY}11${NC}| CHECK BANDWIDTH PER HOUR"
+	echo -e "|${GRAY}12${NC}| CHECK BANDWIDTH PER USER"
+	echo -e "|${GRAY}13${NC}| CHANGE SYSTEM SERVER"
 	if [[ $CHECKSYSTEM ]]; then
-		echo -e "|${GRAY}13${NC}| BAN AND UNBAN CLIENT"
+		echo -e "|${GRAY}14${NC}| BAN AND UNBAN CLIENT"
 	else
-		echo -e "|${GRAY}13${NC}| BAN AND UNBAN CLIENT ${GRAY}Not available with current server.  ${NC}"
+		echo -e "|${GRAY}14${NC}| BAN AND UNBAN CLIENT ${GRAY}Not available with current server.  ${NC}"
 	fi
-	echo -e "|${GRAY}14${NC}| UP-DOWN SPEED INTERNET"
-	echo -e "|${GRAY}15${NC}| START-STOP-RESTART OPERATION SYSTEM"
-	echo -e "|${GRAY}16${NC}| EDIT CONFIG"
+	echo -e "|${GRAY}15${NC}| UP-DOWN SPEED INTERNET"
+	echo -e "|${GRAY}16${NC}| START-STOP-RESTART OPERATION SYSTEM"
+	echo -e "|${GRAY}17${NC}| EDIT CONFIG"
 	echo ""
 	echo -e "|${GRAY} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาไทย"
@@ -636,6 +638,157 @@ fi
 
 	9) # ==================================================================================================================
 
+if [[ ! -e /etc/openvpn/server.conf ]]; then
+	echo ""
+	echo "เมื่อติดตั้ง OpenVPN จะสามารถใช้ฟังก์ชั่นนี้ได้"
+	echo ""
+	exit
+fi
+
+clear
+echo ""
+echo "อ่านก่อนตั้งค่า Hostname"
+echo ""
+echo "ฟังก์ชั่นนี้เป็นระบบอัพเดต Hostname อัตโนมัติใน no-ip.com"
+echo "เมื่อทำการติดตั้ง ระบบจะทำการอัพเดต Hostname ทุกๆ 1 วัน"
+echo "เพื่อไม่ให้วันใช้งานที่ถูกจำกัด 30 วันหมดอายุ"
+echo ""
+echo "จำเป็นต้องมีบัญชีที่สมัครใน no-ip.com"
+echo "และสร้าง Hostname ที่ลิ้งค์ไว้กับไอพีนี้ ( $IP )"
+echo ""
+read -n1 -r -p "หากเข้าใจแล้วให้กด Enter เพื่อตั้งค่า หรือกด CTRL+C เพื่อยกเลิก"
+
+clear
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
+echo -e "${GRAY}ตั้งค่า Hostname${NC}"
+echo ""
+echo -e "|${GRAY} 1${NC}| ติดตั้งการอัพเดตโฮสเนมอัตโนมัติ"
+echo -e "|${GRAY} 2${NC}| เปลี่ยนโฮสเนม (จะทำการเปลี่ยนในต้นแบบไฟล์คอนฟิกเช่นกัน)"
+echo -e "|${GRAY} 3${NC}| เปลี่ยน Username และ Password ในบัญชี no-ip.com"
+echo ""
+
+read -p "เลือกหัวข้อที่ต้องการใช้งาน : " SETTINGHOSTNAME
+
+case $SETTINGHOSTNAME in
+
+	1)
+
+if [[ ! -e /etc/no-ip/no-ip.conf ]]; then
+
+	echo ""
+	echo "ไอพีนี้ได้ตั้งค่า Hostname ไปก่อนหน้านี้แล้ว"
+	echo ""
+	exit
+fi
+
+
+apt-get install unzip
+wget https://github.com/theonemule/no-ip/archive/master.zip
+unzip master.zip
+
+mkdir /etc/no-ip
+touch /etc/no-ip/no-ip.conf
+
+echo ""
+echo ""
+read -p "ระบุ Username ของคุณใน no-ip.com : " -e username
+read -p "ระบุ Password ของคุณใน no-ip.com : " -e password
+read -p "ระบุ Hostname ของคุณใน no-ip.com : " -e hostname
+
+cat > /etc/no-ip/no-ip.conf <<END
+user=$username 
+password=$password 
+hostname=$hostname
+logfile=/var/log/no-ip.log
+interval=1
+detectip=true
+END
+
+cp /root/no-ip-master/no-ip.sh /usr/sbin/no-ip.sh
+chmod +x /usr/sbin/no-ip.sh
+cp /root/no-ip-master/no-ip-service /etc/init.d/no-ip-service
+chmod +x /etc/init.d/no-ip-service
+/etc/init.d/no-ip-service start
+
+SETHOSTNAME=$(grep '^hostname' /etc/no-ip/no-ip.conf | cut -d "=" -f 2)
+HOSTNAME="s/$IP/$SETHOSTNAME/g";
+sed -i $HOSTNAME /etc/openvpn/client-common.txt;
+
+echo ""
+echo "ทำการตั้งค่าอัพเดตโฮสเนมอัตโนมัติเรียบร้อยแล้ว"
+echo ""
+exit
+
+	;;
+
+	2)
+
+echo ""
+echo "จะต้องเปลี่ยนหรือเพิ่ม Hostname ใน no-ip.com"
+echo "ที่ลิ้งค์ไว้กับไอพีนี้ ( $IP )"
+echo ""
+read -n1 -r -p "หากเข้าใจแล้วให้กด Enter เพื่อตั้งค่า หรือกด CTRL+C เพื่อยกเลิก"
+
+SETBEFORE=$(grep '^hostname' /etc/no-ip/no-ip.conf | cut -d "=" -f 2)
+echo "$SETBEFORE" >> /etc/no-ip/SETBEFORE
+echo ""
+read -p "ระบุ Hostname ของคุณใน no-ip.com : " -e CHANGHOSTNAME
+HOSTNAME="s/$SETBEFORE/$CHANGHOSTNAME/g";
+sed -i $HOSTNAME /etc/no-ip/no-ip.conf;
+SETHOSTNAME=$(cat /etc/no-ip/SETBEFORE | head -n1 | awk '{print $1}' | cut -d ':' -f 1)
+HOSTNAME2="s/$SETHOSTNAME/$CHANGHOSTNAME/g";
+sed -i $HOSTNAME2 /etc/openvpn/client-common.txt;
+rm /etc/no-ip/SETBEFORE
+
+echo ""
+echo "Hostname : $CHANGHOSTNAME"
+echo ""
+echo "ทำการแก้ไขเรียบร้อยแล้ว"
+echo ""
+exit
+
+	;;
+
+	3)
+
+SETHOSTNAME=$(grep '^hostname' /etc/no-ip/no-ip.conf | cut -d "=" -f 2)
+echo ""
+read -p "ระบุ Username ของคุณใน no-ip.com : " -e username
+read -p "ระบุ Password ของคุณใน no-ip.com : " -e password
+
+cat > /etc/no-ip/no-ip.conf <<END
+user=$username 
+password=$password 
+hostname=$SETHOSTNAME
+logfile=/var/log/no-ip.log
+interval=1
+detectip=true
+END
+
+/etc/init.d/no-ip-service restart
+
+echo ""
+echo "Username : $username"
+echo "Password : $password"
+echo "Hostname : $SETHOSTNAME"
+echo ""
+echo "ทำการแก้ไขเรียบร้อยแล้ว"
+echo ""
+exit
+
+	;;
+
+esac
+
+	;;
+
+
+	10 # ==================================================================================================================
+
 INTERFACE=`ifconfig | head -n1 | awk '{print $1}' | cut -d ':' -f 1`
 TODAY=$(vnstat -i $INTERFACE | grep "today" | awk '{print $8" "substr ($9, 1, 1)}')
 YESTERDAY=$(vnstat -i $INTERFACE | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}')
@@ -692,7 +845,7 @@ fi
 
 	;;
 
-	10) # ==================================================================================================================
+	11) # ==================================================================================================================
 
 DATE1=$(vnstat -h | sed -n '16p' | awk '{print $1}')
 RX1=$(vnstat -h | sed -n '16p' | awk '{print $2}' | cut -d ',' -f 1-20 --output-delimiter='')
@@ -873,7 +1026,7 @@ exit
 
 	;;
 
-	11) # ==================================================================================================================
+	12) # ==================================================================================================================
 
 if [[ ! -e /usr/local/bin/Banwidth-Per-Client ]]; then
 	apt-get install python
@@ -898,7 +1051,7 @@ fi
 
 	;;
 
-	12) # ==================================================================================================================
+	13) # ==================================================================================================================
 
 clear
 echo ""
@@ -971,7 +1124,7 @@ esac
 
 	;;
 
-	13) # ==================================================================================================================
+	14) # ==================================================================================================================
 
 if [[ ! $CHECKSYSTEM ]]; then
 	echo ""
@@ -1062,7 +1215,7 @@ esac
 
 	;;
 
-	14) # ==================================================================================================================
+	15) # ==================================================================================================================
 
 clear
 echo ""
@@ -1145,7 +1298,7 @@ esac
 
 	;;
 
-	15) # ==================================================================================================================
+	16) # ==================================================================================================================
 
 clear
 echo ""
@@ -1372,7 +1525,7 @@ esac
 
 	;;
 
-	16) # ==================================================================================================================
+	17) # ==================================================================================================================
 
 clear
 echo ""
