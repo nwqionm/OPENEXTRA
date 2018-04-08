@@ -46,7 +46,7 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY} 6${NC}| เปลี่ยนวันหมดอายุบัญชีผู้ใช้"
 	echo -e "|${GRAY} 7${NC}| ตั้งค่าเวลารีบูทเซิฟเวอร์อัตโนมัติ"
 	echo -e "|${GRAY} 8${NC}| ทดสอบความเร็วอินเตอร์เน็ต"
-	echo -e "|${GRAY} 9${NC}| ติดตั้งและตั้งค่าโฮสเนม (no-ip.com) (กำลังทดลองระบบ อาจจะใช้งานได้ไม่เต็มประสิทธิ์ภาพ)"
+	echo -e "|${GRAY} 9${NC}| ติดตั้งและตั้งค่าโฮสเนม (no-ip.com) (ทดลองระบบ อาจจะใช้งานได้ไม่เต็มประสิทธิ์ภาพ)"
 	echo -e "|${GRAY}10${NC}| ตรวจสอบแบนด์วิดท์"
 	echo -e "|${GRAY}11${NC}| ตรวจสอบแบนด์วิดท์แบบรายชั่วโมง"
 	echo -e "|${GRAY}12${NC}| ตรวจสอบแบนด์วิดท์ต่อบัญชี"
@@ -717,6 +717,7 @@ chmod +x /etc/init.d/no-ip-service
 SETHOSTNAME=$(grep '^hostname' /etc/no-ip/no-ip.conf | cut -d "=" -f 2)
 HOSTNAME="s/$IP/$SETHOSTNAME/g";
 sed -i $HOSTNAME /etc/openvpn/client-common.txt;
+/etc/init.d/openvpn restart
 
 echo ""
 echo "ทำการตั้งค่าอัพเดตโฮสเนมอัตโนมัติเรียบร้อยแล้ว"
@@ -743,6 +744,7 @@ SETHOSTNAME=$(cat /etc/no-ip/SETBEFORE | head -n1 | awk '{print $1}' | cut -d ':
 HOSTNAME2="s/$SETHOSTNAME/$CHANGHOSTNAME/g";
 sed -i $HOSTNAME2 /etc/openvpn/client-common.txt;
 rm /etc/no-ip/SETBEFORE
+/etc/init.d/openvpn restart
 
 echo ""
 echo "Hostname : $CHANGHOSTNAME"
