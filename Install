@@ -1,0 +1,1468 @@
+#!/bin/bash
+
+if [[ "$EUID" -ne 0 ]]; then
+	echo ""
+	echo "กรุณาเข้าสู่ระบบผู้ใช้ root ก่อนทำการใช้งานสคริปท์"
+	echo "คำสั่งเข้าสู่ระบบผู้ใช้ root คือ sudo -i"
+	echo ""
+	exit
+fi
+
+if [[ ! -e /dev/net/tun ]]; then
+	echo ""
+	echo "TUN ไม่สามารถใช้งานได้"
+	exit
+fi
+
+# Set Localtime GMT +7
+ln -fs /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
+
+clear
+# IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+# if [[ "$IP" = "" ]]; then
+IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+# fi
+
+if [[ -e /etc/debian_version ]]; then
+	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
+	GROUPNAME=nogroup
+	RCLOCAL='/etc/rc.local'
+
+	if [[ "$VERSION_ID" != 'VERSION_ID="7"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="8"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="9"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="14.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="16.04"' ]] && [[ "$VERSION_ID" != 'VERSION_ID="17.04"' ]]; then
+		echo ""
+		echo "  (\_(\ "
+		echo " (=’ :’) :* Script by Mnm Ami"
+		echo "  (,(”)(”) °.¸¸.•"
+		echo ""
+		echo "เวอร์ชั่น OS ของคุณเป็นเวอร์ชั่นที่ยังไม่รองรับ"
+		echo "สำหรับเวอร์ชั่นที่รองรับได้ จะมีดังนี้..."
+		echo ""
+		echo "Ubuntu 14.04 - 16.04 - 17.04"
+		echo "Debian 7 - 8 - 9"
+		echo ""
+		exit
+	fi
+else
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "OS ที่คุณใช้ไม่สามารถรองรับได้กับสคริปท์นี้"
+	echo "สำหรับ OS ที่รองรับได้ จะมีดังนี้..."
+	echo ""
+	echo "Ubuntu 14.04 - 16.04 - 17.04"
+	echo "Debian 7 - 8 - 9"
+	echo ""
+	exit
+fi
+
+# Color
+GRAY='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+# Menu
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
+if [[ -e /usr/local/bin/Check-Thai ]]; then
+	echo -e "ฟังก์ชั่นสคริปท์ ${GRAY}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+	echo ""
+	if [[ -e /etc/openvpn/server.conf ]]; then
+		echo -e "|${GRAY} 1${NC}| ถอนการติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+	else
+		echo -e "|${GRAY} 1${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอล ${GREEN} ✔   ${NC}"
+	fi
+	echo -e "|${GRAY} 2${NC}| ติดตั้ง OPENVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ${GREEN} ✔   ${NC}"
+	echo -e "|${GRAY} 3${NC}| ติดตั้ง SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	echo -e "|${GRAY} 4${NC}| ติดตั้ง WEB PANEL ${GRAY} ✖   ${NC}"
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		elif [[ -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| ติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		elif [[ -e /etc/squid/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| ถอนการติดตั้ง SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
+	fi
+	echo ""
+	echo -e "|${GRAY}99${NC}| นำเข้าข้อมูลที่สำรองไว้"
+	echo -e "|${GRAY} 0${NC}| อัพเดตฟังก์ชั่นสคริปท์"
+	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
+	echo ""
+	echo ""
+	read -p "เลือกหัวข้อฟังก์ชั่นที่ต้องการใช้งาน : " FUNCTIONSCRIPT
+
+elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+	echo -e "FUNCTION SCRIPT ${GRAY}✿.｡.:* *.:｡✿*ﾟ’ﾟ･✿.｡.:*${NC}"
+	echo ""
+	if [[ -e /etc/openvpn/server.conf ]]; then
+		echo -e "|${GRAY} 1${NC}| REMOVE OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+	else
+		echo -e "|${GRAY} 1${NC}| INSTALL OPENVPN TERMINAL CONTROL ${GREEN} ✔   ${NC}"
+	fi
+	echo -e "|${GRAY} 2${NC}| INSTALL OPENVPN PRITUNL CONTROL ${GREEN} ✔   ${NC}"
+	echo -e "|${GRAY} 3${NC}| INSTALL SSH DROPBEAR ${GREEN} ✔   ${NC}"
+	echo -e "|${GRAY} 4${NC}| INSTALL WEB PANEL ${GRAY} ✖   ${NC}"
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ ! -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
+		elif [[ -e /etc/squid3/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ ! -e /etc/squid/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| INSTALL SQUID PROXY ${GREEN} ✔   ${NC}"
+		elif [[ -e /etc/squid/squid.conf ]]; then
+			echo -e "|${GRAY} 5${NC}| REMOVE SQUID PROXY ${GREEN} ✔   ${NC}"
+		fi
+	fi
+	echo ""
+	echo -e "|${GRAY}99${NC}| RE-BACKUP"
+	echo -e "|${GRAY} 0${NC}| UPDATE FUNCTION SCRIPT"
+	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาไทย"
+	echo ""
+	echo ""
+	read -p "Select a Function Script : " FUNCTIONSCRIPT
+fi
+
+case $FUNCTIONSCRIPT in
+
+	1) # ==================================================================================================================
+
+newclient () {
+	cp /etc/openvpn/client-common.txt ~/$1.ovpn
+	echo "<ca>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
+	echo "</ca>" >> ~/$1.ovpn
+	echo "<cert>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/issued/$1.crt >> ~/$1.ovpn
+	echo "</cert>" >> ~/$1.ovpn
+	echo "<key>" >> ~/$1.ovpn
+	cat /etc/openvpn/easy-rsa/pki/private/$1.key >> ~/$1.ovpn
+	echo "</key>" >> ~/$1.ovpn
+	echo "<tls-auth>" >> ~/$1.ovpn
+	cat /etc/openvpn/ta.key >> ~/$1.ovpn
+	echo "</tls-auth>" >> ~/$1.ovpn
+}
+
+if [[ -e /etc/openvpn/server.conf ]]; then
+	echo ""
+	read -p "ต้องการถอนการติดตั้ง OpenVPN หรือไม่  (Y or N): " -e -i N REMOVE
+
+	if [[ "$REMOVE" = 'Y' ]]; then
+		PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
+		PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
+		if pgrep firewalld; then
+			IP=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.8.0.0/24 '"'"'!'"'"' -d 10.8.0.0/24 -j SNAT --to ' | cut -d " " -f 10)
+			firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
+			firewall-cmd --permanent --zone=trusted --remove-source=10.8.0.0/24
+			firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		else
+			IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 14)
+			iptables -t nat -D POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+			sed -i '/iptables -t nat -A POSTROUTING -s 10.8.0.0\/24 ! -d 10.8.0.0\/24 -j SNAT --to /d' $RCLOCAL
+			if iptables -L -n | grep -qE '^ACCEPT'; then
+				iptables -D INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+				iptables -D FORWARD -s 10.8.0.0/24 -j ACCEPT
+				iptables -D FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+				sed -i "/iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -s 10.8.0.0\/24 -j ACCEPT/d" $RCLOCAL
+				sed -i "/iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT/d" $RCLOCAL
+			fi
+		fi
+		if hash sestatus 2>/dev/null; then
+			if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+				if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+					semanage port -d -t openvpn_port_t -p $PROTOCOL $PORT
+				fi
+			fi
+		fi
+		apt-get remove --purge -y openvpn
+		apt-get remove --purge -y nginx
+		rm -rf /home/vps/public_html
+		rm -rf /etc/openvpn
+		rm -rf /usr/local/bin/*
+		echo ""
+		read -p "ต้องการลบข้อมูลบัญชีทั้งหมดหรือไม่ (Y or N) : " -e -i N DELETEACCOUNT
+		if [[ "$DELETEACCOUNT" = "Y" ]]; then
+			UIDN=1000
+			while read CHECKCLIENT
+			do
+				ACCOUNT="$(echo $CHECKCLIENT | cut -d: -f1)"
+				ID="$(echo $CHECKCLIENT | grep -v nobody | cut -d: -f3)"
+				if [[ $ID -ge $UIDN ]]; then
+					userdel $ACCOUNT
+				fi
+			done < /etc/passwd
+		fi
+		echo ""
+		echo -e "${GRAY}OpenVPN Removed. ${NC} "
+		echo ""
+		exit
+	else
+		echo ""
+		echo -e "${GRAY}Removal Aborted. ${NC} "
+		echo ""
+		exit
+	fi
+	exit
+
+# elif [[ -e /etc/apt/sources.list.d/pritunl.list ]]; then
+# echo ""
+# echo "ไม่สามารถติดตั้ง OpenVPN ได้"
+# echo "เนื่องจาก IP นี้ได้ติดตั้ง OpenVPN ที่ควบคุมการใช้งานผ่าน PRITUNL ไปก่อนหน้านี้แล้ว"
+# exit
+
+else
+	clear
+	echo ""
+	read -p "IP Server : " -e -i $IP IP
+	read -p "Port Server : " -e -i 1194 PORT
+	read -p "Port Proxy : " -e -i 8080 PROXY
+	echo ""
+	echo -e " |${GRAY}1${NC}| UDP"
+	echo -e " |${GRAY}2${NC}| TCP"
+	echo ""
+	read -p "Protocol : " -e -i 2 PROTOCOL
+	case $PROTOCOL in
+		1) 
+		PROTOCOL=udp
+		;;
+		2) 
+		PROTOCOL=tcp
+		;;
+	esac
+	echo ""
+	echo -e " |${GRAY}1${NC}| DNS Current System"
+	echo -e " |${GRAY}2${NC}| DNS Google"
+	echo ""
+	read -p "DNS : " -e -i 1 DNS
+	echo ""
+	echo -e " |${GRAY}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น แต่สามารถสร้างไฟล์เพิ่มได้"
+	echo -e " |${GRAY}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องใช้ชื่อบัญชีและรหัสผ่านเพื่อใช้เชื่อมต่อ"
+	echo -e " |${GRAY}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดจำนวนเครื่อง"
+	echo ""
+	read -p "Server System : " -e OPENVPNSYSTEM
+	echo ""
+	read -p "Server Name: " -e CLIENT
+	echo ""
+	case $OPENVPNSYSTEM in
+		2)
+		read -p "Your Username : " -e Usernames
+		read -p "Your Password : " -e Passwords
+		;;
+	esac
+	echo ""
+	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
+
+	apt-get update
+	apt-get install openvpn iptables openssl ca-certificates -y
+
+	if [[ -d /etc/openvpn/easy-rsa/ ]]; then
+		rm -rf /etc/openvpn/easy-rsa/
+	fi
+
+	wget -O ~/EasyRSA-3.0.4.tgz "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.4/EasyRSA-3.0.4.tgz"
+	tar xzf ~/EasyRSA-3.0.4.tgz -C ~/
+	mv ~/EasyRSA-3.0.4/ /etc/openvpn/
+	mv /etc/openvpn/EasyRSA-3.0.4/ /etc/openvpn/easy-rsa/
+	chown -R root:root /etc/openvpn/easy-rsa/
+	rm -rf ~/EasyRSA-3.0.4.tgz
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa init-pki
+	./easyrsa --batch build-ca nopass
+	./easyrsa gen-dh
+	./easyrsa build-server-full server nopass
+	./easyrsa build-client-full $CLIENT nopass
+	EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl
+	cp pki/ca.crt pki/private/ca.key pki/dh.pem pki/issued/server.crt pki/private/server.key pki/crl.pem /etc/openvpn
+	chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+	openvpn --genkey --secret /etc/openvpn/ta.key
+
+	echo "port $PORT
+proto $PROTOCOL
+dev tun
+sndbuf 0
+rcvbuf 0
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+auth SHA512
+tls-auth ta.key 0
+topology subnet
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
+	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
+	case $DNS in
+		1)
+		if grep -q "127.0.0.53" "/etc/resolv.conf"; then
+			RESOLVCONF='/run/systemd/resolve/resolv.conf'
+		else
+			RESOLVCONF='/etc/resolv.conf'
+		fi
+		# Obtain the resolvers from resolv.conf and use them for OpenVPN
+		grep -v '#' $RESOLVCONF | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
+			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
+		done
+		;;
+		2)
+		echo 'push "dhcp-option DNS 8.8.8.8"' >> /etc/openvpn/server.conf
+		echo 'push "dhcp-option DNS 8.8.4.4"' >> /etc/openvpn/server.conf
+		;;
+	esac
+	echo "keepalive 10 120
+cipher AES-256-CBC
+comp-lzo
+user nobody
+group $GROUPNAME
+persist-key
+persist-tun
+status openvpn-status.log
+verb 3
+crl-verify crl.pem" >> /etc/openvpn/server.conf
+	case $OPENVPNSYSTEM in
+		1)
+		echo "client-to-client" >> /etc/openvpn/server.conf
+		;;
+		2)
+		if [[ "$VERSION_ID" = 'VERSION_ID="7"' ]]; then
+			echo "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		else
+			echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		fi
+		;;
+		3)
+		echo "duplicate-cn" >> /etc/openvpn/server.conf
+		;;
+	esac
+
+	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
+	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
+		echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+	fi
+
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	if pgrep firewalld; then
+		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
+		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
+		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+	else
+		if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
+			echo '#!/bin/sh -e
+exit 0' > $RCLOCAL
+		fi
+		chmod +x $RCLOCAL
+
+		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
+		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
+			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
+			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+			sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
+		fi
+	fi
+
+	if hash sestatus 2>/dev/null; then
+		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+			fi
+		fi
+	fi
+
+	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	if [[ "$IP" != "$EXTERNALIP" ]]; then
+		echo ""
+		echo "ตรวจพบเบื้องหลังเซิฟเวอร์ของคุณเป็น Network Addrsss Translation (NAT)"
+		echo "NAT คืออะไร ? : http://www.greatinfonet.co.th/15396685/nat"
+		echo ""
+		echo "หากเซิฟเวอร์ของคุณเป็น (NAT) คุณจำเป็นต้องระบุ IP ภายนอกของคุณ"
+		echo "หากไม่ใช่ กรุณาเว้นว่างไว้"
+		echo "หรือหากไม่แน่ใจ กรุณาเปิดดูลิ้งค์ด้านบนเพื่อศึกษาข้อมูลเกี่ยวกับ (NAT)"
+		echo ""
+		read -p "External IP: " -e USEREXTERNALIP
+		if [[ "$USEREXTERNALIP" != "" ]]; then
+			IP=$USEREXTERNALIP
+		fi
+	fi
+
+	echo "client
+dev tun
+proto $PROTOCOL
+sndbuf 0
+rcvbuf 0
+remote $CLIENT 999 udp
+remote $IP:$PORT@anywhere.truevisions.tv.ps.line.naver.jp $PORT
+http-proxy $IP $PROXY
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+auth SHA512
+cipher AES-256-CBC
+comp-lzo
+setenv opt block-outside-dns
+key-direction 1
+verb 3" > /etc/openvpn/client-common.txt
+
+	case $OPENVPNSYSTEM in
+		2)
+		echo "auth-user-pass" >> /etc/openvpn/client-common.txt
+		;;
+	esac
+
+	cd
+	apt-get -y install nginx
+	cat > /etc/nginx/nginx.conf <<END
+user www-data;
+worker_processes 2;
+pid /var/run/nginx.pid;
+events {
+	multi_accept on;
+        worker_connections 1024;
+}
+http {
+	autoindex on;
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        server_tokens off;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+        client_max_body_size 32M;
+	client_header_buffer_size 8m;
+	large_client_header_buffers 8 8m;
+	fastcgi_buffer_size 8m;
+	fastcgi_buffers 8 8m;
+	fastcgi_read_timeout 600;
+        include /etc/nginx/conf.d/*.conf;
+}
+END
+	mkdir -p /home/vps/public_html
+	echo "<pre>Source by Mnm Ami | Donate via TrueMoney Wallet : 082-038-2600</pre>" > /home/vps/public_html/index.html
+	echo "<?phpinfo(); ?>" > /home/vps/public_html/info.php
+	args='$args'
+	uri='$uri'
+	document_root='$document_root'
+	fastcgi_script_name='$fastcgi_script_name'
+	cat > /etc/nginx/conf.d/vps.conf <<END
+server {
+    listen       85;
+    server_name  127.0.0.1 localhost;
+    access_log /var/log/nginx/vps-access.log;
+    error_log /var/log/nginx/vps-error.log error;
+    root   /home/vps/public_html;
+    location / {
+        index  index.html index.htm index.php;
+	try_files $uri $uri/ /index.php?$args;
+    }
+    location ~ \.php$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass  127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+END
+
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		fi
+
+		apt-get -y install squid3
+		cat > /etc/squid3/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+		IP2="s/xxxxxxxxx/$IP/g";
+		sed -i $IP2 /etc/squid3/squid.conf;
+		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			service squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
+		else
+			/etc/init.d/squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
+
+		apt-get -y install squid
+		cat > /etc/squid/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+		IP2="s/xxxxxxxxx/$IP/g";
+		sed -i $IP2 /etc/squid/squid.conf;
+		/etc/init.d/squid restart
+		/etc/init.d/openvpn restart
+		/etc/init.d/nginx restart
+	fi
+
+fi
+
+	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Menu"
+	chmod +x /usr/local/bin/menu
+	apt-get -y install vnstat
+	cd /etc/openvpn/easy-rsa/
+	./easyrsa build-client-full $CLIENT nopass
+	newclient "$CLIENT"
+	cp /root/$CLIENT.ovpn /home/vps/public_html/
+	rm -f /root/$CLIENT.ovpn
+	case $OPENVPNSYSTEM in
+		2)
+		useradd $Usernames
+		echo -e "$Passwords\n$Passwords\n"|passwd $Usernames &> /dev/null
+		;;
+	esac
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
+	echo "IP Server : $IP"
+	echo "Port Server : $PORT"
+	if [[ "$PROTOCOL" = 'udp' ]]; then
+		echo "Protocal : UDP"
+	elif [[ "$PROTOCOL" = 'tcp' ]]; then
+		echo "Protocal : TCP"
+	fi
+	echo "Port Nginx : 85"
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
+	echo ""
+	case $OPENVPNSYSTEM in
+		1)
+		echo "Download My Config : http://$IP:85/$CLIENT.ovpn"
+		;;
+		2)
+		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
+		echo ""
+		echo "Your Username : $Usernames"
+		echo "Your Password : $Passwords"
+		echo "Expire : Never"
+		;;
+		3)
+		echo "Download Config : http://$IP:85/$CLIENT.ovpn"
+		;;
+	esac
+	echo ""
+	echo ""
+	echo "====================================================="
+	echo -e "ติดตั้งสำเร็จ... กรุณาพิมพ์คำสั่ง${GRAY} menu ${NC} เพื่อไปยังขั้นตอนถัดไป"
+	echo "====================================================="
+	echo ""
+	exit
+
+	;;
+
+	2) # ==================================================================================================================
+
+if [[ -e /etc/openvpn/server.conf ]]; then
+	echo ""
+	echo "ไม่สามารถติดตั้ง Pritunl ได้"
+	echo "เนื่องจาก IP นี้ได้ติดตั้ง OpenVPN ที่ควบคุมการใช้งานผ่านเทอร์มินอลไปก่อนหน้านี้แล้ว"
+	echo ""
+	exit
+fi
+
+# Debian 8
+if [[ "$VERSION_ID" = 'VERSION_ID="8"' ]]; then
+	echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongodb-org-3.6.list
+	echo "deb http://repo.pritunl.com/stable/apt jessie main" > /etc/apt/sources.list.d/pritunl.list
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+	apt-get update
+	apt-get --assume-yes install pritunl mongodb-org
+	systemctl start mongod pritunl
+	systemctl enable mongod pritunl
+
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
+			echo ""
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
+		done
+
+# Debian 9
+elif [[ "$VERSION_ID" = 'VERSION_ID="9"' ]]; then
+	echo "deb http://repo.pritunl.com/stable/apt stretch main" > /etc/apt/sources.list.d/pritunl.list
+	apt-get -y install dirmngr
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+	apt-get update
+	apt-get --assume-yes install pritunl mongodb-server
+	systemctl start mongodb pritunl
+	systemctl enable mongodb pritunl
+
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
+			echo ""
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
+		done
+
+# Ubuntu 14.04
+elif [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+	echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.6 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.6.list
+	echo "deb http://repo.pritunl.com/stable/apt trusty main" > /etc/apt/sources.list.d/pritunl.list
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+	apt-get update
+	apt-get --assume-yes install pritunl mongodb-org
+	service pritunl start
+
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
+			echo ""
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
+		done
+
+# Ubuntu 16.04
+elif [[ "$VERSION_ID" = 'VERSION_ID="16.04"' ]]; then
+	echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" > /etc/apt/sources.list.d/mongodb-org-3.6.list
+	echo "deb http://repo.pritunl.com/stable/apt xenial main" > /etc/apt/sources.list.d/pritunl.list
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+	apt-get update
+	apt-get --assume-yes install pritunl mongodb-org
+	systemctl start pritunl mongod
+	systemctl enable pritunl mongod
+
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
+			echo ""
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
+		done
+
+# Ubuntu 17.04
+elif [[ "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	echo "deb http://repo.pritunl.com/stable/apt zesty main" > /etc/apt/sources.list.d/pritunl.list
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+	apt-get update
+	apt-get --assume-yes install pritunl mongodb-server
+	systemctl start pritunl mongodb
+	systemctl enable pritunl mongodb
+
+		while [[ $Squid != "Y" && $NoSquid != "N" ]]; do
+			echo ""
+			read -p "ต้องการติดตั้ง Squid Proxy หรือไม่ (Y or N) : " -e -i Y Squid
+		done
+
+fi
+
+if [[ "$NoSquid" = 'N' ]]; then
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Pritunl .....Install Finish."
+	echo "No Proxy"
+	echo ""
+	echo "Pritunl : http://$IP"
+	echo ""
+	pritunl setup-key
+	echo ""
+	exit
+
+elif [[ "$Squid" = 'Y' ]]; then
+
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		fi
+
+	echo ""
+	read -p "Port proxy : " -e -i 8080 PROXY
+
+	apt-get -y install squid3
+	cat > /etc/squid3/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+	IP2="s/xxxxxxxxx/$IP/g";
+	sed -i $IP2 /etc/squid3/squid.conf;
+		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			service squid3 restart
+		else
+			/etc/init.d/squid3 restart
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
+
+	echo ""
+	read -p "Port proxy : " -e -i 8080 PROXY
+
+	apt-get -y install squid
+	cat > /etc/squid/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+	IP2="s/xxxxxxxxx/$IP/g";
+	sed -i $IP2 /etc/squid/squid.conf;
+	/etc/init.d/squid restart
+
+	fi
+
+fi
+
+clear
+echo ""
+echo "  (\_(\ "
+echo " (=’ :’) :* Script by Mnm Ami"
+echo "  (,(”)(”) °.¸¸.•"
+echo ""
+echo "Donate via TrueMoney Wallet : 082-038-2600"
+echo ""
+echo "Pritunl, Squid Proxy .....Install Finish."
+echo "IP Proxy : $IP"
+echo "Port Proxy : $PROXY"
+echo ""
+echo "Pritunl : http://$IP"
+echo ""
+pritunl setup-key
+echo ""
+exit
+
+	;;
+
+	3) # ==================================================================================================================
+
+if [[ -e /etc/default/dropbear ]]; then
+	echo ""
+	echo "IP นี้ได้ติดตั้ง SSH Dropbear ไปก่อนหน้านี้แล้ว"
+	echo ""
+	exit
+
+elif [[ ! -e /etc/default/dropbear ]]; then
+	apt-get -y install dropbear
+	sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
+	/etc/init.d/dropbear restart
+	PORTSSH=$(grep '^port ' /etc/ssh/sshd_config | cut -d " " -f 2)
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "SSH Dropbear .....Install Finish."
+	echo "IP Addrsss : $IP"
+	echo "Port SSH : $PORTSSH"
+	echo ""
+	if [[ -e /etc/squid3/squid.conf ]]; then
+			PROXY=$(grep '^http_port ' /etc/squid3/squid.conf | cut -d " " -f 2)
+			echo "IP Proxy : $IP"
+			echo "Port Proxy : $PROXY"
+	elif [[ -e /etc/squid/squid.conf ]]; then
+			PROXY=$(grep '^http_port ' /etc/squid/squid.conf | cut -d " " -f 2)
+			echo "IP Proxy : $IP"
+			echo "Port Proxy : $PROXY"
+			
+	else
+		echo "No Proxy"
+	fi
+	echo ""
+	exit
+fi
+
+	;;
+
+	4) # ==================================================================================================================
+	;;
+
+	5) # ==================================================================================================================
+
+if [[ -e /etc/squid3/squid.conf ]]; then
+	apt-get -y remove --purge squid3
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Removed."
+	exit
+elif [[ -e /etc/squid/squid.conf ]]; then
+	apt-get -y remove --purge squid
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Removed."
+	exit
+fi
+
+read -p "Port Proxy : " -e -i 8080 PROXY
+
+if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+	apt-get -y install squid3
+	cat > /etc/squid3/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+	IP2="s/xxxxxxxxx/$IP/g";
+	sed -i $IP2 /etc/squid3/squid.conf;
+	if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		service squid3 restart
+	else
+		/etc/init.d/squid3 restart
+	fi
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Install finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
+	echo ""
+	exit
+
+elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+	apt-get -y install squid
+	cat > /etc/squid/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+	IP2="s/xxxxxxxxx/$IP/g";
+	sed -i $IP2 /etc/squid/squid.conf;
+	/etc/init.d/squid restart
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Source by Mnm Ami"
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "Squid Proxy .....Install finish."
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
+	echo ""
+	exit
+
+fi
+
+	;;
+
+	99) # ==================================================================================================================
+
+clear
+echo ""
+read -p "ID ดาวน์โหลดไฟล์สำรอง Account : " REACCOUNT
+read -p "ID ดาวน์โหลดไฟล์สำรอง OpenVPN : " REOPENVPN
+
+gdrive download $REACCOUNT
+gdrive download $REOPENVPN
+apt-get install openvpn
+
+tar -xzvf Backup-Account.tgz
+cp /root/etc/* /etc
+tar -xzvf Backup-OpenVPN.tgz
+cp -r /root/etc/openvpn/* /etc/openvpn/
+rm Backup-Account.tgz
+rm Backup-OpenVPN.tgz
+rm -rf /root/etc
+
+	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	RCLOCAL='/etc/rc.local'
+	GROUPNAME=nogroup
+	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
+
+	clear
+	echo ""
+	read -p "IP Server : " -e -i $IP IP
+	read -p "Port Server : " -e -i 1194 PORT
+	read -p "Port Proxy : " -e -i 8080 PROXY
+	echo ""
+	echo -e " |${GRAY}1${NC}| UDP"
+	echo -e " |${GRAY}2${NC}| TCP"
+	echo ""
+	read -p "Protocol : " -e -i 2 PROTOCOL
+	case $PROTOCOL in
+		1) 
+		PROTOCOL=udp
+		;;
+		2) 
+		PROTOCOL=tcp
+		;;
+	esac
+	echo ""
+	echo -e " |${GRAY}1${NC}| DNS Current System"
+	echo -e " |${GRAY}2${NC}| DNS Google"
+	echo ""
+	read -p "DNS : " -e -i 1 DNS
+	echo ""
+	echo -e " |${GRAY}1${NC}| 1 ไฟล์เชื่อมต่อได้ 1 เครื่องเท่านั้น แต่สามารถสร้างไฟล์เพิ่มได้"
+	echo -e " |${GRAY}2${NC}| 1 ไฟล์เชื่อมต่อได้หลายเครื่อง แต่ต้องใช้ชื่อบัญชีและรหัสผ่านเพื่อใช้เชื่อมต่อ"
+	echo -e " |${GRAY}3${NC}| 1 ไฟล์เชื่อมต่อได้ไม่จำกัดจำนวนเครื่อง"
+	echo ""
+	read -p "Server System : " -e OPENVPNSYSTEM
+	echo ""
+	read -p "Server Name: " -e CLIENT
+	echo ""
+	case $OPENVPNSYSTEM in
+		2)
+		read -p "Your Username : " -e Usernames
+		read -p "Your Password : " -e Passwords
+		;;
+	esac
+	echo ""
+	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
+
+	apt-get update
+	apt-get install iptables openssl ca-certificates -y
+chown -R root:root /etc/openvpn/easy-rsa/
+chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+openvpn --genkey --secret /etc/openvpn/ta.key
+cd /etc/openvpn/easy-rsa/
+cd
+	rm -rf /etc/openvpn/server.conf
+	rm -rf /etc/openvpn/client-common.txt
+
+	echo "port $PORT
+proto $PROTOCOL
+dev tun
+sndbuf 0
+rcvbuf 0
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+auth SHA512
+tls-auth ta.key 0
+topology subnet
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
+	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
+	case $DNS in
+		1)
+		if grep -q "127.0.0.53" "/etc/resolv.conf"; then
+			RESOLVCONF='/run/systemd/resolve/resolv.conf'
+		else
+			RESOLVCONF='/etc/resolv.conf'
+		fi
+		# Obtain the resolvers from resolv.conf and use them for OpenVPN
+		grep -v '#' $RESOLVCONF | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
+			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
+		done
+		;;
+		2)
+		echo 'push "dhcp-option DNS 8.8.8.8"' >> /etc/openvpn/server.conf
+		echo 'push "dhcp-option DNS 8.8.4.4"' >> /etc/openvpn/server.conf
+		;;
+	esac
+	echo "keepalive 10 120
+cipher AES-256-CBC
+comp-lzo
+user nobody
+group $GROUPNAME
+persist-key
+persist-tun
+status openvpn-status.log
+verb 3
+crl-verify crl.pem" >> /etc/openvpn/server.conf
+	case $OPENVPNSYSTEM in
+		1)
+		echo "client-to-client" >> /etc/openvpn/server.conf
+		;;
+		2)
+		if [[ "$VERSION_ID" = 'VERSION_ID="7"' ]]; then
+			echo "plugin /usr/lib/openvpn/openvpn-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		else
+			echo "plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so /etc/pam.d/login" >> /etc/openvpn/server.conf
+			echo "client-cert-not-required" >> /etc/openvpn/server.conf
+			echo "username-as-common-name" >> /etc/openvpn/server.conf
+		fi
+		;;
+		3)
+		echo "duplicate-cn" >> /etc/openvpn/server.conf
+		;;
+	esac
+
+	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
+	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
+		echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+	fi
+
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	if pgrep firewalld; then
+		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
+		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
+		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
+		firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+	else
+		if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
+			echo '#!/bin/sh -e
+exit 0' > $RCLOCAL
+		fi
+		chmod +x $RCLOCAL
+
+		iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP
+		sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 ! -d 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
+		if iptables -L -n | grep -qE '^(REJECT|DROP)'; then
+			iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
+			iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
+			iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+			sed -i "1 a\iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
+			sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
+		fi
+	fi
+
+	if hash sestatus 2>/dev/null; then
+		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
+			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
+				semanage port -a -t openvpn_port_t -p $PROTOCOL $PORT
+			fi
+		fi
+	fi
+
+
+	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
+	if [[ "$IP" != "$EXTERNALIP" ]]; then
+		echo ""
+		echo "ตรวจพบเบื้องหลังเซิฟเวอร์ของคุณเป็น Network Addrsss Translation (NAT)"
+		echo "NAT คืออะไร ? : http://www.greatinfonet.co.th/15396685/nat"
+		echo ""
+		echo "หากเซิฟเวอร์ของคุณเป็น (NAT) คุณจำเป็นต้องระบุ IP ภายนอกของคุณ"
+		echo "หากไม่ใช่ กรุณาเว้นว่างไว้"
+		echo "หรือหากไม่แน่ใจ กรุณาเปิดดูลิ้งค์ด้านบนเพื่อศึกษาข้อมูลเกี่ยวกับ (NAT)"
+		echo ""
+		read -p "External IP: " -e USEREXTERNALIP
+		if [[ "$USEREXTERNALIP" != "" ]]; then
+			IP=$USEREXTERNALIP
+		fi
+	fi
+
+	echo "client
+dev tun
+proto $PROTOCOL
+sndbuf 0
+rcvbuf 0
+remote $CLIENT 999 udp
+remote $IP:$PORT@anywhere.truevisions.tv.ps.line.naver.jp $PORT
+http-proxy $IP $PROXY
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+auth SHA512
+cipher AES-256-CBC
+comp-lzo
+setenv opt block-outside-dns
+key-direction 1
+verb 3" > /etc/openvpn/client-common.txt
+
+	case $OPENVPNSYSTEM in
+		2)
+		echo "auth-user-pass" >> /etc/openvpn/client-common.txt
+		;;
+	esac
+
+	cd
+	apt-get -y install nginx
+	cat > /etc/nginx/nginx.conf <<END
+user www-data;
+worker_processes 2;
+pid /var/run/nginx.pid;
+events {
+	multi_accept on;
+        worker_connections 1024;
+}
+http {
+	autoindex on;
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        server_tokens off;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+        client_max_body_size 32M;
+	client_header_buffer_size 8m;
+	large_client_header_buffers 8 8m;
+	fastcgi_buffer_size 8m;
+	fastcgi_buffers 8 8m;
+	fastcgi_read_timeout 600;
+        include /etc/nginx/conf.d/*.conf;
+}
+END
+	mkdir -p /home/vps/public_html
+	echo "<pre>Source by Mnm Ami | Donate via TrueMoney Wallet : 082-038-2600</pre>" > /home/vps/public_html/index.html
+	echo "<?phpinfo(); ?>" > /home/vps/public_html/info.php
+	args='$args'
+	uri='$uri'
+	document_root='$document_root'
+	fastcgi_script_name='$fastcgi_script_name'
+	cat > /etc/nginx/conf.d/vps.conf <<END
+server {
+    listen       85;
+    server_name  127.0.0.1 localhost;
+    access_log /var/log/nginx/vps-access.log;
+    error_log /var/log/nginx/vps-error.log error;
+    root   /home/vps/public_html;
+    location / {
+        index  index.html index.htm index.php;
+	try_files $uri $uri/ /index.php?$args;
+    }
+    location ~ \.php$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass  127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+END
+
+	if [[ "$VERSION_ID" = 'VERSION_ID="7"' || "$VERSION_ID" = 'VERSION_ID="8"' || "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+		if [[ -e /etc/squid3/squid.conf ]]; then
+			apt-get -y remove --purge squid3
+		fi
+
+		apt-get -y install squid3
+		cat > /etc/squid3/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+		IP2="s/xxxxxxxxx/$IP/g";
+		sed -i $IP2 /etc/squid3/squid.conf;
+		if [[ "$VERSION_ID" = 'VERSION_ID="14.04"' ]]; then
+			service squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
+		else
+			/etc/init.d/squid3 restart
+			/etc/init.d/openvpn restart
+			/etc/init.d/nginx restart
+		fi
+
+	elif [[ "$VERSION_ID" = 'VERSION_ID="9"' || "$VERSION_ID" = 'VERSION_ID="16.04"' || "$VERSION_ID" = 'VERSION_ID="17.04"' ]]; then
+		if [[ -e /etc/squid/squid.conf ]]; then
+			apt-get -y remove --purge squid
+		fi
+
+		apt-get -y install squid
+		cat > /etc/squid/squid.conf <<END
+http_port $PROXY
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
+acl localnet src 10.0.0.0/8
+acl localnet src 172.16.0.0/12
+acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 70
+acl Safe_ports port 210
+acl Safe_ports port 1025-65535
+acl Safe_ports port 280
+acl Safe_ports port 488
+acl Safe_ports port 591
+acl Safe_ports port 777
+acl CONNECT method CONNECT
+acl SSH dst xxxxxxxxx-xxxxxxxxx/255.255.255.255
+http_access allow SSH
+http_access allow localnet
+http_access allow localhost
+http_access deny all
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320
+END
+		IP2="s/xxxxxxxxx/$IP/g";
+		sed -i $IP2 /etc/squid/squid.conf;
+		/etc/init.d/squid restart
+		/etc/init.d/openvpn restart
+		/etc/init.d/nginx restart
+	fi
+
+
+	wget -O /usr/local/bin/menu "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Menu"
+	chmod +x /usr/local/bin/menu
+	apt-get -y install vnstat
+	
+	clear
+	echo ""
+	echo "  (\_(\ "
+	echo " (=’ :’) :* Script by Mnm Ami"
+	echo "  (,(”)(”) °.¸¸.•"
+	echo ""
+	echo "Donate via TrueMoney Wallet : 082-038-2600"
+	echo ""
+	echo "OpenVPN, Squid Proxy, Nginx .....Install finish."
+	echo "IP Server : $IP"
+	echo "Port Server : $PORT"
+	if [[ "$PROTOCOL" = 'udp' ]]; then
+		echo "Protocal : UDP"
+	elif [[ "$PROTOCOL" = 'tcp' ]]; then
+		echo "Protocal : TCP"
+	fi
+	echo "Port Nginx : 85"
+	echo "IP Proxy : $IP"
+	echo "Port Proxy : $PROXY"
+	echo ""
+	echo "====================================================="
+	echo -e "BACKUP IS COMPLETE"
+	echo "====================================================="
+	echo ""
+	exit
+
+	;;
+
+	0) # ==================================================================================================================
+
+rm -rf Install
+wget https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Install && chmod +x Install && bash Install
+
+	;;
+
+	00) # ==================================================================================================================
+
+if [[ -e /usr/local/bin/Check-Thai ]]; then
+	rm -f /usr/local/bin/Check-Thai
+elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
+	echo "Check Thai" >> /usr/local/bin/Check-Thai
+fi
+bash Install
+	;;
+
+esac
