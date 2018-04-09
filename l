@@ -26,21 +26,24 @@ exit
 
 	2)
 
-read -p "เลือกหัวข้อที่ต้องการ : " RE-ACCOUNT
-read -p "เลือกหัวข้อที่ต้องการ : " RE-OPENVPN
+echo ""
+read -p "DL Account File : " REACCOUNT
+read -p "DL OpenVPN File : " REOPENVPN
 
-wget $RE-ACCOUNT
-wget $RE-OPENVPN
+wget $REACCOUNT
+wget $REOPENVPN
 
 tar -xzvf Backup-User.tgz
 cp /root/etc/* /etc
 mkdir /etc/openvpn
-tar -xzvf Backup-User.tgz
+tar -xzvf Backup-OpenVPN.tgz
 cp -r /root/etc/openvpn/* /etc/openvpn/
 
 	IP=$(wget -4qO- "http://whatismyip.akamai.com/")
 	RCLOCAL='/etc/rc.local'
 	GROUPNAME=nogroup
+	OS=debian
+	VERSION_ID=$(cat /etc/os-release | grep "VERSION_ID")
 
 	clear
 	echo ""
@@ -84,8 +87,12 @@ cp -r /root/etc/openvpn/* /etc/openvpn/
 	read -n1 -r -p "กด Enter 1 ครั้งเพื่อเริ่มทำการติดตั้ง หรือกด CTRL+C เพื่อยกเลิก"
 
 	apt-get update
-	apt-get install openvpn iptables openssl ca-certificates -y
-
+	apt-get install iptables openssl ca-certificates -y
+chown -R root:root /etc/openvpn/easy-rsa/
+chown nobody:$GROUPNAME /etc/openvpn/crl.pem
+openvpn --genkey --secret /etc/openvpn/ta.key
+cd /etc/openvpn/easy-rsa/
+cd
 	rm -rf /etc/openvpn/server.conf
 	rm -rf /etc/openvpn/client-common.txt
 
