@@ -1670,8 +1670,8 @@ echo ""
 read -p "ID ดาวน์โหลดไฟล์สำรอง Account : " REACCOUNT
 read -p "ID ดาวน์โหลดไฟล์สำรอง OpenVPN : " REOPENVPN
 
-gdrive download REACCOUNT
-gdrive download REOPENVPN
+gdrive download $REACCOUNT
+gdrive download $REOPENVPN
 apt-get install openvpn
 
 tar -xzvf Backup-Account.tgz
