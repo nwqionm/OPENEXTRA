@@ -1667,11 +1667,11 @@ exit
 	2)
 
 echo ""
-read -p "Account fileID : " REACCOUNT
-read -p "OpenVPN fileID : " REOPENVPN
+read -p "ลิ้งค์ดาวน์โหลดไฟล์สำรอง Account : " REACCOUNT
+read -p "ลิ้งค์ดาวน์โหลดไฟล์สำรอง OpenVPN : " REOPENVPN
 
-wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=$REACCOUNT' -O Backup-Account.tgz
-wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=$REOPENVPN' -O Backup-OpenVPN.tgz
+wget --no-check-certificate '$REACCOUNT' -O Backup-Account.tgz
+wget --no-check-certificate '$REOPENVPN' -O Backup-OpenVPN.tgz
 apt-get install openvpn
 
 tar -xzvf Backup-Account.tgz
