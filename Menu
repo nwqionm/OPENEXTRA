@@ -16,9 +16,11 @@ NC='\033[0m'
 
 
 if [ ! -e /usr/local/bin/Auto-Delete-Client ]; then
-	echo "0 * * * * root /usr/local/bin/Auto-Delete-Client" > /etc/cron.d/Auto-Delete-Client
+	echo "* * * * * root bash Auto-Delete-Client" > /etc/cron.d/Auto-Delete-Client
 	wget -O /usr/local/bin/Auto-Delete-Client "https://raw.githubusercontent.com/nwqionm/OPENEXTRA/master/Auto-Delete-Client"
 	chmod +x /usr/local/bin/Auto-Delete-Client
+	/etc/init.d/cron restart
+	/etc/init.d/cron start
 fi
 
 # Menu
