@@ -104,7 +104,7 @@ fi
 
 echo ""
 if [[ -e /etc/vnstat.conf ]]; then
-	INTERFACE=`ifconfig | head -n1 | awk '{print $1}' | cut -d ':' -f 1`
+	INTERFACE=`vnstat -m | head -n2 | awk '{print $1}'`
 	TOTALBW=$(vnstat -i $INTERFACE --nick local | grep "total:" | awk '{print $8" "substr ($9, 1, 1)}')
 fi
 
