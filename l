@@ -24,9 +24,9 @@ for((i=1; i<=$TOTALACCOUNTS; i++ ))
            DATE="0"$DATE
        done
 
-       while [ ${#USERNAME} -lt 15 ]
+       while [ ${#username} -lt 15 ]
        do
-           username=$USERNAME" " 
+           username=$username" " 
        done
        MOUNTYEAR=`echo $DATEEXP | awk -F" " '{print $2,$6}'`
        TODAYTIME=`date +%s`
@@ -34,7 +34,7 @@ for((i=1; i<=$TOTALACCOUNTS; i++ ))
            then
 			:
        else
-       echo "echo "ชื่อบัญชี $username หมดอายุในวันที่ $DATE $MOUNTYEAR และถูกลบออกจากระบบเมื่อวันที่ $TODAY "" >> /usr/local/bin/Deleted-Account
+       echo "echo "ชื่อบัญชี $USERNAME หมดอายุในวันที่ $DATE $MOUNTYEAR และถูกลบออกจากระบบเมื่อวันที่ $TODAY "" >> /usr/local/bin/Deleted-Account
        userdel $username
        fi
 done
