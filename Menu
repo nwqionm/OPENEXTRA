@@ -62,7 +62,6 @@ if [[ -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY}16${NC}| เปิด-ปิด-รีสตาร์ท การทำงานของระบบ"
 	echo -e "|${GRAY}17${NC}| แก้ไขคอนฟิกต่างๆในระบบ"
 	echo ""
-	echo -e "|${GRAY}99${NC}| -"
 	echo -e "|${GRAY} 0${NC}| อัพเดตเมนูสคริปท์"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาอังกฤษ"
 
@@ -99,7 +98,6 @@ elif [[ ! -e /usr/local/bin/Check-Thai ]]; then
 	echo -e "|${GRAY}16${NC}| START-STOP-RESTART OPERATION SYSTEM"
 	echo -e "|${GRAY}17${NC}| EDIT CONFIG"
 	echo ""
-	echo -e "|${GRAY}99${NC}| -"
 	echo -e "|${GRAY} 0${NC}| UPDATE MENU SCRIPT"
 	echo -e "|${GRAY}00${NC}| เปลี่ยนเป็นภาษาไทย"
 fi
