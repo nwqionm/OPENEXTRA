@@ -589,7 +589,7 @@ exit
 
 	5)
 
-echo "0 0 * * 0 root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
+echo "0 0 * * MON root /usr/local/bin/Reboot-Server" > /etc/cron.d/Reboot-Server
 echo ""
 echo "ตั้งค่ารีบูทเซิฟเวอร์ทุกๆ 7 วันเรียบร้อยแล้ว"
 echo ""
