@@ -202,6 +202,7 @@ case $MENU in
 		echo "IP : $IP"
 		echo "Port : 22"
 		echo "Proxy Port : $PROXY"
+		echo ""
 		exit
 	else
 		echo ""
