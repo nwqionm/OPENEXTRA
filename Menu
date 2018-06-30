@@ -196,7 +196,7 @@ case $MENU in
 		clear
 		echo ""
 		echo "ชื่อบัญชี : $CLIENT"
-		echo "รหัสผ่าน : $PASSWD"
+		echo "รหัสผ่าน : $PASSWORD"
 		echo "หมดอายุในวันที่ : $EXP"
 		echo ""
 		echo "IP : $IP"
