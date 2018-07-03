@@ -877,7 +877,7 @@ elif [[ ! -e /etc/default/dropbear ]]; then
 	apt-get -y install dropbear
 	sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 	/etc/init.d/dropbear restart
-	PORTSSH=$(grep '^port ' /etc/ssh/sshd_config | cut -d " " -f 2)
+	PORTSSH=$(grep '^Port ' /etc/ssh/sshd_config | cut -d " " -f 2)
 	clear
 	echo ""
 	echo "  (\_(\ "
